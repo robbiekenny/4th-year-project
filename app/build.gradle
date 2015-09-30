@@ -21,7 +21,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
     compile project(':libstreaming')
+    compile 'com.google.android.gms:play-services-base:6.5.87'
     compile 'com.microsoft.azure:azure-mobile-services-android-sdk:2.0.3'
 }

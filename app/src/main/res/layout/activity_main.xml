@@ -14,7 +14,8 @@
         android:id="@+id/email"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp" />
+        android:layout_marginTop="110dp"
+        android:hint="Email"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -24,7 +25,8 @@
         android:id="@+id/password"
         android:layout_below="@+id/email"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="30dp"
+        android:hint="Password"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -43,5 +45,15 @@
         android:id="@+id/register"
         android:layout_below="@+id/signIn"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:onClick="register"/>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/fragment_container"
+        ></FrameLayout>
+
 </RelativeLayout>

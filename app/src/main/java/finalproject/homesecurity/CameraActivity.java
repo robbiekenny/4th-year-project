@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -28,6 +30,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.EditText;
 
 public class CameraActivity extends SensorsActivity {
     //https://github.com/phishman3579/android-motion-detection/tree/master/src/com/jwetherell/motion_detection
@@ -41,7 +44,7 @@ public class CameraActivity extends SensorsActivity {
     private static IMotionDetection detector = null;
     private static Context con;
     private static volatile AtomicBoolean processing = new AtomicBoolean(false);
-    private boolean testing = true;
+    private boolean detectMotion = false;
     /**
      * {@inheritDoc}
      */
@@ -64,6 +67,23 @@ public class CameraActivity extends SensorsActivity {
             // Using State based (aggregate map)
             detector = new AggregateLumaMotionDetection();
         }
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(CameraActivity.this);
+
+        alert.setTitle("Enter the name of this device");
+
+
+        // Set an EditText view to get user input
+        EditText input = new EditText(CameraActivity.this);
+        input.setHint("e.g Kitchen,Bedroom,Garage");
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+
+        alert.show();
     }
 
     @Override
@@ -98,7 +118,7 @@ public class CameraActivity extends SensorsActivity {
             @Override
             public void run() {
                 System.out.println("HOWYE------------------");
-                testing = false;
+                detectMotion = false;
             }
         }, 10000);
     }
@@ -111,11 +131,9 @@ public class CameraActivity extends SensorsActivity {
         @Override
         public void onPreviewFrame(byte[] data, Camera cam) {
             //my idea here is to allow a user to select when the motion detection starts
-            if(testing)
+            //this might need to be put onto a seperate thread
+            if(detectMotion)
             {
-                System.out.println("TESTING");
-            }
-            else {
                 if (data == null) return;
                 Camera.Size size = cam.getParameters().getPreviewSize();
                 if (size == null) return;
@@ -124,6 +142,10 @@ public class CameraActivity extends SensorsActivity {
                     DetectionThread thread = new DetectionThread(data, size.width, size.height);
                     thread.start();
                 }
+
+            }
+            else {
+                System.out.println("MOTION DETECTION IS DISABLED");
             }
         }
     };
