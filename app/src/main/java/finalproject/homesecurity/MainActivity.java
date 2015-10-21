@@ -41,6 +41,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.microsoft.windowsazure.mobileservices.*;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
@@ -48,6 +49,8 @@ import com.microsoft.windowsazure.notifications.NotificationsManager;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+
+import finalproject.homesecurity.model.User;
 
 public class MainActivity extends ActionBarActivity {
     private static final String SENDER_ID = "1017315118157";
@@ -72,17 +75,18 @@ public class MainActivity extends ActionBarActivity {
         try {
             mClient = new MobileServiceClient(
                     "https://homesecurityapp.azure-mobile.net/",
-                    "rKdicilUIMYXfBBlUwydBGGiNqzJPZ93",
-                    MainActivity.this
+                    "MjerDEqzlAcPkyfiKaUwDOYoIxeOLB33",
+                    this
             );
+
         } catch (MalformedURLException e) {
             System.out.println("ERROR STARTING MOBILE SERVICE CLIENT");
             e.printStackTrace();
         }
 
-        NotificationsManager.handleNotifications(this, SENDER_ID, MyHandler.class);
-        gcm = GoogleCloudMessaging.getInstance(this);
-        registerClient = new RegisterClient(this, BACKEND_ENDPOINT);
+//        NotificationsManager.handleNotifications(this, SENDER_ID, MyHandler.class);
+//        gcm = GoogleCloudMessaging.getInstance(this);
+//        registerClient = new RegisterClient(this, BACKEND_ENDPOINT);
 
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
@@ -114,46 +118,43 @@ public class MainActivity extends ActionBarActivity {
 
     public void signInErrorChecking(View v) //simple error checks on email and password fields
     {
-//        if(isValidEmail(email.getText().toString()) && isValidPassword(password.getText().toString()))
-//            signIn();
-//        else
-//        {
-//            if(!isValidEmail(email.getText().toString()))
-//                email.setError("Valid email required");
-//            if(!isValidPassword(password.getText().toString()))
-//                password.setError("Password must be greater than 5 characters");
-//        }
-        try
+        if(isValidEmail(email.getText().toString()) && isValidPassword(password.getText().toString()))
+            signIn();
+        else
         {
-            login();
-        }catch(Exception e)
-        {
-            Log.e("Login Error",e.getMessage());
+            if(!isValidEmail(email.getText().toString()))
+                email.setError("Valid email required");
+            if(!isValidPassword(password.getText().toString()))
+                password.setError("Password must be greater than 5 characters");
         }
-
     }
 
     public void signIn() //sends credentials to server
     {
         progress = ProgressDialog.show(this, "Logging in",
                 "Please Wait..", true);
-        ArrayList<Pair<String, String>> parameters = new ArrayList<Pair<String, String>>();
-        parameters.add(new Pair<>("id", email.getText().toString()));
-        parameters.add(new Pair<>("password", password.getText().toString()));
-        ListenableFuture<JsonElement> result = mClient.invokeApi("login", null, "POST", parameters);
+        final User newUser = new User(email.getText().toString(), password.getText().toString());
 
+
+        ListenableFuture<JsonElement> result = mClient.invokeApi( "CustomLogin", newUser, JsonElement.class );
+        System.out.println("HELLO-------------------");
         Futures.addCallback(result, new FutureCallback<JsonElement>() {
             @Override
             public void onFailure(Throwable exc) {
-                //could be a bad internet connection
-                System.out.println("FAILED---------------------");
-                signinResult("Failed");
+                System.out.println("FAILED");
+                System.out.println(exc.getMessage().toString());
+                //this gets rid of the json format so i am left with just the string message received from the Mobile Service
+                signinResult(exc.getMessage().substring(12, exc.getMessage().length() - 2));
             }
 
             @Override
             public void onSuccess(JsonElement result) {
-                System.out.println(result);
-                signinResult(result.getAsString().toString());
+                if(result.isJsonObject()) {
+                    JsonObject resultObj = result.getAsJsonObject();
+                    displayRegistrationMessage(resultObj.get("message").getAsString());
+                }
+                else
+                    displayRegistrationMessage(result.getAsString().toString());
             }
         });
     }
@@ -176,31 +177,26 @@ public class MainActivity extends ActionBarActivity {
 
     public void register(View v) //displays the register fragment while hiding other GUI components
     {
-//        email.setVisibility(View.INVISIBLE);
-//        password.setVisibility(View.INVISIBLE);
-//        signin.setVisibility(View.INVISIBLE);
-//        register.setVisibility(View.INVISIBLE);
-//
-//        frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
-//        if(frag == null)
-//        {
-//            fragmentManager = getFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            frag = new RegisterFragment();
-//            fragmentTransaction.add(R.id.fragment_container, frag, "frag");
-//            fragmentTransaction.commit();
-//        }
-//        else
-//        {
-//            fragmentManager = getFragmentManager();
-//            FragmentTransaction ft = fragmentManager.beginTransaction();
-//            ft.replace(R.id.fragment_container, frag);
-//            ft.commit();
-//        }
-        try {
-            sendPush("gcm","robbie","\"testing\"");
-        } catch (IOException e) {
-            e.printStackTrace();
+        email.setVisibility(View.INVISIBLE);
+        password.setVisibility(View.INVISIBLE);
+        signin.setVisibility(View.INVISIBLE);
+        register.setVisibility(View.INVISIBLE);
+
+        frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
+        if(frag == null)
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            frag = new RegisterFragment();
+            fragmentTransaction.add(R.id.fragment_container, frag, "frag");
+            fragmentTransaction.commit();
+        }
+        else
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.replace(R.id.fragment_container, frag);
+            ft.commit();
         }
     }
 
@@ -242,23 +238,28 @@ public class MainActivity extends ActionBarActivity {
 
     public void insertUser(String email,String password) //sends users credentials to server to be assessed
     {
-        ArrayList<Pair<String, String>> parameters = new ArrayList<Pair<String, String>>();
-        parameters.add(new Pair<>("id", email));
-        parameters.add(new Pair<>("password", password));
-        ListenableFuture<JsonElement> result = mClient.invokeApi("register", null, "POST", parameters);
+        final User newUser = new User(email, password);
 
+
+        ListenableFuture<JsonElement> result = mClient.invokeApi( "CustomRegistration", newUser, JsonElement.class );
+        System.out.println("HELLO-------------------");
         Futures.addCallback(result, new FutureCallback<JsonElement>() {
             @Override
             public void onFailure(Throwable exc) {
-                //could be a bad internet connection
-                System.out.println("FAILED---------------------");
-                displayRegistrationMessage("Failed");
+                System.out.println("FAILED");
+                System.out.println(exc.getMessage().toString());
+                //this gets rid of the json format so i am left with just the string message received from the Mobile Service
+                displayRegistrationMessage(exc.getMessage().substring(12, exc.getMessage().length() - 2));
             }
 
             @Override
             public void onSuccess(JsonElement result) {
-                System.out.println(result);
-                displayRegistrationMessage(result.getAsString().toString());
+                if(result.isJsonObject()) {
+                    JsonObject resultObj = result.getAsJsonObject();
+                    displayRegistrationMessage(resultObj.get("message").getAsString());
+                }
+                else
+                    displayRegistrationMessage(result.getAsString().toString());
             }
         });
     }
@@ -267,7 +268,7 @@ public class MainActivity extends ActionBarActivity {
     public void displayRegistrationMessage(String message) //displays appropriate message to user after registration
     {
         progress.dismiss();
-        if(message.equals("Success"))
+        if(message.equals("Created"))
         {
             Toast.makeText(MainActivity.this,message,Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this,DecisionActivity.class);
