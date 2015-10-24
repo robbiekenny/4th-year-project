@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -144,26 +145,36 @@ public class MainActivity extends ActionBarActivity {
                 System.out.println("FAILED");
                 System.out.println(exc.getMessage().toString());
                 //this gets rid of the json format so i am left with just the string message received from the Mobile Service
-                signinResult(exc.getMessage().substring(12, exc.getMessage().length() - 2));
+                signinResult(exc.getMessage().substring(12, exc.getMessage().length() - 2), "");
             }
 
             @Override
             public void onSuccess(JsonElement result) {
-                if(result.isJsonObject()) {
+                if (result.isJsonObject()) {
                     JsonObject resultObj = result.getAsJsonObject();
-                    displayRegistrationMessage(resultObj.get("message").getAsString());
-                }
-                else
-                    displayRegistrationMessage(result.getAsString().toString());
+                    System.out.println(resultObj.get("userId").getAsString());
+                    System.out.println(resultObj.get("mobileServiceAuthenticationToken").getAsString());
+                    signinResult("SignedIn", resultObj.get("mobileServiceAuthenticationToken").getAsString());
+                } else
+                    signinResult("SignedIn", "");
             }
         });
     }
 
-    public void signinResult(String message) //determines what happens on successful or failed sign in
+    public void signinResult(String message,String token) //determines what happens on successful or failed sign in
     {
         progress.dismiss();
         if(message.equals("SignedIn"))
         {
+            if(token != "")
+            {
+                SharedPreferences sharedPref = this.getSharedPreferences("AuthenticatedUserDetails",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("userId", email.getText().toString());
+                editor.putString("mobileServiceAuthenticationToken", token);
+                editor.commit();
+            }
+
             Toast.makeText(this,"Successful sign in",Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this,DecisionActivity.class);
             startActivity(intent);
