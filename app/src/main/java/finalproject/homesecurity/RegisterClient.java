@@ -29,21 +29,19 @@ public class RegisterClient {
     private String Backend_Endpoint;
     SharedPreferences settings;
     protected HttpClient httpClient;
-    private String authorizationHeader;
+    private String userid;
 
     public RegisterClient(Context context, String backendEnpoint) {
         super();
         this.settings = context.getSharedPreferences(PREFS_NAME, 0);
         httpClient =  new DefaultHttpClient();
-        Backend_Endpoint = backendEnpoint + "/api/register";
+        Backend_Endpoint = backendEnpoint + "/api/GCMRegistration";
     }
 
-    public String getAuthorizationHeader() {
-        return authorizationHeader;
-    }
 
-    public void setAuthorizationHeader(String authorizationHeader) {
-        this.authorizationHeader = authorizationHeader;
+
+    public void setUserID(String userid) {
+        this.userid = userid;
     }
 
     public void register(String handle, Set<String> tags) throws ClientProtocolException, IOException, JSONException {
@@ -57,8 +55,10 @@ public class RegisterClient {
         int statusCode = upsertRegistration(registrationId, deviceInfo);
 
         if (statusCode == HttpStatus.SC_OK) {
+            Log.e("RegisterClient", "REGISTERED SUCCESSFULLY");
             return;
         } else if (statusCode == HttpStatus.SC_GONE){
+            System.out.println("GOING INTO ELSE IF STATEMENT");
             settings.edit().remove(REGID_SETTING_NAME).commit();
             registrationId = retrieveRegistrationIdOrRequestNewOne(handle);
             statusCode = upsertRegistration(registrationId, deviceInfo);
@@ -75,9 +75,10 @@ public class RegisterClient {
     private int upsertRegistration(String registrationId, JSONObject deviceInfo)
             throws UnsupportedEncodingException, IOException,
             ClientProtocolException {
-        HttpPut request = new HttpPut(Backend_Endpoint+"/"+registrationId);
+        HttpPut request = new HttpPut(Backend_Endpoint + "/" + registrationId + "?userid=" + userid);
         request.setEntity(new StringEntity(deviceInfo.toString()));
-        request.addHeader("Authorization", "Basic "+authorizationHeader);
+//        request.setEntity(new StringEntity(userid));
+        request.addHeader("X-ZUMO-APPLICATION","MjerDEqzlAcPkyfiKaUwDOYoIxeOLB33");
         request.addHeader("Content-Type", "application/json");
         HttpResponse response = httpClient.execute(request);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -89,7 +90,7 @@ public class RegisterClient {
             return settings.getString(REGID_SETTING_NAME, null);
 
         HttpUriRequest request = new HttpPost(Backend_Endpoint+"?handle="+handle);
-        request.addHeader("Authorization", "Basic "+authorizationHeader);
+        request.addHeader("X-ZUMO-APPLICATION","MjerDEqzlAcPkyfiKaUwDOYoIxeOLB33");
         HttpResponse response = httpClient.execute(request);
         if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
             Log.e("RegisterClient", "Error creating registrationId: " + response.getStatusLine().getStatusCode());
@@ -99,7 +100,7 @@ public class RegisterClient {
         registrationId = registrationId.substring(1, registrationId.length()-1);
 
         settings.edit().putString(REGID_SETTING_NAME, registrationId).commit();
-
+        System.out.println("REG ID: " + registrationId);
         return registrationId;
     }
 }

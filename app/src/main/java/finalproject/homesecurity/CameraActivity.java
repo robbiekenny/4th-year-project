@@ -114,11 +114,14 @@ public class CameraActivity extends SensorsActivity {
 
         camera = Camera.open();
         final Handler handler = new Handler();
+
+
+        //enable or disable motion detection
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 System.out.println("HOWYE------------------");
-                detectMotion = false;
+                detectMotion = true;
             }
         }, 10000);
     }

@@ -51,6 +51,7 @@ import com.microsoft.windowsazure.notifications.NotificationsManager;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
+import finalproject.homesecurity.Utils.CleanUserId;
 import finalproject.homesecurity.model.User;
 
 public class MainActivity extends ActionBarActivity {
@@ -64,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
     private Button register;
     private ProgressDialog progress;
     private RegisterClient registerClient;
-    private static final String BACKEND_ENDPOINT = "http://appbackend2558.azurewebsites.net";
+    private static final String BACKEND_ENDPOINT = "https://homesecurityapp.azure-mobile.net";
     private GoogleCloudMessaging gcm;
 
     @Override
@@ -85,9 +86,9 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-//        NotificationsManager.handleNotifications(this, SENDER_ID, MyHandler.class);
-//        gcm = GoogleCloudMessaging.getInstance(this);
-//        registerClient = new RegisterClient(this, BACKEND_ENDPOINT);
+        NotificationsManager.handleNotifications(this, SENDER_ID, MyHandler.class);
+        gcm = GoogleCloudMessaging.getInstance(this);
+        registerClient = new RegisterClient(this, BACKEND_ENDPOINT);
 
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
@@ -166,6 +167,12 @@ public class MainActivity extends ActionBarActivity {
         progress.dismiss();
         if(message.equals("SignedIn"))
         {
+            try {
+                registerClientForGCM();
+            } catch (UnsupportedEncodingException e) {
+                System.out.println("FAILED TO REGISTER FOR GCM");
+                e.printStackTrace();
+            }
             if(token != "")
             {
                 SharedPreferences sharedPref = this.getSharedPreferences("AuthenticatedUserDetails",Context.MODE_PRIVATE);
@@ -209,6 +216,8 @@ public class MainActivity extends ActionBarActivity {
             ft.replace(R.id.fragment_container, frag);
             ft.commit();
         }
+
+
     }
 
     public void cancel(View v){
@@ -265,11 +274,10 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onSuccess(JsonElement result) {
-                if(result.isJsonObject()) {
+                if (result.isJsonObject()) {
                     JsonObject resultObj = result.getAsJsonObject();
                     displayRegistrationMessage(resultObj.get("message").getAsString());
-                }
-                else
+                } else
                     displayRegistrationMessage(result.getAsString().toString());
             }
         });
@@ -312,8 +320,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    public void login() throws UnsupportedEncodingException {
-        this.registerClient.setAuthorizationHeader(getAuthorizationHeader());
+    public void registerClientForGCM() throws UnsupportedEncodingException {
+        this.registerClient.setUserID(email.getText().toString());
 
         final Context context = this;
         new AsyncTask<Object, Object, Object>() {
@@ -321,6 +329,7 @@ public class MainActivity extends ActionBarActivity {
             protected Object doInBackground(Object... params) {
                 try {
                     String regid = gcm.register(SENDER_ID);
+                    System.out.println("GCM ID: " + regid);
                     registerClient.register(regid, new HashSet<String>());
                 } catch (Exception e) {
                     Log.e("Failed to register", e.getMessage());
@@ -332,14 +341,9 @@ public class MainActivity extends ActionBarActivity {
             protected void onPostExecute(Object result) {
                 Toast.makeText(context, "Logged in and registered.",
                         Toast.LENGTH_LONG).show();
+
             }
         }.execute(null, null, null);
-    }
-
-    private String getAuthorizationHeader() throws UnsupportedEncodingException {
-        String basicAuthHeader = email.getText().toString()+":"+password.getText().toString();
-        basicAuthHeader = Base64.encodeToString(basicAuthHeader.getBytes("UTF-8"), Base64.NO_WRAP);
-        return basicAuthHeader;
     }
 
     /**
@@ -359,14 +363,14 @@ public class MainActivity extends ActionBarActivity {
             @Override
             protected Object doInBackground(Object... params) {
                 try {
-
-                    String uri = BACKEND_ENDPOINT + "/api/notifications";
-                    uri += "?pns=" + pns;
+                    //send push produces an internal server error this needs to be fixed
+                    String uri = BACKEND_ENDPOINT + "/api/Notifications";
+                    uri += "?pns=" + pns;       //adds parameters the the uri
                     uri += "&to_tag=" + userTag;
 
                     HttpPost request = new HttpPost(uri);
-                    request.addHeader("Authorization", "Basic "+ getAuthorizationHeader());
-                    request.setEntity(new StringEntity(message));
+                    request.addHeader("X-ZUMO-APPLICATION","MjerDEqzlAcPkyfiKaUwDOYoIxeOLB33");
+                    request.setEntity(new StringEntity(message)); //data passed to the controller
                     request.addHeader("Content-Type", "application/json");
 
                     HttpResponse response = new DefaultHttpClient().execute(request);
