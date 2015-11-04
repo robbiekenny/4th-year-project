@@ -2,6 +2,7 @@ package finalproject.homesecurity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -11,15 +12,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import finalproject.homesecurity.Utils.CleanUserId;
+import finalproject.homesecurity.Utils.SendMessage;
+
 /**
  * Created by Robbie on 13/08/2015.
  */
 public class DecisionActivity extends ActionBarActivity {
+    private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.decision_activity);
+        prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
+        editor = prefs.edit();
     }
 
     @Override
@@ -52,13 +60,23 @@ public class DecisionActivity extends ActionBarActivity {
     public void security(View v)
     {
         System.out.println("security method called");
-        Intent it = new Intent(this,CameraActivity.class);
-        startActivity(it);
+        //save device mode to phone to be read later
+        editor.putString("DeviceMode","Security");
+        editor.commit();
+
+        //enable this functionality when you are able to retrieve a list of security devices
+        //Intent it = new Intent(this,CameraActivity.class);
+        //startActivity(it);
+        Toast.makeText(this,"You are now a security device",Toast.LENGTH_LONG).show();
     }
 
     public void personal(View v)
     {
         System.out.println("personal method called");
+        editor.putString("DeviceMode", "Personal"); //this device will be listed as personal
+        editor.commit();
+        Intent it = new Intent(this,PersonalDeviceActivity.class);
+        startActivity(it);
     }
 
     /** Check if this device has a camera

@@ -36,6 +36,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.common.util.concurrent.FutureCallback;
@@ -54,8 +55,7 @@ import java.util.ArrayList;
 import finalproject.homesecurity.Utils.CleanUserId;
 import finalproject.homesecurity.model.User;
 
-public class MainActivity extends ActionBarActivity {
-    private static final String SENDER_ID = "1017315118157";
+public class MainActivity extends ActionBarActivity { //deals with sign in and register (should split the two later on for cleaner code)
     public static MobileServiceClient mClient;
     private RegisterFragment frag;
     private FragmentManager fragmentManager;
@@ -65,7 +65,6 @@ public class MainActivity extends ActionBarActivity {
     private Button register;
     private ProgressDialog progress;
     private RegisterClient registerClient;
-    private static final String BACKEND_ENDPOINT = "https://homesecurityapp.azure-mobile.net";
     private GoogleCloudMessaging gcm;
 
     @Override
@@ -77,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
         try {
             mClient = new MobileServiceClient(
                     "https://homesecurityapp.azure-mobile.net/",
-                    "MjerDEqzlAcPkyfiKaUwDOYoIxeOLB33",
+                    Constants.APPLICATION_KEY,
                     this
             );
 
@@ -86,9 +85,9 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        NotificationsManager.handleNotifications(this, SENDER_ID, MyHandler.class);
+        NotificationsManager.handleNotifications(this, Constants.SENDER_ID, MyHandler.class);
         gcm = GoogleCloudMessaging.getInstance(this);
-        registerClient = new RegisterClient(this, BACKEND_ENDPOINT);
+        registerClient = new RegisterClient(this, Constants.BACKEND_ENDPOINT);
 
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
@@ -180,12 +179,14 @@ public class MainActivity extends ActionBarActivity {
                 editor.putString("userId", email.getText().toString());
                 editor.putString("mobileServiceAuthenticationToken", token);
                 editor.commit();
+
+                Toast.makeText(this,"Successful sign in",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this,DecisionActivity.class);
+                startActivity(intent);
+                finish();
             }
 
-            Toast.makeText(this,"Successful sign in",Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this,DecisionActivity.class);
-            startActivity(intent);
-            finish();
+
         }
         else if(message.equals("Fail"))
             Toast.makeText(this,"Incorrect email or password",Toast.LENGTH_LONG).show();
@@ -216,8 +217,6 @@ public class MainActivity extends ActionBarActivity {
             ft.replace(R.id.fragment_container, frag);
             ft.commit();
         }
-
-
     }
 
     public void cancel(View v){
@@ -328,7 +327,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             protected Object doInBackground(Object... params) {
                 try {
-                    String regid = gcm.register(SENDER_ID);
+                    String regid = gcm.register(Constants.SENDER_ID);
                     System.out.println("GCM ID: " + regid);
                     registerClient.register(regid, new HashSet<String>());
                 } catch (Exception e) {
@@ -346,48 +345,6 @@ public class MainActivity extends ActionBarActivity {
         }.execute(null, null, null);
     }
 
-    /**
-     * This method calls the ASP.NET WebAPI backend to send the notification message
-     * to the platform notification service based on the pns parameter.
-     *
-     * @param pns     The platform notification service to send the notification message to. Must
-     *                be one of the following ("wns", "gcm", "apns").
-     * @param userTag The tag for the user who will receive the notification message. This string
-     *                must not contain spaces or special characters.
-     * @param message The notification message string. This string must include the double quotes
-     *                to be used as JSON content.
-     */
-    public void sendPush(final String pns, final String userTag, final String message)
-            throws ClientProtocolException, IOException {
-        new AsyncTask<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                try {
-                    //send push produces an internal server error this needs to be fixed
-                    String uri = BACKEND_ENDPOINT + "/api/Notifications";
-                    uri += "?pns=" + pns;       //adds parameters the the uri
-                    uri += "&to_tag=" + userTag;
 
-                    HttpPost request = new HttpPost(uri);
-                    request.addHeader("X-ZUMO-APPLICATION","MjerDEqzlAcPkyfiKaUwDOYoIxeOLB33");
-                    request.setEntity(new StringEntity(message)); //data passed to the controller
-                    request.addHeader("Content-Type", "application/json");
-
-                    HttpResponse response = new DefaultHttpClient().execute(request);
-
-                    if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                        Log.e("Notification Error1",
-                                response.getStatusLine().toString());
-                        throw new RuntimeException("Error sending notification");
-                    }
-                } catch (Exception e) {
-                    Log.e("Notification Error2", e.getMessage());
-                    return e;
-                }
-
-                return null;
-            }
-        }.execute(null, null, null);
-    }
 
 }

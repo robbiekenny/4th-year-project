@@ -48,6 +48,9 @@
         <activity
             android:name=".Image">
         </activity>
+        <activity
+            android:name=".PersonalDeviceActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -35,7 +35,7 @@ public class RegisterClient {
         super();
         this.settings = context.getSharedPreferences(PREFS_NAME, 0);
         httpClient =  new DefaultHttpClient();
-        Backend_Endpoint = backendEnpoint + "/api/GCMRegistration";
+        Backend_Endpoint = backendEnpoint + "/api/GCMRegistration"; //controller used to register clients for GCM
     }
 
 
@@ -78,7 +78,7 @@ public class RegisterClient {
         HttpPut request = new HttpPut(Backend_Endpoint + "/" + registrationId + "?userid=" + userid);
         request.setEntity(new StringEntity(deviceInfo.toString()));
 //        request.setEntity(new StringEntity(userid));
-        request.addHeader("X-ZUMO-APPLICATION","MjerDEqzlAcPkyfiKaUwDOYoIxeOLB33");
+        request.addHeader("X-ZUMO-APPLICATION",Constants.APPLICATION_KEY); //application key passed in header
         request.addHeader("Content-Type", "application/json");
         HttpResponse response = httpClient.execute(request);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -90,7 +90,7 @@ public class RegisterClient {
             return settings.getString(REGID_SETTING_NAME, null);
 
         HttpUriRequest request = new HttpPost(Backend_Endpoint+"?handle="+handle);
-        request.addHeader("X-ZUMO-APPLICATION","MjerDEqzlAcPkyfiKaUwDOYoIxeOLB33");
+        request.addHeader("X-ZUMO-APPLICATION",Constants.APPLICATION_KEY); //application key passed in header
         HttpResponse response = httpClient.execute(request);
         if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
             Log.e("RegisterClient", "Error creating registrationId: " + response.getStatusLine().getStatusCode());
