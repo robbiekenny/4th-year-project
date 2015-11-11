@@ -95,6 +95,7 @@ public class SensorsActivity extends Activity implements SensorEventListener {
     public void onStop() {
         super.onStop();
 
+
         try {
             try {
                 sensorMgr.unregisterListener(this, sensorGrav);
@@ -148,6 +149,7 @@ public class SensorsActivity extends Activity implements SensorEventListener {
         computing.set(false);
     }
 
+
     /**
      * {@inheritDoc}
      */
@@ -159,4 +161,5 @@ public class SensorsActivity extends Activity implements SensorEventListener {
             Log.e(TAG, "Compass data unreliable");
         }
     }
+
 }

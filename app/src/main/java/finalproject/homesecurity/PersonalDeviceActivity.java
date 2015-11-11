@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -36,10 +37,10 @@ import finalproject.homesecurity.model.User;
  * Created by Robbie on 04/11/2015.
  */
 public class PersonalDeviceActivity extends ActionBarActivity {
-    private ProgressBar spinner;
+    public static ProgressBar spinner;
     private ArrayList<Room> arrayOfRooms = new ArrayList<Room>();
-    private ListView listView;
-    private RoomsAdapter adapter;
+    public static ListView listView;
+    public static RoomsAdapter adapter; //static makes this adapter accessible in the notifications handler
     private SharedPreferences settings;
     private String userID;
 
@@ -57,6 +58,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         // Attach the adapter to a ListView
          listView = (ListView) findViewById(R.id.rooms);
         listView.setAdapter(adapter);
+        handleListViewItemClick();
         getSecurityDevices();
     }
 
@@ -65,6 +67,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         userID = settings.getString("userId",null); //default value is null
         if(userID != null) //send message to all devices linked to this account
         {
+            System.out.println("GETTING SECURITY DEVICES");
             try {
                 SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID),"Retrieve");
             } catch (Exception e) {
@@ -75,6 +78,27 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         else
             System.out.println("USERID IS NULL");
 
+    }
+
+    public void handleListViewItemClick()
+    {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                Room r = (Room) parent.getItemAtPosition(position);
+                System.out.println(r.getRoomName());
+                try {
+                    //should probably use shared preferences to get the room name
+                    //room name needs to be unique behind the scenes
+                    SendMessage.sendPush("gcm",CleanUserId.RemoveSpecialCharacters(userID),"MotionOn" + r.getRoomName());
+                    System.out.println("SENT PUSH TO TURN MOTION ON");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
+                }
+            }
+        });
     }
 
     @Override
@@ -95,6 +119,15 @@ public class PersonalDeviceActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //THIS WAS JUST TO TEST THAT IT WORKS
+            //IT DOES :D
+            try {
+                SendMessage.sendPush("gcm",CleanUserId.RemoveSpecialCharacters(userID),"LightsOn");
+                System.out.println("SENT PUSH TO TURN LIGHTS ON");
+            } catch (IOException e) {
+                System.out.println("COULD NOT SEND PUSH TO TURN LIGHTS ON");
+                e.printStackTrace();
+            }
             return true;
         }
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent"
+        android:id="@+id/detailsLayout" android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Room Name"
+            android:id="@+id/roomNameLabel"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/roomNameInput"
+            android:layout_weight="1"
+            android:hint="Bedroom,Kitchen,etc.."/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingLeft="4.0dip"
+        android:paddingTop="5.0dip"
+        android:paddingRight="4.0dip"
+        android:paddingBottom="1.0dip"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_below="@+id/detailsLayout">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Cancel"
+            android:layout_weight="1.0"
+            android:onClick="cancelDetails"/>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="0.0dip" android:layout_height="fill_parent"
+            android:text="Save"
+            android:layout_weight="1.0" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

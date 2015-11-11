@@ -16,10 +16,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/rooms"
         android:visibility="invisible"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/spinner"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="117dp" />
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>

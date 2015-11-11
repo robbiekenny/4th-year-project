@@ -1,5 +1,7 @@
 package finalproject.homesecurity;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +12,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import finalproject.homesecurity.Utils.CleanUserId;
@@ -21,6 +25,10 @@ import finalproject.homesecurity.Utils.SendMessage;
 public class DecisionActivity extends ActionBarActivity {
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
+    private SecurityDetailsFragment frag;
+    private FragmentManager fragmentManager;
+    private Button pButton,sButton;
+    private TextView text1,text2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +36,10 @@ public class DecisionActivity extends ActionBarActivity {
         setContentView(R.layout.decision_activity);
         prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
         editor = prefs.edit();
+        pButton = (Button) findViewById(R.id.personal);
+        sButton = (Button) findViewById(R.id.security);
+        text1 = (TextView) findViewById(R.id.textView);
+        text2 = (TextView) findViewById(R.id.textView2);
     }
 
     @Override
@@ -60,14 +72,27 @@ public class DecisionActivity extends ActionBarActivity {
     public void security(View v)
     {
         System.out.println("security method called");
-        //save device mode to phone to be read later
-        editor.putString("DeviceMode","Security");
-        editor.commit();
+        pButton.setVisibility(View.INVISIBLE);
+        sButton.setVisibility(View.INVISIBLE);
+        text1.setVisibility(View.INVISIBLE);
+        text2.setVisibility(View.INVISIBLE);
 
-        //enable this functionality when you are able to retrieve a list of security devices
-        //Intent it = new Intent(this,CameraActivity.class);
-        //startActivity(it);
-        Toast.makeText(this,"You are now a security device",Toast.LENGTH_LONG).show();
+        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
+        if(frag == null)
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            frag = new SecurityDetailsFragment();
+            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
+            fragmentTransaction.commit();
+        }
+        else
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.replace(R.id.security_details_fragment_container, frag);
+            ft.commit();
+        }
     }
 
     public void personal(View v)
@@ -92,5 +117,16 @@ public class DecisionActivity extends ActionBarActivity {
         }
     }
 
+    public void cancelDetails(View v) //remove fragment
+    {
+        fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(frag);
+        fragmentTransaction.commit();
 
+        pButton.setVisibility(View.VISIBLE);
+        sButton.setVisibility(View.VISIBLE);
+        text1.setVisibility(View.VISIBLE);
+        text2.setVisibility(View.VISIBLE);
+    }
 }

@@ -1,6 +1,5 @@
 package finalproject.homesecurity;
 
-import finalproject.homesecurity.SensorsActivity;
 import finalproject.homesecurity.data.GlobalData;
 import finalproject.homesecurity.data.Preferences;
 import finalproject.homesecurity.detection.AggregateLumaMotionDetection;
@@ -13,10 +12,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
@@ -30,12 +28,12 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import android.widget.EditText;
 
 public class CameraActivity extends SensorsActivity {
     //https://github.com/phishman3579/android-motion-detection/tree/master/src/com/jwetherell/motion_detection
     private static final String TAG = "CameraActivity";
-
+    private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
     private static SurfaceView preview = null;
     private static SurfaceHolder previewHolder = null;
     private static Camera camera = null;
@@ -44,20 +42,31 @@ public class CameraActivity extends SensorsActivity {
     private static IMotionDetection detector = null;
     private static Context con;
     private static volatile AtomicBoolean processing = new AtomicBoolean(false);
-    private boolean detectMotion = false;
+    private static boolean detectMotion = false;
     /**
      * {@inheritDoc}
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.camera_activity_layout);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         con = CameraActivity.this;
         preview = (SurfaceView) findViewById(R.id.preview);
         previewHolder = preview.getHolder();
         previewHolder.addCallback(surfaceCallback);
         previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+        prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
+        editor = prefs.edit();
+        editor.putString("DeviceMode", "Security"); //this device will be listed as security
+
+        Intent intent = getIntent();
+        String roomName = intent.getStringExtra("roomName");
+        System.out.println("Room Name in Camera Activity: " + roomName);
+
+        editor.putString("RoomName",roomName);
+        editor.commit();
 
         if (Preferences.USE_RGB) {
             detector = new RgbMotionDetection();
@@ -67,23 +76,6 @@ public class CameraActivity extends SensorsActivity {
             // Using State based (aggregate map)
             detector = new AggregateLumaMotionDetection();
         }
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(CameraActivity.this);
-
-        alert.setTitle("Enter the name of this device");
-
-
-        // Set an EditText view to get user input
-        EditText input = new EditText(CameraActivity.this);
-        input.setHint("e.g Kitchen,Bedroom,Garage");
-        alert.setView(input);
-
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            }
-        });
-
-        alert.show();
     }
 
     @Override
@@ -113,17 +105,23 @@ public class CameraActivity extends SensorsActivity {
         super.onResume();
 
         camera = Camera.open();
-        final Handler handler = new Handler();
+    }
+
+    /*
+    METHODS ACCESSED BY NOTIFICATIONS HANDLER
+     */
+    public static void setDetectMotion(boolean motion)
+    {
+        detectMotion = motion;
+    }
 
 
-        //enable or disable motion detection
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("HOWYE------------------");
-                detectMotion = true;
-            }
-        }, 10000);
+    public static Camera getCamera() {
+        return camera;
+    }
+
+    public static void setCamera(Camera camera) {
+        CameraActivity.camera = camera;
     }
 
     private PreviewCallback previewCallback = new PreviewCallback() {
@@ -135,7 +133,7 @@ public class CameraActivity extends SensorsActivity {
         public void onPreviewFrame(byte[] data, Camera cam) {
             //my idea here is to allow a user to select when the motion detection starts
             //this might need to be put onto a seperate thread
-            if(detectMotion)
+            if(detectMotion) //if detect moton is true then allow this device to detect motion other wise do nothing
             {
                 if (data == null) return;
                 Camera.Size size = cam.getParameters().getPreviewSize();
@@ -287,8 +285,14 @@ public class CameraActivity extends SensorsActivity {
 
                         Log.i(TAG, "Saving.. previous=" + previous + " original=" + original + " bitmap=" + bitmap);
                         Looper.prepare();
-                        //could send warning to user informing them motion has been detected
+
+                        /*
+                        MOTION HAS BEEN DETECTED AT THIS POINT
+                        WE NOW HAVE AN IMAGE SHOWING WHAT HAS TRIGGERED THE MOTION DETECTION
+                        SEND THIS TO A USER
+                         */
                         Intent intent = new Intent(con, Image.class);
+                        //test which of original,previous or bitmap is the image with the detected motion
                         intent.putExtra("BitmapImage", original);
                         con.startActivity(intent);
 
