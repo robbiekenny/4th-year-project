@@ -27,7 +27,9 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 public class CameraActivity extends SensorsActivity {
     //https://github.com/phishman3579/android-motion-detection/tree/master/src/com/jwetherell/motion_detection
@@ -43,6 +45,8 @@ public class CameraActivity extends SensorsActivity {
     private static Context con;
     private static volatile AtomicBoolean processing = new AtomicBoolean(false);
     private static boolean detectMotion = false;
+    private ImageView changeCamera;
+    private int cameraID = 0; //camera is initially facing back
     /**
      * {@inheritDoc}
      */
@@ -52,6 +56,7 @@ public class CameraActivity extends SensorsActivity {
         setContentView(R.layout.camera_activity_layout);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         con = CameraActivity.this;
+        changeCamera = (ImageView) findViewById(R.id.changeCamera);
         preview = (SurfaceView) findViewById(R.id.preview);
         previewHolder = preview.getHolder();
         previewHolder.addCallback(surfaceCallback);
@@ -75,6 +80,38 @@ public class CameraActivity extends SensorsActivity {
         } else {
             // Using State based (aggregate map)
             detector = new AggregateLumaMotionDetection();
+        }
+    }
+
+    public void changeCamera(View v)
+    {
+        //if phone has only one camera, hide "switch camera" button
+        if(Camera.getNumberOfCameras() == 1){
+            changeCamera.setVisibility(View.INVISIBLE);
+        }
+        else {
+            camera.setPreviewCallback(null);
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+
+            //swap the id of the camera to be used
+            if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                cameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
+            } else {
+                cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
+            }
+            camera = Camera.open(cameraID);
+            //Code snippet for this method from somewhere on android developers, i forget where
+            camera.setDisplayOrientation(90);
+            try {
+                //this step is critical or preview on new camera will no know where to render to
+                camera.setPreviewDisplay(previewHolder);
+                camera.setPreviewCallback(previewCallback);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            camera.startPreview();
         }
     }
 
@@ -132,21 +169,23 @@ public class CameraActivity extends SensorsActivity {
         @Override
         public void onPreviewFrame(byte[] data, Camera cam) {
             //my idea here is to allow a user to select when the motion detection starts
-            //this might need to be put onto a seperate thread
-            if(detectMotion) //if detect moton is true then allow this device to detect motion other wise do nothing
+            //this might need to be put onto a separate thread
+            if(detectMotion) //if detect motion is true then allow this device to detect motion other wise do nothing
             {
+
                 if (data == null) return;
                 Camera.Size size = cam.getParameters().getPreviewSize();
                 if (size == null) return;
 
                 if (!GlobalData.isPhoneInMotion()) {
+                    System.out.println("DETECTING MOTION");
                     DetectionThread thread = new DetectionThread(data, size.width, size.height);
                     thread.start();
                 }
 
             }
             else {
-                System.out.println("MOTION DETECTION IS DISABLED");
+                //System.out.println("MOTION DETECTION IS DISABLED");
             }
         }
     };
@@ -167,7 +206,6 @@ public class CameraActivity extends SensorsActivity {
                 System.out.println("Exception in setPreviewDisplay()");
             }
         }
-
         /**
          * {@inheritDoc}
          */

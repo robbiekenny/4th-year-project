@@ -25,27 +25,6 @@ public class MyHandler extends NotificationsHandler {
     private SharedPreferences settings,prefs;
     private String userID,roomName, substringPersonalMessage,substringSecurityMessage;
 
-//    @Override
-//    public void onRegistered(Context context,  final String gcmRegistrationId) {
-//        super.onRegistered(context, gcmRegistrationId);
-//
-//        new AsyncTask<Void, Void, Void>() {
-//
-//            protected Void doInBackground(Void... params) {
-//                try {
-//                    MainActivity.mClient.getPush().register(gcmRegistrationId, null);
-//                    System.out.println("HERE " + gcmRegistrationId);
-//                    return null;
-//                }
-//                catch(Exception e) {
-//                    // handle error
-//                    e.printStackTrace();
-//                }
-//                return null;
-//            }
-//        }.execute();
-//    }
-
     @Override
     public void onReceive(Context context, Bundle bundle) {
         ctx = context;
@@ -95,7 +74,7 @@ public class MyHandler extends NotificationsHandler {
             System.out.println("IN retrieve case");
             //Toast.makeText(ctx,"RETRIEVE",Toast.LENGTH_LONG);
             if(userID == null || roomName == null)
-                Toast.makeText(ctx,"An error has occuered please close the application and start again", Toast.LENGTH_LONG).show();
+                Toast.makeText(ctx,"An error has occured please close the application and start again", Toast.LENGTH_LONG).show();
             else {
                 /*
                 MESSAGE BEING SENT TO PERSONAL DEVICE WILL BE IN THE FORMAT
@@ -112,55 +91,51 @@ public class MyHandler extends NotificationsHandler {
         }
         else //message needs to be sub stringed to see whats in it
         {
-            try
-            {
-                substringSecurityMessage = message.substring(0,8); //should produce either MotionOn or LightsOn
-            }catch(Exception e)
-            {
-                //if the try fails then we know that the message is either MotionOff or LightsOff
-                substringSecurityMessage = message.substring(0,9);
-                //e.printStackTrace();
-            }
 
+            substringSecurityMessage = message.substring(0,8); //should produce either MotionOn or LightsOn
             System.out.println(substringSecurityMessage);
             /*
             AFTER THIS PART I NEED TO CHECK IF THE MESSAGE IS FOR THIS DEVICE OR NOT BY CHECKING THE ROOM NAME
             FOR NOW THOUGH THIS IS IGNORED
              */
-
-
-            if(substringSecurityMessage.equals("MotionOn"))
+            if(substringSecurityMessage.equals("MotionOn") || substringSecurityMessage.equals("LightsOn"))
             {
-                CameraActivity.setDetectMotion(true); //turn motion detection on WORKING
-            }
-            else if(substringSecurityMessage.equals("MotionOff"))
-            {
-                CameraActivity.setDetectMotion(false); //turn motion detection off
-            }
-            else if(substringSecurityMessage.equals("LightsOn"))
-            {
-                //turn flash light on
+                if(substringSecurityMessage.equals("MotionOn"))
+                    CameraActivity.setDetectMotion(true); //turn motion detection on WORKING
+                else
+                {
+                    //turn flash light on
                 /*
                 THIS COMMAND MAY DIFFER ON PHONES SO IL HAVE TO RESEARCH THIS
                  */
-                if (ctx.getPackageManager().hasSystemFeature( //WORKING ON MY DEVICE
-                        PackageManager.FEATURE_CAMERA_FLASH)) { //if this device has a flash light
-                    System.out.println("SUPPORTs FLASH LIGHT FUNCTION");
-                    Camera.Parameters p = CameraActivity.getCamera().getParameters();
-                    p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                    CameraActivity.getCamera().setParameters(p);
+                    if (ctx.getPackageManager().hasSystemFeature( //WORKING ON MY DEVICE
+                            PackageManager.FEATURE_CAMERA_FLASH)) { //if this device has a flash light
+                        System.out.println("SUPPORTS FLASH LIGHT FUNCTION");
+                        Camera.Parameters p = CameraActivity.getCamera().getParameters();
+                        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                        CameraActivity.getCamera().setParameters(p);
+                    }
+                    else
+                    {
+                        System.out.println("DOESN'T SUPPORT FLASH LIGHT FUNCTION");
+                    }
                 }
-                else
-                {
-                    System.out.println("DOESNT SUPPORT FLASH LIGHT FUNCTION");
-                }
-
             }
             else
             {
-                //turn flash light off
-            }
+                substringSecurityMessage = message.substring(0,9); //should produce either MotionOff or LightsOff
+                System.out.println(substringSecurityMessage);
+                if(substringSecurityMessage.equals("MotionOff"))
+                    CameraActivity.setDetectMotion(false); //turn motion detection off
+                else
+                {
+                    //turn flash light off
+                    Camera.Parameters p = CameraActivity.getCamera().getParameters();
+                    p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    CameraActivity.getCamera().setParameters(p);
+                }
 
+            }
         }
     }
 }

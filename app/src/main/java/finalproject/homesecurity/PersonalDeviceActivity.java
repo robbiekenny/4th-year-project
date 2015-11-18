@@ -1,5 +1,6 @@
 package finalproject.homesecurity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -14,9 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -43,8 +48,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
     public static RoomsAdapter adapter; //static makes this adapter accessible in the notifications handler
     private SharedPreferences settings;
     private String userID;
-
-
+    private Dialog dialog;
+    private Room room;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
 
     public void getSecurityDevices() //retrieve security devices linked to this account
     {
+        adapter.clear();
         userID = settings.getString("userId",null); //default value is null
         if(userID != null) //send message to all devices linked to this account
         {
@@ -86,19 +92,80 @@ public class PersonalDeviceActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Room r = (Room) parent.getItemAtPosition(position);
-                System.out.println(r.getRoomName());
-                try {
-                    //should probably use shared preferences to get the room name
-                    //room name needs to be unique behind the scenes
-                    SendMessage.sendPush("gcm",CleanUserId.RemoveSpecialCharacters(userID),"MotionOn" + r.getRoomName());
-                    System.out.println("SENT PUSH TO TURN MOTION ON");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
-                }
+                room = (Room) parent.getItemAtPosition(position);
+                System.out.println(room.getRoomName());
+
+                // custom dialog
+                dialog = new Dialog(PersonalDeviceActivity.this);
+                dialog.setContentView(R.layout.command_controls_layout);
+                dialog.setTitle("Control device");
+                dialog.show();
+                Switch motion = (Switch) dialog.findViewById(R.id.motionDetectionSwitch);
+                motion.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
+                        if (isChecked)//switched on
+                            enableMotion();
+                        else
+                            disableMotion();
+                    }
+                });
+
+                Switch flashlight = (Switch) dialog.findViewById(R.id.flashlightSwitch);
+                flashlight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
+                        if (isChecked)//switched on
+                            enableFlashLight();
+                        else
+                            disableFlashLight();
+                    }
+                });
+
+
             }
         });
+    }
+
+    private void disableFlashLight() {
+        try {
+            //room name needs to be unique behind the scenes
+            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "LightsOff" + room.getRoomName());
+            System.out.println("SENT PUSH TO TURN Lights OFF");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
+        }
+    }
+
+    private void enableFlashLight() {
+        try {
+            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "LightsOn" + room.getRoomName());
+            System.out.println("SENT PUSH TO TURN Lights ON");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
+        }
+    }
+
+    private void enableMotion() {
+        try {
+            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "MotionOn" + room.getRoomName());
+            System.out.println("SENT PUSH TO TURN Motion ON");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
+        }
+    }
+
+    private void disableMotion() {
+        try {
+            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "MotionOff" + room.getRoomName());
+            System.out.println("SENT PUSH TO TURN Motion OFF");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
+        }
     }
 
     @Override
@@ -119,19 +186,17 @@ public class PersonalDeviceActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            //THIS WAS JUST TO TEST THAT IT WORKS
-            //IT DOES :D
-            try {
-                SendMessage.sendPush("gcm",CleanUserId.RemoveSpecialCharacters(userID),"LightsOn");
-                System.out.println("SENT PUSH TO TURN LIGHTS ON");
-            } catch (IOException e) {
-                System.out.println("COULD NOT SEND PUSH TO TURN LIGHTS ON");
-                e.printStackTrace();
-            }
+
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void back(View v)
+    {
+        dialog.dismiss();
     }
 }
 /***************************************************************************************
