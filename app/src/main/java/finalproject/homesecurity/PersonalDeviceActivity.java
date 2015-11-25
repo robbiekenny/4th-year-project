@@ -1,7 +1,10 @@
 package finalproject.homesecurity;
 
 import android.app.Dialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -48,7 +51,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
     public static RoomsAdapter adapter; //static makes this adapter accessible in the notifications handler
     private SharedPreferences settings;
     private String userID;
-    private Dialog dialog;
+    private CommandControlsFragment frag;
+    private FragmentManager fragmentManager;
     private Room room;
 
     @Override
@@ -95,78 +99,32 @@ public class PersonalDeviceActivity extends ActionBarActivity {
                 room = (Room) parent.getItemAtPosition(position);
                 System.out.println(room.getRoomName());
 
-                // custom dialog
-                dialog = new Dialog(PersonalDeviceActivity.this);
-                dialog.setContentView(R.layout.command_controls_layout);
-                dialog.setTitle("Control device");
-                dialog.show();
-                Switch motion = (Switch) dialog.findViewById(R.id.motionDetectionSwitch);
-                motion.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-                        if (isChecked)//switched on
-                            enableMotion();
-                        else
-                            disableMotion();
-                    }
-                });
-
-                Switch flashlight = (Switch) dialog.findViewById(R.id.flashlightSwitch);
-                flashlight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-                        if (isChecked)//switched on
-                            enableFlashLight();
-                        else
-                            disableFlashLight();
-                    }
-                });
-
-
+                listView.setVisibility(View.INVISIBLE);
+                Bundle bundle = new Bundle();
+                bundle.putString("user", userID);
+                bundle.putString("room", room.getRoomName());
+                frag = (CommandControlsFragment) getFragmentManager().findFragmentByTag("frag");
+                if(frag == null)
+                {
+                    fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    frag = new CommandControlsFragment();
+                    frag.setArguments(bundle);
+                    fragmentTransaction.add(R.id.command_controls_fragment_container, frag, "frag");
+                    fragmentTransaction.commit();
+                }
+                else
+                {
+                    fragmentManager = getFragmentManager();
+                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                    ft.replace(R.id.security_details_fragment_container, frag);
+                    ft.commit();
+                }
             }
         });
     }
 
-    private void disableFlashLight() {
-        try {
-            //room name needs to be unique behind the scenes
-            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "LightsOff" + room.getRoomName());
-            System.out.println("SENT PUSH TO TURN Lights OFF");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
-        }
-    }
 
-    private void enableFlashLight() {
-        try {
-            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "LightsOn" + room.getRoomName());
-            System.out.println("SENT PUSH TO TURN Lights ON");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
-        }
-    }
-
-    private void enableMotion() {
-        try {
-            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "MotionOn" + room.getRoomName());
-            System.out.println("SENT PUSH TO TURN Motion ON");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
-        }
-    }
-
-    private void disableMotion() {
-        try {
-            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "MotionOff" + room.getRoomName());
-            System.out.println("SENT PUSH TO TURN Motion OFF");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -194,9 +152,14 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void back(View v)
+    public void back(View v) //remove the fragment and make the listview visible again
     {
-        dialog.dismiss();
+        fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(frag);
+        fragmentTransaction.commit();
+
+        listView.setVisibility(View.VISIBLE);
     }
 }
 /***************************************************************************************

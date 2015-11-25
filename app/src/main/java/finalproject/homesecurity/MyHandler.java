@@ -134,7 +134,6 @@ public class MyHandler extends NotificationsHandler {
                     p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                     CameraActivity.getCamera().setParameters(p);
                 }
-
             }
         }
     }

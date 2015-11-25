@@ -178,7 +178,7 @@ public class CameraActivity extends SensorsActivity {
                 if (size == null) return;
 
                 if (!GlobalData.isPhoneInMotion()) {
-                    System.out.println("DETECTING MOTION");
+                    //System.out.println("DETECTING MOTION");
                     DetectionThread thread = new DetectionThread(data, size.width, size.height);
                     thread.start();
                 }
@@ -267,6 +267,7 @@ public class CameraActivity extends SensorsActivity {
          */
         @Override
         public void run() {
+            //System.out.println("DETECTING MOTION");
             if (!processing.compareAndSet(false, true)) return;
 
             // Log.d(TAG, "BEGIN PROCESSING...");
@@ -323,7 +324,7 @@ public class CameraActivity extends SensorsActivity {
 
                         Log.i(TAG, "Saving.. previous=" + previous + " original=" + original + " bitmap=" + bitmap);
                         Looper.prepare();
-
+                        System.out.println("SAVING IMAGE ANDLAUNCHING ACTIVITY");
                         /*
                         MOTION HAS BEEN DETECTED AT THIS POINT
                         WE NOW HAVE AN IMAGE SHOWING WHAT HAS TRIGGERED THE MOTION DETECTION
