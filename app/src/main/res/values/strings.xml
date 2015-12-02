@@ -3,4 +3,19 @@
     <string name="back">Back</string>
     <string name="motionDetection">Motion Detection</string>
     <string name="flashLight">Flash Light</string>
+
+
+
+    <string name="start">Start/Stop Streaming</string>
+    <string name="flash">Flash</string>
+    <string name="camera">Camera</string>
+    <string name="video">Video Settings</string>
+    <string name="save">OK</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="uri">URI</string>
+    <string name="password_hint">Leave empty if not needed</string>
+    <string name="username_hint">Leave empty if not needed</string>
+    <string name="default_bitrate">0 kbps</string>
+    <string name="default_stream">rtmp://test-homesecuritymedia.channel.mediaservices.windows.net:1935/live/d0d657dde76441db8be678a6c977d661</string>
 </resources>

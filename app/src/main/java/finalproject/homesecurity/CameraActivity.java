@@ -324,7 +324,7 @@ public class CameraActivity extends SensorsActivity {
 
                         Log.i(TAG, "Saving.. previous=" + previous + " original=" + original + " bitmap=" + bitmap);
                         Looper.prepare();
-                        System.out.println("SAVING IMAGE ANDLAUNCHING ACTIVITY");
+                        System.out.println("SAVING IMAGE AND LAUNCHING ACTIVITY");
                         /*
                         MOTION HAS BEEN DETECTED AT THIS POINT
                         WE NOW HAVE AN IMAGE SHOWING WHAT HAS TRIGGERED THE MOTION DETECTION

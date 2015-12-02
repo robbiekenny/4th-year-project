@@ -52,6 +52,9 @@
         <activity
             android:name=".PersonalDeviceActivity">
         </activity>
+        <activity
+            android:name=".StreamingActivity">
+        </activity>
     </application>
 
 </manifest>

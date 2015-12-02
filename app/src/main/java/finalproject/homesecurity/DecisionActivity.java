@@ -72,27 +72,32 @@ public class DecisionActivity extends ActionBarActivity {
     public void security(View v)
     {
         System.out.println("security method called");
-        pButton.setVisibility(View.INVISIBLE);
-        sButton.setVisibility(View.INVISIBLE);
-        text1.setVisibility(View.INVISIBLE);
-        text2.setVisibility(View.INVISIBLE);
-
-        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
-        if(frag == null)
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            frag = new SecurityDetailsFragment();
-            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
-            fragmentTransaction.commit();
-        }
-        else
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.security_details_fragment_container, frag);
-            ft.commit();
-        }
+//        pButton.setVisibility(View.INVISIBLE);
+//        sButton.setVisibility(View.INVISIBLE);
+//        text1.setVisibility(View.INVISIBLE);
+//        text2.setVisibility(View.INVISIBLE);
+//
+//        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
+//        if(frag == null)
+//        {
+//            fragmentManager = getFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            frag = new SecurityDetailsFragment();
+//            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
+//            fragmentTransaction.commit();
+//        }
+//        else
+//        {
+//            fragmentManager = getFragmentManager();
+//            FragmentTransaction ft = fragmentManager.beginTransaction();
+//            ft.replace(R.id.security_details_fragment_container, frag);
+//            ft.commit();
+//        }
+        /*
+        TESTING STREAMING FUNCTIONALITY
+         */
+        Intent intent = new Intent(this,StreamingActivity.class);
+        startActivity(intent);
     }
 
     public void personal(View v)
