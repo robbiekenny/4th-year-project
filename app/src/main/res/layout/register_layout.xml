@@ -12,7 +12,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="96dp"
-        android:hint="Email"/>
+        android:drawableLeft="@mipmap/ic_person"
+        android:hint="@string/email"
+        android:textColorHint="#ffffff"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -23,35 +25,41 @@
         android:layout_below="@+id/register_email"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:hint="Password"/>
+        android:drawableLeft="@mipmap/ic_lock"
+        android:hint="@string/password"
+        android:textColorHint="#ffffff"/>
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:layout_marginTop="10dp"
+        android:textAllCaps="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"
+        android:text="@string/back"
         android:id="@+id/cancel_button"
         android:onClick="cancel"
-        android:layout_below="@+id/register_password"
-        android:layout_alignLeft="@+id/register_password"
-        android:layout_alignStart="@+id/register_password" />
+        android:layout_below="@+id/signup_button"
+        android:layout_alignLeft="@+id/signup_button"
+        android:layout_alignStart="@+id/signup_button"
+        android:layout_alignRight="@+id/signup_button"
+        android:layout_alignEnd="@+id/signup_button"
+        android:background="#F44336"
+        android:textColor="#ffffff" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:textAllCaps="false"
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign up"
+        android:text="@string/createAccount"
         android:id="@+id/signup_button"
-        android:layout_alignTop="@+id/cancel_button"
+        android:onClick="errorCheckingForSignup"
+        android:layout_below="@+id/register_password"
+        android:layout_alignLeft="@+id/register_password"
+        android:layout_alignStart="@+id/register_password"
         android:layout_alignRight="@+id/register_password"
         android:layout_alignEnd="@+id/register_password"
-        android:onClick="errorCheckingForSignup"/>
+        android:background="#4CAF50"
+        android:textColor="#ffffff" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Register"
-        android:id="@+id/textView3"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

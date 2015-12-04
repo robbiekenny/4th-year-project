@@ -12,6 +12,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import android.widget.Button;
@@ -29,14 +32,7 @@ import android.content.Context;
 import java.util.HashSet;
 import android.widget.Toast;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import java.io.IOException;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
+
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.common.util.concurrent.FutureCallback;
@@ -63,6 +59,7 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
     private EditText password;
     private Button signin;
     private Button register;
+    private TextView forgotPassword;
     private ProgressDialog progress;
     private RegisterClient registerClient;
     private GoogleCloudMessaging gcm;
@@ -71,7 +68,6 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         try {
             mClient = new MobileServiceClient(
@@ -93,12 +89,13 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         password = (EditText) findViewById(R.id.password);
         signin = (Button) findViewById(R.id.signIn);
         register = (Button) findViewById(R.id.register);
+        forgotPassword = (TextView) findViewById(R.id.forgotPassword);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -200,6 +197,7 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         password.setVisibility(View.INVISIBLE);
         signin.setVisibility(View.INVISIBLE);
         register.setVisibility(View.INVISIBLE);
+        forgotPassword.setVisibility(View.INVISIBLE);
 
         frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
         if(frag == null)
@@ -230,6 +228,7 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         password.setVisibility(View.VISIBLE);
         signin.setVisibility(View.VISIBLE);
         register.setVisibility(View.VISIBLE);
+        forgotPassword.setVisibility(View.VISIBLE);
     } //gets rid of the register fragment
 
     public void errorCheckingForSignup(View v) //handles error checking on the users register details

@@ -3,8 +3,11 @@
     <string name="back">Back</string>
     <string name="motionDetection">Motion Detection</string>
     <string name="flashLight">Flash Light</string>
-
-
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="signIn">Sign In</string>
+    <string name="createAccount">Create Account</string>
+    <string name="forgotPassword"><u>Forgot password?</u></string>
 
     <string name="start">Start/Stop Streaming</string>
     <string name="flash">Flash</string>
@@ -12,7 +15,7 @@
     <string name="video">Video Settings</string>
     <string name="save">OK</string>
     <string name="username">Username</string>
-    <string name="password">Password</string>
+
     <string name="uri">URI</string>
     <string name="password_hint">Leave empty if not needed</string>
     <string name="username_hint">Leave empty if not needed</string>
