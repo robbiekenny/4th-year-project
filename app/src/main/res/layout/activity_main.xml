@@ -1,4 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar"
+        ></include>
+    <ScrollView
+        android:scrollbars="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true"
+        android:layout_weight="1">
+
+<RelativeLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:ems="10"
+        android:ems="15"
         android:drawableLeft="@mipmap/ic_person"
         android:id="@+id/email"
         android:layout_marginTop="92dp"
@@ -24,13 +41,15 @@
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/password"
         android:layout_alignStart="@+id/password"
-        android:textColorHint="#ffffff" />
+        android:textColorHint="#ffffff"
+        android:textColor="#ffffff" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:ems="10"
+        android:textColor="#ffffff"
+        android:ems="15"
         android:id="@+id/password"
         android:drawableLeft="@mipmap/ic_lock"
         android:layout_below="@+id/email"
@@ -91,3 +110,5 @@
         ></FrameLayout>
 
 </RelativeLayout>
+        </ScrollView>
+    </LinearLayout>

@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +56,7 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
     public static MobileServiceClient mClient;
     private RegisterFragment frag;
     private FragmentManager fragmentManager;
+    private FrameLayout container;
     private EditText email;
     private EditText password;
     private Button signin;
@@ -63,6 +65,7 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
     private ProgressDialog progress;
     private RegisterClient registerClient;
     private GoogleCloudMessaging gcm;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +88,27 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         gcm = GoogleCloudMessaging.getInstance(this);
         registerClient = new RegisterClient(this, Constants.BACKEND_ENDPOINT);
 
+        //http://www.android4devs.com/2014/12/how-to-make-material-design-app.html
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
         signin = (Button) findViewById(R.id.signIn);
         register = (Button) findViewById(R.id.register);
         forgotPassword = (TextView) findViewById(R.id.forgotPassword);
+        container = (FrameLayout) findViewById(R.id.fragment_container);
+
+        if (savedInstanceState != null) //remove the visual components belonging to the frag on screen orientation
+            container.setVisibility(View.INVISIBLE);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -198,37 +211,51 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         signin.setVisibility(View.INVISIBLE);
         register.setVisibility(View.INVISIBLE);
         forgotPassword.setVisibility(View.INVISIBLE);
+        //fragment container could be invisible when we get to this point
+        container.setVisibility(View.VISIBLE); //no matter what at this stage the fragment container should be visible
 
         frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
         if(frag == null)
         {
             fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
             frag = new RegisterFragment();
             fragmentTransaction.add(R.id.fragment_container, frag, "frag");
+            //fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
             fragmentTransaction.commit();
         }
         else
         {
             fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
             ft.replace(R.id.fragment_container, frag);
+            //ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
             ft.commit();
         }
     }
 
     public void cancel(View v){
-        //remove register fragment from view
         fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
         fragmentTransaction.remove(frag);
         fragmentTransaction.commit();
 
-        email.setVisibility(View.VISIBLE);
-        password.setVisibility(View.VISIBLE);
-        signin.setVisibility(View.VISIBLE);
-        register.setVisibility(View.VISIBLE);
-        forgotPassword.setVisibility(View.VISIBLE);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                email.setVisibility(View.VISIBLE);
+                password.setVisibility(View.VISIBLE);
+                signin.setVisibility(View.VISIBLE);
+                register.setVisibility(View.VISIBLE);
+                forgotPassword.setVisibility(View.VISIBLE);
+            }
+        }, 500);
+
     } //gets rid of the register fragment
 
     public void errorCheckingForSignup(View v) //handles error checking on the users register details
