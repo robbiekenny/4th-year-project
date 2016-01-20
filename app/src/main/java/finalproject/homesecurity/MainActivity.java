@@ -17,9 +17,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -50,22 +52,20 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import finalproject.homesecurity.Utils.CleanUserId;
+import finalproject.homesecurity.Utils.GCMRegistration;
 import finalproject.homesecurity.model.User;
 
 public class MainActivity extends ActionBarActivity { //deals with sign in and register (should split the two later on for cleaner code)
     public static MobileServiceClient mClient;
     private RegisterFragment frag;
+    private LoginFragment loginFrag;
     private FragmentManager fragmentManager;
     private FrameLayout container;
-    private EditText email;
-    private EditText password;
-    private Button signin;
-    private Button register;
-    private TextView forgotPassword;
     private ProgressDialog progress;
-    private RegisterClient registerClient;
-    private GoogleCloudMessaging gcm;
+    public static RegisterClient registerClient;
+    public static GoogleCloudMessaging gcm;
     private Toolbar toolbar;
+    private GCMRegistration gcmReg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
 
         try {
             mClient = new MobileServiceClient(
-                    "https://homesecurityapp.azure-mobile.net/",
+                    "https://homesecurity.azure-mobile.net/",
                     Constants.APPLICATION_KEY,
                     this
             );
@@ -88,19 +88,48 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         gcm = GoogleCloudMessaging.getInstance(this);
         registerClient = new RegisterClient(this, Constants.BACKEND_ENDPOINT);
 
-        //http://www.android4devs.com/2014/12/how-to-make-material-design-app.html
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+        SharedPreferences sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+        String user = sharedPref.getString("userId",null);
 
-        email = (EditText) findViewById(R.id.email);
-        password = (EditText) findViewById(R.id.password);
-        signin = (Button) findViewById(R.id.signIn);
-        register = (Button) findViewById(R.id.register);
-        forgotPassword = (TextView) findViewById(R.id.forgotPassword);
-        container = (FrameLayout) findViewById(R.id.fragment_container);
+        if(user != null) //checking to see if this user is already signed in
+        {
+            gcmReg = new GCMRegistration();
 
-        if (savedInstanceState != null) //remove the visual components belonging to the frag on screen orientation
-            container.setVisibility(View.INVISIBLE);
+//            try { //Disabled because notification hubs costs loads
+//                gcmReg.registerClientForGCM(registerClient,user,this,gcm);
+//            } catch (UnsupportedEncodingException e) {
+//                System.out.println("FAILED TO REGISTER FOR GCM");
+//                e.printStackTrace();
+//            }
+            Intent intent = new Intent(this,DecisionActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else
+        {
+            //http://www.android4devs.com/2014/12/how-to-make-material-design-app.html
+            toolbar = (Toolbar) findViewById(R.id.tool_bar);
+            setSupportActionBar(toolbar);
+            container = (FrameLayout) findViewById(R.id.fragment_container);
+            loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
+            if(loginFrag == null)
+            {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                loginFrag = new LoginFragment();
+                fragmentTransaction.add(R.id.fragment_container, loginFrag, "loginFrag");
+                fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
+                fragmentTransaction.commit();
+            }
+            else
+            {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.fragment_container, loginFrag);
+                ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
+                ft.commit();
+            }
+        }
     }
 
 
@@ -126,251 +155,4 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
 
         return super.onOptionsItemSelected(item);
     }
-
-    public void signInErrorChecking(View v) //simple error checks on email and password fields
-    {
-        if(isValidEmail(email.getText().toString()) && isValidPassword(password.getText().toString()))
-            signIn();
-        else
-        {
-            if(!isValidEmail(email.getText().toString()))
-                email.setError("Valid email required");
-            if(!isValidPassword(password.getText().toString()))
-                password.setError("Password must be greater than 5 characters");
-        }
-    }
-
-    public void signIn() //sends credentials to server
-    {
-        progress = ProgressDialog.show(this, "Logging in",
-                "Please Wait..", true);
-        final User newUser = new User(email.getText().toString(), password.getText().toString());
-
-
-        ListenableFuture<JsonElement> result = mClient.invokeApi( "CustomLogin", newUser, JsonElement.class );
-        System.out.println("HELLO-------------------");
-        Futures.addCallback(result, new FutureCallback<JsonElement>() {
-            @Override
-            public void onFailure(Throwable exc) {
-                System.out.println("FAILED");
-                System.out.println(exc.getMessage().toString());
-                //this gets rid of the json format so i am left with just the string message received from the Mobile Service
-                signinResult(exc.getMessage().substring(12, exc.getMessage().length() - 2), "");
-            }
-
-            @Override
-            public void onSuccess(JsonElement result) {
-                if (result.isJsonObject()) {
-                    JsonObject resultObj = result.getAsJsonObject();
-                    System.out.println(resultObj.get("userId").getAsString());
-                    System.out.println(resultObj.get("mobileServiceAuthenticationToken").getAsString());
-                    signinResult("SignedIn", resultObj.get("mobileServiceAuthenticationToken").getAsString());
-                } else
-                    signinResult("SignedIn", "");
-            }
-        });
-    }
-
-    public void signinResult(String message,String token) //determines what happens on successful or failed sign in
-    {
-        progress.dismiss();
-        if(message.equals("SignedIn"))
-        {
-            try {
-                registerClientForGCM();
-            } catch (UnsupportedEncodingException e) {
-                System.out.println("FAILED TO REGISTER FOR GCM");
-                e.printStackTrace();
-            }
-            if(token != "")
-            {
-                SharedPreferences sharedPref = this.getSharedPreferences("AuthenticatedUserDetails",Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("userId", email.getText().toString());
-                editor.putString("mobileServiceAuthenticationToken", token);
-                editor.commit();
-
-                Toast.makeText(this,"Successful sign in",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this,DecisionActivity.class);
-                startActivity(intent);
-                finish();
-            }
-
-
-        }
-        else if(message.equals("Fail"))
-            Toast.makeText(this,"Incorrect email or password",Toast.LENGTH_LONG).show();
-        else
-            Toast.makeText(this,"Please check your internet connection",Toast.LENGTH_LONG).show();
-    }
-
-    public void register(View v) //displays the register fragment while hiding other GUI components
-    {
-        email.setVisibility(View.INVISIBLE);
-        password.setVisibility(View.INVISIBLE);
-        signin.setVisibility(View.INVISIBLE);
-        register.setVisibility(View.INVISIBLE);
-        forgotPassword.setVisibility(View.INVISIBLE);
-        //fragment container could be invisible when we get to this point
-        container.setVisibility(View.VISIBLE); //no matter what at this stage the fragment container should be visible
-
-        frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
-        if(frag == null)
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
-            frag = new RegisterFragment();
-            fragmentTransaction.add(R.id.fragment_container, frag, "frag");
-            //fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
-            fragmentTransaction.commit();
-        }
-        else
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
-            ft.replace(R.id.fragment_container, frag);
-            //ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
-            ft.commit();
-        }
-    }
-
-    public void cancel(View v){
-        fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
-        fragmentTransaction.remove(frag);
-        fragmentTransaction.commit();
-
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                email.setVisibility(View.VISIBLE);
-                password.setVisibility(View.VISIBLE);
-                signin.setVisibility(View.VISIBLE);
-                register.setVisibility(View.VISIBLE);
-                forgotPassword.setVisibility(View.VISIBLE);
-            }
-        }, 500);
-
-    } //gets rid of the register fragment
-
-    public void errorCheckingForSignup(View v) //handles error checking on the users register details
-    {
-        EditText ed = (EditText) findViewById(R.id.register_email);
-        EditText pa = (EditText) findViewById(R.id.register_password);
-
-        if(isValidEmail(ed.getText()) && isValidPassword(pa.getText().toString()))
-        {
-            System.out.println("HERE-------------------");
-
-            progress = ProgressDialog.show(this, "Confirming Details",
-                    "Please Wait..", true);
-            insertUser(ed.getText().toString(),pa.getText().toString());
-        }
-        else
-        {
-            if(!isValidEmail(ed.getText()))  //returns true if email is valid
-                ed.setError("Invalid email address");
-
-            if(!isValidPassword(pa.getText().toString())) //returns true if password is valid
-                pa.setError("Invalid password\nPassword must be greater than 5 characters");
-        }
-    }
-
-    public void insertUser(String email,String password) //sends users credentials to server to be assessed
-    {
-        final User newUser = new User(email, password);
-
-
-        ListenableFuture<JsonElement> result = mClient.invokeApi( "CustomRegistration", newUser, JsonElement.class );
-        System.out.println("HELLO-------------------");
-        Futures.addCallback(result, new FutureCallback<JsonElement>() {
-            @Override
-            public void onFailure(Throwable exc) {
-                System.out.println("FAILED");
-                System.out.println(exc.getMessage().toString());
-                //this gets rid of the json format so i am left with just the string message received from the Mobile Service
-                displayRegistrationMessage(exc.getMessage().substring(12, exc.getMessage().length() - 2));
-            }
-
-            @Override
-            public void onSuccess(JsonElement result) {
-                if (result.isJsonObject()) {
-                    JsonObject resultObj = result.getAsJsonObject();
-                    displayRegistrationMessage(resultObj.get("message").getAsString());
-                } else
-                    displayRegistrationMessage(result.getAsString().toString());
-            }
-        });
-    }
-
-
-    public void displayRegistrationMessage(String message) //displays appropriate message to user after registration
-    {
-        progress.dismiss();
-        if(message.equals("Created"))
-        {
-            Toast.makeText(MainActivity.this,message,Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this,DecisionActivity.class);
-            startActivity(intent);
-            finish();
-        }
-        else if(message.equals("Fail"))
-        {
-            Toast.makeText(this,"This email already exists",Toast.LENGTH_LONG).show();
-        }
-        else
-            Toast.makeText(this,"A problem occurred and your request could not be completed\n" +
-                    "Please check your internet connection",Toast.LENGTH_LONG).show();
-    }
-
-    public boolean isValidPassword(String pass) //password must be greater than 5 characters
-    {
-        boolean isValid = true;
-        if(pass == "" || pass == null || pass.length() < 6)
-            isValid =  false;
-        return isValid;
-    }
-
-    public boolean isValidEmail(CharSequence target) {
-        if (target == null) {
-            return false;
-        } else {
-            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
-        }
-    }
-
-
-    public void registerClientForGCM() throws UnsupportedEncodingException {
-        this.registerClient.setUserID(email.getText().toString());
-
-        final Context context = this;
-        new AsyncTask<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                try {
-                    String regid = gcm.register(Constants.SENDER_ID);
-                    System.out.println("GCM ID: " + regid);
-                    registerClient.register(regid, new HashSet<String>());
-                } catch (Exception e) {
-                    Log.e("Failed to register", e.getMessage());
-                    return e;
-                }
-                return null;
-            }
-
-            protected void onPostExecute(Object result) {
-                Toast.makeText(context, "Logged in and registered.",
-                        Toast.LENGTH_LONG).show();
-
-            }
-        }.execute(null, null, null);
-    }
-
-
-
 }

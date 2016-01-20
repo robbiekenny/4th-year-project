@@ -236,7 +236,7 @@ public class StreamingActivity extends Activity implements
             editor.commit();
 
             // We parse the URI written in the Editext
-            Pattern uri = Pattern.compile("rtmp://(.+):(\\d*)/(.+)");
+            Pattern uri = Pattern.compile("rtsp://(.+):(\\d*)/(.+)");
             Matcher m = uri.matcher(mEditTextURI.getText()); m.find();
             try
             {
@@ -248,6 +248,7 @@ public class StreamingActivity extends Activity implements
             try
             {
                 port = m.group(2);
+                //port = "1935";
             }catch(Exception e)
             {
                 e.printStackTrace();

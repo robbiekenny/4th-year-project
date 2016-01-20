@@ -20,5 +20,7 @@
     <string name="password_hint">Leave empty if not needed</string>
     <string name="username_hint">Leave empty if not needed</string>
     <string name="default_bitrate">0 kbps</string>
-    <string name="default_stream">rtmp://test-homesecuritymedia.channel.mediaservices.windows.net:1935/live/d0d657dde76441db8be678a6c977d661</string>
+    <string name="default_stream">rtsp://40.127.139.63:1935/live/myStream</string>
+    <string name="username_text">robbie</string>
+    <string name="password_text">dublin5512</string>
 </resources>

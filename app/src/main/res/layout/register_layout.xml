@@ -15,13 +15,15 @@
 
 <RelativeLayout
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:id="@+id/relLayout">
+    android:id="@+id/relLayout"
+    android:background="#ffffff">
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:textColor="#ffffff"
+        android:textColorHint="#212121"
+        android:textColor="#212121"
         android:ems="15"
         android:id="@+id/register_email"
         android:layout_alignParentTop="true"
@@ -29,13 +31,12 @@
         android:layout_marginTop="96dp"
         android:drawableLeft="@mipmap/ic_person"
         android:hint="@string/email"
-        android:textColorHint="#ffffff"/>
+       />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:textColor="#ffffff"
         android:ems="15"
         android:id="@+id/register_password"
         android:layout_below="@+id/register_email"
@@ -43,7 +44,9 @@
         android:layout_marginTop="10dp"
         android:drawableLeft="@mipmap/ic_lock"
         android:hint="@string/password"
-        android:textColorHint="#ffffff"/>
+        android:textColorHint="#212121"
+        android:textColor="#212121"
+        android:imeOptions="actionGo"/>
 
     <Button
         android:layout_marginTop="10dp"
@@ -52,7 +55,6 @@
         android:layout_height="wrap_content"
         android:text="@string/back"
         android:id="@+id/cancel_button"
-        android:onClick="cancel"
         android:layout_below="@+id/signup_button"
         android:layout_alignLeft="@+id/signup_button"
         android:layout_alignStart="@+id/signup_button"

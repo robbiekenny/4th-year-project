@@ -60,7 +60,7 @@
                     android:layout_column="2"
                     android:inputType="text"
                     android:singleLine="true"
-                    android:text="@string/username_hint" />
+                    android:text="@string/username_text" />
             </TableRow>
 
             <TableRow>
@@ -83,7 +83,7 @@
                     android:layout_column="2"
                     android:inputType="textVisiblePassword"
                     android:singleLine="true"
-                    android:hint="@string/password_hint" />
+                    android:text="@string/password_text" />
             </TableRow>
         </TableLayout>
 

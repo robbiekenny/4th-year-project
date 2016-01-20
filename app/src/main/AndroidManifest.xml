@@ -42,7 +42,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DecisionActivity">
+            android:name=".DecisionActivity"
+            android:theme="@style/NoActionBar">
+        </activity>
+        <activity
+            android:name=".RecordActivity">
         </activity>
         <activity android:name=".CameraActivity"
             android:screenOrientation="portrait">

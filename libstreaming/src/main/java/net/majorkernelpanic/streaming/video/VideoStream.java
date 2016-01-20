@@ -66,7 +66,7 @@ public abstract class VideoStream extends MediaStream {
 	protected SurfaceView mSurfaceView = null;
 	protected SharedPreferences mSettings = null;
 	protected int mVideoEncoder, mCameraId = 0;
-	protected int mRequestedOrientation = 0, mOrientation = 0;
+	protected int mRequestedOrientation = 90, mOrientation = 90;
 	protected Camera mCamera;
 	protected Thread mCameraThread;
 	protected Looper mCameraLooper;
@@ -110,6 +110,7 @@ public abstract class VideoStream extends MediaStream {
 	public void setCamera(int camera) {
 		CameraInfo cameraInfo = new CameraInfo();
 		int numberOfCameras = Camera.getNumberOfCameras();
+
 		for (int i=0;i<numberOfCameras;i++) {
 			Camera.getCameraInfo(i, cameraInfo);
 			if (cameraInfo.facing == camera) {
@@ -663,7 +664,7 @@ public abstract class VideoStream extends MediaStream {
 
 		try {
 			mCamera.setParameters(parameters);
-			mCamera.setDisplayOrientation(mOrientation);
+			mCamera.setDisplayOrientation(90);
 			mCamera.startPreview();
 			mPreviewStarted = true;
 			mUpdated = true;

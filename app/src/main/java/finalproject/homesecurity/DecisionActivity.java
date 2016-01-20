@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,11 +30,15 @@ public class DecisionActivity extends ActionBarActivity {
     private FragmentManager fragmentManager;
     private Button pButton,sButton;
     private TextView text1,text2;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.decision_activity);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar2);
+        setSupportActionBar(toolbar);
+
         prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
         editor = prefs.edit();
         pButton = (Button) findViewById(R.id.personal);
@@ -45,7 +50,7 @@ public class DecisionActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.logout_menu, menu);
         return true;
     }
 
@@ -61,8 +66,14 @@ public class DecisionActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+
+        if (id == R.id.action_signout) { //Remove user from shared preferences thus making the user sign in the next time
+            SharedPreferences prefs = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+            prefs.edit().putString("userId",null).apply();
+
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+            finish();
             return true;
         }
 
@@ -96,7 +107,7 @@ public class DecisionActivity extends ActionBarActivity {
         /*
         TESTING STREAMING FUNCTIONALITY
          */
-        Intent intent = new Intent(this,StreamingActivity.class);
+        Intent intent = new Intent(this,RecordActivity.class);
         startActivity(intent);
     }
 

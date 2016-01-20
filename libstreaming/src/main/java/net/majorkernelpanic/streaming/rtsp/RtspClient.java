@@ -361,15 +361,15 @@ public class RtspClient {
 				throw new IOException("Invalid response from server");
 			}
 
-			//I CHANGED RTSP TO RTMP IN THE URI
-			String uri = "rtmp://"+mParameters.host+":"+mParameters.port+mParameters.path;
+
+			String uri = "rtsp://"+mParameters.host+":"+mParameters.port+mParameters.path;
 			String hash1 = computeMd5Hash(mParameters.username+":"+m.group(1)+":"+mParameters.password);
 			String hash2 = computeMd5Hash("ANNOUNCE"+":"+uri);
 			String hash3 = computeMd5Hash(hash1+":"+m.group(2)+":"+hash2);
 
 			mAuthorization = "Digest username=\""+mParameters.username+"\",realm=\""+realm+"\",nonce=\""+nonce+"\",uri=\""+uri+"\",response=\""+hash3+"\"";
 
-			request = "ANNOUNCE rtmp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" +
+			request = "ANNOUNCE rtsp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" +
 					"CSeq: " + (++mCSeq) + "\r\n" +
 					"Content-Length: " + body.length() + "\r\n" +
 					"Authorization: " + mAuthorization + "\r\n" +
@@ -400,7 +400,7 @@ public class RtspClient {
 			if (stream != null) {
 				String params = mParameters.transport==TRANSPORT_TCP ? 
 						("TCP;interleaved="+2*i+"-"+(2*i+1)) : ("UDP;unicast;client_port="+(5000+2*i)+"-"+(5000+2*i+1)+";mode=receive");
-				String request = "SETUP rtmp://"+mParameters.host+":"+mParameters.port+mParameters.path+"/trackID="+i+" RTSP/1.0\r\n" +
+				String request = "SETUP rtsp://"+mParameters.host+":"+mParameters.port+mParameters.path+"/trackID="+i+" RTSP/1.0\r\n" +
 						"Transport: RTP/AVP/"+params+"\r\n" +
 						addHeaders();
 
@@ -442,7 +442,7 @@ public class RtspClient {
 	 * Forges and sends the RECORD request 
 	 */
 	private void sendRequestRecord() throws IllegalStateException, SocketException, IOException {
-		String request = "RECORD rtmp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" +
+		String request = "RECORD rtsp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" +
 				"Range: npt=0.000-\r\n" +
 				addHeaders();
 		Log.i(TAG,request.substring(0, request.indexOf("\r\n")));
@@ -455,7 +455,7 @@ public class RtspClient {
 	 * Forges and sends the TEARDOWN request 
 	 */
 	private void sendRequestTeardown() throws IOException {
-		String request = "TEARDOWN rtmp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" + addHeaders();
+		String request = "TEARDOWN rtsp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" + addHeaders();
 		Log.i(TAG,request.substring(0, request.indexOf("\r\n")));
 		mOutputStream.write(request.getBytes("UTF-8"));
 		mOutputStream.flush();
@@ -465,7 +465,7 @@ public class RtspClient {
 	 * Forges and sends the OPTIONS request 
 	 */
 	private void sendRequestOption() throws IOException {
-		String request = "OPTIONS rtmp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" + addHeaders();
+		String request = "OPTIONS rtsp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" + addHeaders();
 		Log.i(TAG,request.substring(0, request.indexOf("\r\n")));
 		mOutputStream.write(request.getBytes("UTF-8"));
 		mOutputStream.flush();
