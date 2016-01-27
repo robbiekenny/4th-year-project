@@ -42,7 +42,7 @@ public class SendMessage {
                     HttpPost request = new HttpPost(uri);
                     request.addHeader("X-ZUMO-APPLICATION", Constants.APPLICATION_KEY);
                     request.addHeader("Content-Type", "application/json");
-                    request.setEntity(new StringEntity("\"" + message + "\"")); //data passed to the controller
+                    request.setEntity(new StringEntity("\"" + message + "\"")); //data passed to the controller via the body of the request
 
                     HttpResponse response = new DefaultHttpClient().execute(request);
 

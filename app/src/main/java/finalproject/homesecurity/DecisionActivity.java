@@ -107,7 +107,13 @@ public class DecisionActivity extends ActionBarActivity {
         /*
         TESTING STREAMING FUNCTIONALITY
          */
-        Intent intent = new Intent(this,RecordActivity.class);
+//        Intent intent = new Intent(this,RecordActivity.class);
+//        startActivity(intent);
+
+        /*
+        TESTING SENDING PHOTO FUNCTIONALITY
+         */
+        Intent intent = new Intent(this,CameraActivity.class);
         startActivity(intent);
     }
 

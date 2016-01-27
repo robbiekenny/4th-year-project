@@ -8,8 +8,7 @@ import finalproject.homesecurity.detection.LumaMotionDetection;
 import finalproject.homesecurity.detection.RgbMotionDetection;
 import finalproject.homesecurity.image.ImageProcessing;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
@@ -21,9 +20,8 @@ import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.Looper;
+import android.util.Base64;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -31,10 +29,17 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 public class CameraActivity extends SensorsActivity {
     //https://github.com/phishman3579/android-motion-detection/tree/master/src/com/jwetherell/motion_detection
     private static final String TAG = "CameraActivity";
-    private SharedPreferences prefs;
+    private String email; //we use the users email in this activity so that we can send them an email if motion is detected
+    private SharedPreferences prefs, sharedPref;
     private SharedPreferences.Editor editor;
     private static SurfaceView preview = null;
     private static SurfaceHolder previewHolder = null;
@@ -44,7 +49,7 @@ public class CameraActivity extends SensorsActivity {
     private static IMotionDetection detector = null;
     private static Context con;
     private static volatile AtomicBoolean processing = new AtomicBoolean(false);
-    private static boolean detectMotion = false;
+    private static boolean detectMotion = true; //PUT BACK TO FALSE
     private ImageView changeCamera;
     private int cameraID = 0; //camera is initially facing back
     /**
@@ -62,6 +67,8 @@ public class CameraActivity extends SensorsActivity {
         previewHolder.addCallback(surfaceCallback);
         previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
+        sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+        email = sharedPref.getString("userId",null);
         prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
         editor = prefs.edit();
         editor.putString("DeviceMode", "Security"); //this device will be listed as security
@@ -179,7 +186,7 @@ public class CameraActivity extends SensorsActivity {
 
                 if (!GlobalData.isPhoneInMotion()) {
                     //System.out.println("DETECTING MOTION");
-                    DetectionThread thread = new DetectionThread(data, size.width, size.height);
+                    DetectionThread thread = new DetectionThread(data, size.width, size.height,email);
                     thread.start();
                 }
 
@@ -253,13 +260,14 @@ public class CameraActivity extends SensorsActivity {
     private static final class DetectionThread extends Thread {
 
         private byte[] data;
-        private int width;
-        private int height;
+        private int width,height;
+        private String email;
 
-        public DetectionThread(byte[] data, int width, int height) {
+        public DetectionThread(byte[] data, int width, int height,String email) {
             this.data = data;
             this.width = width;
             this.height = height;
+            this.email = email;
         }
 
         /**
@@ -331,11 +339,10 @@ public class CameraActivity extends SensorsActivity {
                         SEND THIS TO A USER
                          */
                         Intent intent = new Intent(con, Image.class);
-                        //test which of original,previous or bitmap is the image with the detected motion
                         intent.putExtra("BitmapImage", original);
                         con.startActivity(intent);
 
-
+                        new SendPhotoToUser(email).execute(original);
                         //new SavePhotoTask().execute(previous, original, bitmap);
                     } else {
                         Log.i(TAG, "Not taking picture because not enough time has passed since the creation of the Surface");
@@ -354,31 +361,79 @@ public class CameraActivity extends SensorsActivity {
 
     ;
 
-    private static final class SavePhotoTask extends AsyncTask<Bitmap, Integer, Integer> {
+//    private static final class SavePhotoTask extends AsyncTask<Bitmap, Integer, Integer> {
+//
+//        /**
+//         * {@inheritDoc}
+//         */
+//        @Override
+//        protected Integer doInBackground(Bitmap... data) {
+//            for (int i = 0; i < data.length; i++) {
+//                Bitmap bitmap = data[i];
+//                String name = String.valueOf(System.currentTimeMillis());
+//                if (bitmap != null) save(name, bitmap);
+//            }
+//            return 1;
+//        }
+//
+//        private void save(String name, Bitmap bitmap) {
+//            File photo = new File(Environment.getExternalStorageDirectory(), name + ".jpg");
+//            if (photo.exists()) photo.delete();
+//
+//            try {
+//                FileOutputStream fos = new FileOutputStream(photo.getPath());
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+//                fos.close();
+//            } catch (java.io.IOException e) {
+//                Log.e("PictureDemo", "Exception in photoCallback", e);
+//            }
+//        }
+//    }
+
+    private static final class SendPhotoToUser extends AsyncTask<Bitmap, Void, Void> {
+        String user;
+        public SendPhotoToUser(String email)
+        {
+            user = email;
+        }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        protected Integer doInBackground(Bitmap... data) {
-            for (int i = 0; i < data.length; i++) {
-                Bitmap bitmap = data[i];
-                String name = String.valueOf(System.currentTimeMillis());
-                if (bitmap != null) save(name, bitmap);
-            }
-            return 1;
+        protected Void doInBackground(Bitmap... data) {
+                Bitmap bitmap = data[0];
+                if (bitmap != null) convertImageToBase64String(bitmap);
+            return null;
         }
 
-        private void save(String name, Bitmap bitmap) {
-            File photo = new File(Environment.getExternalStorageDirectory(), name + ".jpg");
-            if (photo.exists()) photo.delete();
+        private void convertImageToBase64String(Bitmap bitmap) { //encode bitmap to string
+            //https://blog.nraboy.com/2015/06/from-bitmap-to-base64-and-back-with-native-android/
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream .toByteArray();
+            sendPhoto(Base64.encodeToString(byteArray, Base64.DEFAULT));
+        }
 
+        private void sendPhoto(String b64String) { //send the encoded string to the web api to process
             try {
-                FileOutputStream fos = new FileOutputStream(photo.getPath());
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                fos.close();
-            } catch (java.io.IOException e) {
-                Log.e("PictureDemo", "Exception in photoCallback", e);
+
+                HttpPost request = new HttpPost(Constants.UPLOADIMAGE_ENDPOINT + "?email=" + user);
+                request.addHeader("ZUMO-API-VERSION","2.0.0" );
+                request.addHeader("Content-Type", "application/json");
+                request.setEntity(new StringEntity("\"" + b64String + "\"")); //encoded image passed to the controller
+                                                                                // via the body of the request
+                HttpResponse response = new DefaultHttpClient().execute(request);
+
+                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
+                    Log.e("Sending Photo Error",
+                            response.getStatusLine().toString());
+
+                }
+                else
+                    Log.i("Photo sent","Image was sent to the API successfully");
+            } catch (Exception e) {
+                Log.e("Sending photo Error2", e.getMessage());
             }
         }
     }
