@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -39,7 +40,7 @@ import finalproject.homesecurity.model.User;
  */
 public class LoginFragment extends Fragment {
     private EditText email,password;
-    private Button signin,register;
+    private Button signin;
     private TextView forgotPassword;
     private ProgressDialog progress;
     private RegisterClient registerClient;
@@ -47,6 +48,7 @@ public class LoginFragment extends Fragment {
     private GoogleCloudMessaging gcm;
     private FragmentManager fragmentManager;
     private GCMRegistration gcmReg; //responsible for invoking the registerClientForGCM method
+    private FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -75,15 +77,17 @@ public class LoginFragment extends Fragment {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               errorCheck();
+                errorCheck();
             }
         });
 
-        register = (Button) view.findViewById(R.id.register);
-        register.setOnClickListener(new View.OnClickListener() {
+
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 createAccount();
+                fab.hide();
             }
         });
         forgotPassword = (TextView) view.findViewById(R.id.forgotPassword);
@@ -100,7 +104,7 @@ public class LoginFragment extends Fragment {
             fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
             frag = new RegisterFragment();
             fragmentTransaction.replace(R.id.fragment_container, frag, "frag");
-            fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
+            //fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
             fragmentTransaction.commit();
         }
         else
@@ -109,7 +113,7 @@ public class LoginFragment extends Fragment {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
             ft.replace(R.id.fragment_container, frag);
-            ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
+            //ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
             ft.commit();
         }
     }

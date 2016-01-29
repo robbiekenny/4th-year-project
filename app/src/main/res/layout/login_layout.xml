@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/login_relLayout"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -11,6 +12,17 @@
     tools:context=".MainActivity"
     android:background="#ffffff">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/ic_person_add"
+        app:layout_anchor="@id/login_relLayout"
+        app:backgroundTint="@color/ColorPrimary"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
     <EditText
@@ -20,13 +32,12 @@
         android:ems="15"
         android:drawableLeft="@mipmap/ic_person"
         android:id="@+id/email"
-        android:layout_marginTop="92dp"
         android:hint="@string/email"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/password"
-        android:layout_alignStart="@+id/password"
         android:textColorHint="#212121"
-        android:textColor="#212121" />
+        android:textColor="#212121"
+        android:layout_below="@+id/fab"
+        android:layout_alignLeft="@+id/password"
+        android:layout_alignStart="@+id/password" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -59,29 +70,23 @@
         android:background="#0288D1"
         android:textColor="#ffffff" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/createAccount"
-        android:textAllCaps="false"
-        android:id="@+id/register"
-        android:background="@drawable/transaprent_button"
-        android:layout_below="@+id/signIn"
-        android:layout_marginTop="20dp"
-        android:layout_alignLeft="@+id/signIn"
-        android:layout_alignStart="@+id/signIn"
-        android:layout_alignRight="@+id/signIn"
-        android:layout_alignEnd="@+id/signIn"
-        android:textColor="#212121"
-        android:backgroundTint="#212121" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/forgotPassword"
         android:id="@+id/forgotPassword"
-        android:layout_below="@+id/register"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:textColor="#212121" />
-    </RelativeLayout>
+        android:textColor="#212121"
+        android:layout_below="@+id/signIn"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Sign in"
+        android:id="@+id/signinTextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#0288D1" />
+</RelativeLayout>

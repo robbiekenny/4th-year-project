@@ -152,6 +152,21 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         if (id == R.id.action_settings) {
             return true;
         }
+        else if(id == android.R.id.home)
+        {
+            frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
+            loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
+            if(frag != null)
+            {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
+                fragmentTransaction.replace(R.id.fragment_container, loginFrag,"loginFrag");
+                //fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+        }
 
         return super.onOptionsItemSelected(item);
     }

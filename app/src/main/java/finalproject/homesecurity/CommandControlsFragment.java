@@ -25,7 +25,6 @@ public class CommandControlsFragment extends Fragment {
         userID = getArguments().getString("user");
         roomName = getArguments().getString("room");
 
-
         Switch motion = (Switch) view.findViewById(R.id.motionDetectionSwitch);
         motion.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

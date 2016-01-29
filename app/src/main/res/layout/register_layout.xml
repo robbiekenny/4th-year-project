@@ -26,12 +26,11 @@
         android:textColor="#212121"
         android:ems="15"
         android:id="@+id/register_email"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="96dp"
         android:drawableLeft="@mipmap/ic_person"
         android:hint="@string/email"
-       />
+        android:layout_below="@+id/tcreateAccountText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -78,6 +77,16 @@
         android:layout_alignEnd="@+id/register_password"
         android:background="#4CAF50"
         android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Create Account"
+        android:id="@+id/tcreateAccountText"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#0288D1" />
 
 
 </RelativeLayout>

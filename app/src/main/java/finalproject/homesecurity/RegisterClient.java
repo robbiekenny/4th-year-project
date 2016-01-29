@@ -2,6 +2,8 @@ package finalproject.homesecurity;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.http.HttpResponse;
@@ -21,6 +23,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import com.google.gson.JsonObject;
 
 
 public class RegisterClient {
@@ -44,7 +47,7 @@ public class RegisterClient {
         this.userid = userid;
     }
 
-    public void register(String handle, Set<String> tags) throws ClientProtocolException, IOException, JSONException {
+    public void register(String handle, Set<String> tags) throws IOException, JSONException {
         String registrationId = retrieveRegistrationIdOrRequestNewOne(handle);
 
         JSONObject deviceInfo = new JSONObject();
@@ -58,7 +61,7 @@ public class RegisterClient {
             Log.e("RegisterClient", "REGISTERED SUCCESSFULLY");
             return;
         } else if (statusCode == HttpStatus.SC_GONE){
-            System.out.println("GOING INTO ELSE IF STATEMENT");
+            System.out.println("GOING INTO ELSE IF STATEMENT" + statusCode);
             settings.edit().remove(REGID_SETTING_NAME).commit();
             registrationId = retrieveRegistrationIdOrRequestNewOne(handle);
             statusCode = upsertRegistration(registrationId, deviceInfo);
@@ -72,9 +75,8 @@ public class RegisterClient {
         }
     }
 
-    private int upsertRegistration(String registrationId, JSONObject deviceInfo)
-            throws UnsupportedEncodingException, IOException,
-            ClientProtocolException {
+    private int upsertRegistration(String registrationId, final JSONObject deviceInfo)
+            throws UnsupportedEncodingException, IOException{
         HttpPut request = new HttpPut(Backend_Endpoint + "/" + registrationId + "?userid=" + userid);
         request.setEntity(new StringEntity(deviceInfo.toString()));
 //        request.setEntity(new StringEntity(userid));
@@ -85,7 +87,7 @@ public class RegisterClient {
         return statusCode;
     }
 
-    private String retrieveRegistrationIdOrRequestNewOne(String handle) throws ClientProtocolException, IOException {
+    private String retrieveRegistrationIdOrRequestNewOne(String handle) throws IOException {
         if (settings.contains(REGID_SETTING_NAME))
             return settings.getString(REGID_SETTING_NAME, null);
 
@@ -101,6 +103,6 @@ public class RegisterClient {
 
         settings.edit().putString(REGID_SETTING_NAME, registrationId).commit();
         System.out.println("REG ID: " + registrationId);
-        return registrationId;
+        return "";
     }
 }

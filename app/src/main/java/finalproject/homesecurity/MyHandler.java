@@ -81,9 +81,9 @@ public class MyHandler extends NotificationsHandler {
                 DETAILS,ROOM NAME e.g DetailsKitchen
                  */
                 try {
-                    SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "Details" + roomName);
+                    //SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "Details" + roomName);
                     //Toast.makeText(ctx, "SENT", Toast.LENGTH_LONG);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("COULD NOT SEND MESSAGE TO PERSONAL DEVICE");
                 }

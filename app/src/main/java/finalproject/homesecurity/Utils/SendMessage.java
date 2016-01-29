@@ -1,7 +1,9 @@
 package finalproject.homesecurity.Utils;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -9,8 +11,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import finalproject.homesecurity.Constants;
 
@@ -30,11 +35,12 @@ public class SendMessage {
      *                to be used as JSON content.
      */
     public static void sendPush(final String pns, final String userTag, final String message)
-            throws ClientProtocolException, IOException {
+            throws IOException {
         new AsyncTask<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
                 try {
+
                     String uri = Constants.BACKEND_ENDPOINT + "/api/Notifications";
                     uri += "?pns=" + pns;       //adds parameters the the uri
                     uri += "&to_tag=" + userTag;

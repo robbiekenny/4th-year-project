@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +43,11 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.register_layout,
                 container, false);
+
+        //((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
 
         regEmail = (EditText) view.findViewById(R.id.register_email);
         regPass = (EditText) view.findViewById(R.id.register_password);
@@ -140,15 +146,17 @@ public class RegisterFragment extends Fragment {
     public void goBack() { //gets rid of register fragment
         frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
         loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         if(frag != null)
         {
             fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
             fragmentTransaction.replace(R.id.fragment_container, loginFrag,"loginFrag");
+            //fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
-
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
 

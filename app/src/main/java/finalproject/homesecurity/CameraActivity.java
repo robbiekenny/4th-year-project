@@ -9,6 +9,8 @@ import finalproject.homesecurity.detection.RgbMotionDetection;
 import finalproject.homesecurity.image.ImageProcessing;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
@@ -28,6 +30,10 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -68,7 +74,7 @@ public class CameraActivity extends SensorsActivity {
         previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
-        email = sharedPref.getString("userId",null);
+        email = sharedPref.getString("userId", null);
         prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
         editor = prefs.edit();
         editor.putString("DeviceMode", "Security"); //this device will be listed as security
@@ -338,9 +344,11 @@ public class CameraActivity extends SensorsActivity {
                         WE NOW HAVE AN IMAGE SHOWING WHAT HAS TRIGGERED THE MOTION DETECTION
                         SEND THIS TO A USER
                          */
-                        Intent intent = new Intent(con, Image.class);
-                        intent.putExtra("BitmapImage", original);
-                        con.startActivity(intent);
+                            Intent intent = new Intent(con, Image.class);
+                            intent.putExtra("BitmapImage", original); //this will fail if image is too big
+                            con.startActivity(intent);
+
+
 
                         new SendPhotoToUser(email).execute(original);
                         //new SavePhotoTask().execute(previous, original, bitmap);
@@ -349,6 +357,7 @@ public class CameraActivity extends SensorsActivity {
                     }
                 }
             } catch (Exception e) {
+                Log.i(TAG, "FAILED TO PROCESS IMAGE");
                 e.printStackTrace();
             } finally {
                 processing.set(false);
@@ -391,7 +400,8 @@ public class CameraActivity extends SensorsActivity {
 //    }
 
     private static final class SendPhotoToUser extends AsyncTask<Bitmap, Void, Void> {
-        String user;
+        private String user;
+
         public SendPhotoToUser(String email)
         {
             user = email;
@@ -415,9 +425,8 @@ public class CameraActivity extends SensorsActivity {
             sendPhoto(Base64.encodeToString(byteArray, Base64.DEFAULT));
         }
 
-        private void sendPhoto(String b64String) { //send the encoded string to the web api to process
+        private void sendPhoto(final String b64String) { //send the encoded string to the web api to process
             try {
-
                 HttpPost request = new HttpPost(Constants.UPLOADIMAGE_ENDPOINT + "?email=" + user);
                 request.addHeader("ZUMO-API-VERSION","2.0.0" );
                 request.addHeader("Content-Type", "application/json");
