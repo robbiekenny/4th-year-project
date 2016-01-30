@@ -18,6 +18,9 @@ android {
         }
     }
 }
+repositories {
+    mavenCentral()
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -26,6 +29,7 @@ dependencies {
     compile project(':libstreaming')
     compile 'com.google.android.gms:play-services-base:6.5.87'
     compile 'com.microsoft.azure:azure-mobile-services-android-sdk:2.0.3'
+    compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile files('libs/opencv.jar')
     compile files('libs/opencv-android-x86.jar')
     compile files('libs/opencv-android-arm.jar')

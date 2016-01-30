@@ -36,7 +36,8 @@ import java.util.HashSet;
 import android.widget.Toast;
 
 
-
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -66,6 +67,7 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
     public static GoogleCloudMessaging gcm;
     private Toolbar toolbar;
     private GCMRegistration gcmReg;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +134,11 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
 
     @Override
@@ -156,6 +163,7 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
         {
             frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
             loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             if(frag != null)
             {
                 fragmentManager = getFragmentManager();
@@ -165,7 +173,6 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
                 //fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
-            getSupportActionBar().setDisplayShowHomeEnabled(false);
         }
 
         return super.onOptionsItemSelected(item);

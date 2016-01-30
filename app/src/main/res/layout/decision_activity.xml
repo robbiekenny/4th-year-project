@@ -46,12 +46,24 @@
         android:layout_centerHorizontal="true"
         android:onClick="personal"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Signed in as: "
+        android:id="@+id/signedInAs"
+        android:layout_gravity="center"
+        android:layout_below="@id/personal"
+        android:layout_alignLeft="@id/personal"
+        android:layout_marginTop="30dp"/>
+
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/security_details_fragment_container"
-        ></FrameLayout>
+        >
+    </FrameLayout>
 
 </RelativeLayout>

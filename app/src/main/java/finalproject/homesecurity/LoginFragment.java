@@ -21,12 +21,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -41,7 +52,6 @@ import finalproject.homesecurity.model.User;
 public class LoginFragment extends Fragment {
     private EditText email,password;
     private Button signin;
-    private TextView forgotPassword;
     private ProgressDialog progress;
     private RegisterClient registerClient;
     private RegisterFragment frag;
@@ -49,11 +59,17 @@ public class LoginFragment extends Fragment {
     private FragmentManager fragmentManager;
     private GCMRegistration gcmReg; //responsible for invoking the registerClientForGCM method
     private FloatingActionButton fab;
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        FacebookSdk.sdkInitialize(getActivity().getApplicationContext());
+
         View view = inflater.inflate(R.layout.login_layout,
                 container, false);
+
+        callbackManager = CallbackManager.Factory.create();
 
         registerClient = MainActivity.registerClient;
         gcm = MainActivity.gcm;
@@ -90,9 +106,83 @@ public class LoginFragment extends Fragment {
                 fab.hide();
             }
         });
-        forgotPassword = (TextView) view.findViewById(R.id.forgotPassword);
+        
+        //Facebook Login
+        loginButton = (LoginButton) view.findViewById(R.id.fb_login_button);
+        loginButton.setReadPermissions("email");
+        // If using in a fragment
+        loginButton.setFragment(this);
+        // Other app specific specialization
+
+        // Callback registration
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.i("FACEBOOK LOGIN",loginResult.getAccessToken().toString() + "," + loginResult.getAccessToken().getUserId());
+
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(
+                                    JSONObject object,
+                                    GraphResponse response) {
+                                // Application code
+                                Log.v("LoginActivity", response.toString());
+                                try {
+                                    if(object.getString("email") != null || object.getString("email") != "")
+                                    {
+                                        Log.v("EMAIL", object.getString("email"));
+                                        SharedPreferences sharedPref = getActivity().
+                                                getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPref.edit();
+                                        editor.putString("userId", object.getString("email"));
+                                        editor.putString("loginType", "facebook");
+                                        editor.commit();
+
+                                        Toast.makeText(getActivity(),"Successful sign in",Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getActivity(),DecisionActivity.class);
+                                        startActivity(intent);
+                                        getActivity().finish();
+                                    }
+                                    else
+                                    {
+                                        //turn this into a alert dialog of some sort
+                                        Toast.makeText(getActivity(),"Could not sign in with Facebook",Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "email");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+                Log.e("FB LOGIN CANCELLED","Login cancelled");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Log.e("FACEBOOK LOGIN ERROR",exception.toString());
+                Toast.makeText(getActivity(),"Could not sign in with Facebook",Toast.LENGTH_LONG).show();
+            }
+
+        });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void createAccount() {  //displays the register fragment
@@ -195,6 +285,7 @@ public class LoginFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("userId", email.getText().toString());
                 editor.putString("mobileServiceAuthenticationToken", token);
+                editor.putString("loginType", "custom");
                 editor.commit();
 
                 Toast.makeText(getActivity(),"Successful sign in",Toast.LENGTH_SHORT).show();

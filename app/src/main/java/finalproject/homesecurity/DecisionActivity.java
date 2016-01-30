@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+
 import finalproject.homesecurity.Utils.CleanUserId;
 import finalproject.homesecurity.Utils.SendMessage;
 
@@ -29,7 +31,7 @@ public class DecisionActivity extends ActionBarActivity {
     private SecurityDetailsFragment frag;
     private FragmentManager fragmentManager;
     private Button pButton,sButton;
-    private TextView text1,text2;
+    private TextView text1,text2,singedInAs;
     private Toolbar toolbar;
 
     @Override
@@ -45,6 +47,11 @@ public class DecisionActivity extends ActionBarActivity {
         sButton = (Button) findViewById(R.id.security);
         text1 = (TextView) findViewById(R.id.textView);
         text2 = (TextView) findViewById(R.id.textView2);
+        singedInAs = (TextView) findViewById(R.id.signedInAs);
+        SharedPreferences sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+        String signedinas = singedInAs.getText().toString() + sharedPref.getString("userId",null);
+        singedInAs.setText(signedinas);
+
     }
 
     @Override
@@ -69,7 +76,12 @@ public class DecisionActivity extends ActionBarActivity {
 
         if (id == R.id.action_signout) { //Remove user from shared preferences thus making the user sign in the next time
             SharedPreferences prefs = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
-            prefs.edit().putString("userId",null).apply();
+
+            if(prefs.getString("loginType",null) == "facebook")
+            {
+                LoginManager.getInstance().logOut();
+            }
+            prefs.edit().putString("userId", null).apply();
 
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);

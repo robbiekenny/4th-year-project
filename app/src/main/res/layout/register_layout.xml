@@ -19,12 +19,11 @@
     android:background="#ffffff">
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:textColorHint="#212121"
         android:textColor="#212121"
-        android:ems="15"
         android:id="@+id/register_email"
         android:drawableLeft="@mipmap/ic_person"
         android:hint="@string/email"
@@ -33,10 +32,9 @@
         android:layout_marginTop="20dp"/>
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:ems="15"
         android:id="@+id/register_password"
         android:layout_below="@+id/register_email"
         android:layout_centerHorizontal="true"
@@ -46,21 +44,6 @@
         android:textColorHint="#212121"
         android:textColor="#212121"
         android:imeOptions="actionGo"/>
-
-    <Button
-        android:layout_marginTop="10dp"
-        android:textAllCaps="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/back"
-        android:id="@+id/cancel_button"
-        android:layout_below="@+id/signup_button"
-        android:layout_alignLeft="@+id/signup_button"
-        android:layout_alignStart="@+id/signup_button"
-        android:layout_alignRight="@+id/signup_button"
-        android:layout_alignEnd="@+id/signup_button"
-        android:background="#F44336"
-        android:textColor="#ffffff" />
 
     <Button
         android:textAllCaps="false"

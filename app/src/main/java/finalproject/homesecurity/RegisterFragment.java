@@ -32,7 +32,7 @@ import finalproject.homesecurity.model.User;
  * Created by Robbie on 30/09/2015.
  */
 public class RegisterFragment extends Fragment {
-    private Button back,signup;
+    private Button signup;
     private FragmentManager fragmentManager;
     private RegisterFragment frag;
     private LoginFragment loginFrag;
@@ -44,7 +44,6 @@ public class RegisterFragment extends Fragment {
         View view = inflater.inflate(R.layout.register_layout,
                 container, false);
 
-        //((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
         ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -62,13 +61,6 @@ public class RegisterFragment extends Fragment {
             }
         });
 
-        back = (Button) view.findViewById(R.id.cancel_button);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goBack();
-            }
-        });
         signup = (Button) view.findViewById(R.id.signup_button);
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,7 +148,6 @@ public class RegisterFragment extends Fragment {
             //fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
 
