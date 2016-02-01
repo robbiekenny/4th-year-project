@@ -74,12 +74,13 @@ public class DecisionActivity extends ActionBarActivity {
         int id = item.getItemId();
 
 
-        if (id == R.id.action_signout) { //Remove user from shared preferences thus making the user sign in the next time
+        if (id == R.id.action_signout) { //Remove user from shared preferences thus making the user signs in the next time
             SharedPreferences prefs = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+            System.out.println("LOGIN TYPE: " + prefs.getString("loginType",null));
 
-            if(prefs.getString("loginType",null) == "facebook")
+            if(prefs.getString("loginType",null).equals("facebook"))
             {
-                LoginManager.getInstance().logOut();
+                    LoginManager.getInstance().logOut();
             }
             prefs.edit().putString("userId", null).apply();
 

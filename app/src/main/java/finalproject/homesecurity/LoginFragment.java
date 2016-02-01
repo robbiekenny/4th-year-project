@@ -29,6 +29,12 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -61,6 +67,8 @@ public class LoginFragment extends Fragment {
     private FloatingActionButton fab;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
+    private GoogleApiClient mGoogleApiClient;
+    private static final int RC_SIGN_IN = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -118,7 +126,7 @@ public class LoginFragment extends Fragment {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.i("FACEBOOK LOGIN",loginResult.getAccessToken().toString() + "," + loginResult.getAccessToken().getUserId());
+                Log.i("FACEBOOK LOGIN", loginResult.getAccessToken().toString() + "," + loginResult.getAccessToken().getUserId());
 
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
@@ -130,8 +138,7 @@ public class LoginFragment extends Fragment {
                                 // Application code
                                 Log.v("LoginActivity", response.toString());
                                 try {
-                                    if(object.getString("email") != null || object.getString("email") != "")
-                                    {
+                                    if (object.getString("email") != null || object.getString("email") != "") {
                                         Log.v("EMAIL", object.getString("email"));
                                         SharedPreferences sharedPref = getActivity().
                                                 getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
@@ -140,15 +147,13 @@ public class LoginFragment extends Fragment {
                                         editor.putString("loginType", "facebook");
                                         editor.commit();
 
-                                        Toast.makeText(getActivity(),"Successful sign in",Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getActivity(),DecisionActivity.class);
+                                        Toast.makeText(getActivity(), "Successful sign in", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getActivity(), DecisionActivity.class);
                                         startActivity(intent);
                                         getActivity().finish();
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         //turn this into a alert dialog of some sort
-                                        Toast.makeText(getActivity(),"Could not sign in with Facebook",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "Could not sign in with Facebook", Toast.LENGTH_LONG).show();
                                     }
 
                                 } catch (JSONException e) {
@@ -165,24 +170,82 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onCancel() {
-                Log.e("FB LOGIN CANCELLED","Login cancelled");
+                Log.e("FB LOGIN CANCELLED", "Login cancelled");
             }
 
             @Override
             public void onError(FacebookException exception) {
-                Log.e("FACEBOOK LOGIN ERROR",exception.toString());
-                Toast.makeText(getActivity(),"Could not sign in with Facebook",Toast.LENGTH_LONG).show();
+                Log.e("FACEBOOK LOGIN ERROR", exception.toString());
+                Toast.makeText(getActivity(), "Could not sign in with Facebook", Toast.LENGTH_LONG).show();
             }
 
         });
 
+        //Google Sign in
+        // Configure sign-in to request the user's ID, email address, and basic
+// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+               GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+// options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        mGoogleApiClient.connect();
+
+        SignInButton signInButton = (SignInButton) view.findViewById(R.id.g_sign_in_button);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("HERE");
+                googleSignIn();
+            }
+        });
+        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setScopes(gso.getScopeArray());
+
         return view;
+    }
+
+    private void googleSignIn() {
+        System.out.println("HERE2");
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        System.out.println("HERE3 request code: " + requestCode);
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            System.out.println("HERE3");
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+        else
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d("GOOGLE LOG IN", "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            Log.d("GOOGLE LOG IN", "handleSignInResult:" + acct.getDisplayName());
+        } else {
+            // Signed out, show unauthenticated UI.
+            Log.d("GOOGLE LOG OUT", "handleSignInResult:" + result.getStatus());
+        }
     }
 
     private void createAccount() {  //displays the register fragment

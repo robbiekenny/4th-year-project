@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_id": "model-union-108409",
+    "project_number": "1017315118157",
+    "name": "4th year project"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017315118157:android:e25ce47f29c66c97",
+        "client_id": "android:finalproject.homesecurity",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "finalproject.homesecurity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1017315118157-serikbg6e8p8qu49dmls506k36ro84i6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "finalproject.homesecurity",
+            "certificate_hash": "1FE5FC474C3CC131B6960A45196A977AFC438907"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

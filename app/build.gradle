@@ -1,15 +1,20 @@
 apply plugin: 'com.android.application'
 
+
 android {
-    compileSdkVersion 22
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.0"
+
+    useLibrary 'org.apache.http.legacy'
+
 
     defaultConfig {
         applicationId "finalproject.homesecurity"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
     }
     buildTypes {
         release {
@@ -24,12 +29,12 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.android.support:design:23.0.0'
     compile project(':libstreaming')
-    compile 'com.google.android.gms:play-services-base:6.5.87'
     compile 'com.microsoft.azure:azure-mobile-services-android-sdk:2.0.3'
     compile 'com.facebook.android:facebook-android-sdk:4.+'
+
     compile files('libs/opencv.jar')
     compile files('libs/opencv-android-x86.jar')
     compile files('libs/opencv-android-arm.jar')
@@ -38,4 +43,10 @@ dependencies {
     compile files('libs/ffmpeg.jar')
     compile files('libs/ffmpeg-android-x86.jar')
     compile files('libs/ffmpeg-android-arm.jar')
+
+
+    compile 'com.google.android.gms:play-services-auth:8.4.0'
+    compile 'com.google.android.gms:play-services-base:8.4.0'
+    compile 'com.google.android.gms:play-services-gcm:8.4.0'
+
 }
