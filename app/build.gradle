@@ -1,4 +1,15 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 
 android {
@@ -25,6 +36,7 @@ android {
 }
 repositories {
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 dependencies {
@@ -35,18 +47,12 @@ dependencies {
     compile 'com.microsoft.azure:azure-mobile-services-android-sdk:2.0.3'
     compile 'com.facebook.android:facebook-android-sdk:4.+'
 
-    compile files('libs/opencv.jar')
-    compile files('libs/opencv-android-x86.jar')
-    compile files('libs/opencv-android-arm.jar')
-    compile files('libs/javacv.jar')
-    compile files('libs/javacpp.jar')
-    compile files('libs/ffmpeg.jar')
-    compile files('libs/ffmpeg-android-x86.jar')
-    compile files('libs/ffmpeg-android-arm.jar')
 
-
-    compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.google.android.gms:play-services-base:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
+    compile('com.twitter.sdk.android:twitter:1.12.0@aar') {
+        transitive = true;
+    }
+
 
 }

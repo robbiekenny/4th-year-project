@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_id": "model-union-108409",
-    "project_number": "1017315118157",
-    "name": "4th year project"
+    "project_id": "homesecurity-266dd",
+    "project_number": "915927011270",
+    "name": "HomeSecurity"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1017315118157:android:e25ce47f29c66c97",
+        "mobilesdk_app_id": "1:915927011270:android:e25ce47f29c66c97",
         "client_id": "android:finalproject.homesecurity",
         "client_type": 1,
         "android_client_info": {
@@ -16,12 +16,16 @@
       },
       "oauth_client": [
         {
-          "client_id": "1017315118157-serikbg6e8p8qu49dmls506k36ro84i6.apps.googleusercontent.com",
+          "client_id": "915927011270-0b6a5l57rkiq9qdovtr9a1749bgf1jd5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "finalproject.homesecurity",
             "certificate_hash": "1FE5FC474C3CC131B6960A45196A977AFC438907"
           }
+        },
+        {
+          "client_id": "915927011270-se7pu64s04uiag766je28p4ocmend74g.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [],

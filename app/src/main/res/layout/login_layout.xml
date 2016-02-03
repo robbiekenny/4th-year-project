@@ -118,15 +118,28 @@
         android:layout_alignEnd="@+id/signIn" />
 
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/g_sign_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/fb_login_button"
-        android:layout_alignStart="@id/fb_login_button"
-        android:layout_alignLeft="@id/fb_login_button"
-        android:layout_alignEnd="@id/fb_login_button"
-        android:layout_alignRight="@id/fb_login_button"
-        android:layout_marginTop="20dp"/>
+    <!--<com.google.android.gms.common.SignInButton-->
+        <!--android:id="@+id/g_sign_in_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/fb_login_button"-->
+        <!--android:layout_alignStart="@id/fb_login_button"-->
+        <!--android:layout_alignLeft="@id/fb_login_button"-->
+        <!--android:layout_alignEnd="@id/fb_login_button"-->
+        <!--android:layout_alignRight="@id/fb_login_button"-->
+        <!--android:layout_marginTop="20dp"/>-->
+
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:id="@+id/twitter_login_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/fb_login_button"
+    android:layout_alignStart="@id/fb_login_button"
+    android:layout_alignLeft="@id/fb_login_button"
+    android:layout_alignEnd="@id/fb_login_button"
+    android:layout_alignRight="@id/fb_login_button"
+    android:layout_marginTop="20dp"/>
+
+
 
 </RelativeLayout>

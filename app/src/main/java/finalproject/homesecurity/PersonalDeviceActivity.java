@@ -70,7 +70,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
          listView = (ListView) findViewById(R.id.rooms);
         listView.setAdapter(adapter);
         handleListViewItemClick();
-        getSecurityDevices();
+        //getSecurityDevices();
     }
 
     public void getSecurityDevices() //retrieve security devices linked to this account

@@ -1,10 +1,13 @@
 package finalproject.homesecurity;
 
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -38,11 +41,14 @@ public class RegisterFragment extends Fragment {
     private LoginFragment loginFrag;
     private EditText regEmail,regPass;
     private ProgressDialog progress;
+    private SharedPreferences sharedPref;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.register_layout,
                 container, false);
+
+        sharedPref = getActivity().getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
 
         ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -88,7 +94,7 @@ public class RegisterFragment extends Fragment {
             }
         }
 
-    public void insertUser(String email,String password) //sends users credentials to server to be assessed
+    public void insertUser(final String email,String password) //sends users credentials to server to be assessed
     {
         final User newUser = new User(email, password);
 
@@ -100,28 +106,35 @@ public class RegisterFragment extends Fragment {
                 System.out.println("FAILED");
                 System.out.println(exc.getMessage().toString());
                 //this gets rid of the json format so i am left with just the string message received from the Mobile Service
-                displayRegistrationMessage(exc.getMessage().substring(12, exc.getMessage().length() - 2));
+                displayRegistrationMessage(exc.getMessage().substring(12, exc.getMessage().length() - 2), email);
             }
 
             @Override
             public void onSuccess(JsonElement result) {
                 if (result.isJsonObject()) {
                     JsonObject resultObj = result.getAsJsonObject();
-                    displayRegistrationMessage(resultObj.get("message").getAsString());
+                    displayRegistrationMessage(resultObj.get("message").getAsString(), email);
+
                 } else
-                    displayRegistrationMessage(result.getAsString().toString());
+                    displayRegistrationMessage(result.getAsString().toString(), email);
             }
         });
     }
 
 
-    public void displayRegistrationMessage(String message) //displays appropriate message to user after registration
+    public void displayRegistrationMessage(String message,String email) //displays appropriate message to user after registration
     {
         progress.dismiss();
         if(message.equals("Created"))
         {
-            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("userId", email);
+            editor.putString("loginType", "custom");
+            editor.putBoolean("verified",false);
+            editor.commit();
+
             Intent intent = new Intent(getActivity(),DecisionActivity.class);
+            intent.putExtra("comingFrom", "registering"); //allows next activity to display register dialog
             startActivity(intent);
             getActivity().finish();
         }

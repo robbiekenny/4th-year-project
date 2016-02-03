@@ -348,8 +348,6 @@ public class CameraActivity extends SensorsActivity {
                             intent.putExtra("BitmapImage", original); //this will fail if image is too big
                             con.startActivity(intent);
 
-
-
                         new SendPhotoToUser(email).execute(original);
                         //new SavePhotoTask().execute(previous, original, bitmap);
                     } else {
@@ -427,6 +425,7 @@ public class CameraActivity extends SensorsActivity {
 
         private void sendPhoto(final String b64String) { //send the encoded string to the web api to process
             try {
+                System.out.println("SENDING PHOTO");
                 HttpPost request = new HttpPost(Constants.UPLOADIMAGE_ENDPOINT + "?email=" + user);
                 request.addHeader("ZUMO-API-VERSION","2.0.0" );
                 request.addHeader("Content-Type", "application/json");

@@ -1,14 +1,20 @@
 package finalproject.homesecurity;
 
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +39,8 @@ public class DecisionActivity extends ActionBarActivity {
     private Button pButton,sButton;
     private TextView text1,text2,singedInAs;
     private Toolbar toolbar;
+    private SharedPreferences sharedPref;
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +48,16 @@ public class DecisionActivity extends ActionBarActivity {
         setContentView(R.layout.decision_activity);
         toolbar = (Toolbar) findViewById(R.id.tool_bar2);
         setSupportActionBar(toolbar);
+
+        sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            if(extras.getString("comingFrom").equals("registering"))
+            {
+                messageDialog();
+            }
+        }
 
         prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
         editor = prefs.edit();
@@ -51,7 +69,7 @@ public class DecisionActivity extends ActionBarActivity {
         SharedPreferences sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         String signedinas = singedInAs.getText().toString() + sharedPref.getString("userId",null);
         singedInAs.setText(signedinas);
-
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
     }
 
     @Override
@@ -96,7 +114,12 @@ public class DecisionActivity extends ActionBarActivity {
     public void security(View v)
     {
         System.out.println("security method called");
-//        pButton.setVisibility(View.INVISIBLE);
+        if(sharedPref.getBoolean("verified",false) == false)
+        {
+            displaySnackbar();
+        }
+        else {
+            //        pButton.setVisibility(View.INVISIBLE);
 //        sButton.setVisibility(View.INVISIBLE);
 //        text1.setVisibility(View.INVISIBLE);
 //        text2.setVisibility(View.INVISIBLE);
@@ -126,17 +149,26 @@ public class DecisionActivity extends ActionBarActivity {
         /*
         TESTING SENDING PHOTO FUNCTIONALITY
          */
-        Intent intent = new Intent(this,CameraActivity.class);
-        startActivity(intent);
+            Intent intent = new Intent(this,CameraActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void personal(View v)
     {
         System.out.println("personal method called");
-        editor.putString("DeviceMode", "Personal"); //this device will be listed as personal
-        editor.commit();
-        Intent it = new Intent(this,PersonalDeviceActivity.class);
-        startActivity(it);
+        if(sharedPref.getBoolean("verified",false) == false)
+        {
+            displaySnackbar();
+        }
+        else
+        {
+            editor.putString("DeviceMode", "Personal"); //this device will be listed as personal
+            editor.commit();
+            Intent it = new Intent(this,PersonalDeviceActivity.class);
+            startActivity(it);
+        }
+
     }
 
     /** Check if this device has a camera
@@ -163,5 +195,31 @@ public class DecisionActivity extends ActionBarActivity {
         sButton.setVisibility(View.VISIBLE);
         text1.setVisibility(View.VISIBLE);
         text2.setVisibility(View.VISIBLE);
+    }
+
+    public void messageDialog() {
+
+        new AlertDialog.Builder(this)
+                .setTitle("Validate Email")
+                .setMessage("To verify your account please check your inbox or junk folder for an email from HomeSecurity. " +
+                        "Sign out and sign back in once you have verified your account")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+    }
+
+    public void displaySnackbar()
+    {
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, "Verify your account", Snackbar.LENGTH_LONG);
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.parseColor("#0288D1"));
+        snackbar.show();
     }
 }

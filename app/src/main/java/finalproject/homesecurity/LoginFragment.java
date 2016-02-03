@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,18 +30,26 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApiClient;
+//import com.google.android.gms.auth.api.Auth;
+//import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+//import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+//import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+//import com.google.android.gms.common.SignInButton;
+//import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +60,7 @@ import java.util.HashSet;
 
 import finalproject.homesecurity.Utils.GCMRegistration;
 import finalproject.homesecurity.model.User;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by Robbie on 19/01/2016.
@@ -66,9 +76,11 @@ public class LoginFragment extends Fragment {
     private GCMRegistration gcmReg; //responsible for invoking the registerClientForGCM method
     private FloatingActionButton fab;
     private LoginButton loginButton;
+    private TwitterLoginButton twitterLoginButton;
     private CallbackManager callbackManager;
-    private GoogleApiClient mGoogleApiClient;
-    private static final int RC_SIGN_IN = 0;
+    private SharedPreferences sharedPref;
+   // private GoogleApiClient mGoogleApiClient;
+    //private static final int RC_SIGN_IN = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -76,6 +88,7 @@ public class LoginFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.login_layout,
                 container, false);
+        sharedPref = getActivity().getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -140,17 +153,14 @@ public class LoginFragment extends Fragment {
                                 try {
                                     if (object.getString("email") != null || object.getString("email") != "") {
                                         Log.v("EMAIL", object.getString("email"));
-                                        SharedPreferences sharedPref = getActivity().
-                                                getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+
                                         SharedPreferences.Editor editor = sharedPref.edit();
                                         editor.putString("userId", object.getString("email"));
                                         editor.putString("loginType", "facebook");
+                                        editor.putBoolean("verified", true);
                                         editor.commit();
 
-                                        Toast.makeText(getActivity(), "Successful sign in", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getActivity(), DecisionActivity.class);
-                                        startActivity(intent);
-                                        getActivity().finish();
+                                        startNextActivity();
                                     } else {
                                         //turn this into a alert dialog of some sort
                                         Toast.makeText(getActivity(), "Could not sign in with Facebook", Toast.LENGTH_LONG).show();
@@ -184,41 +194,77 @@ public class LoginFragment extends Fragment {
         //Google Sign in
         // Configure sign-in to request the user's ID, email address, and basic
 // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-               GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
+//               GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestEmail()
+//                .build();
+//
+//        // Build a GoogleApiClient with access to the Google Sign-In API and the
+//// options specified by gso.
+//        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+//                .build();
+//        mGoogleApiClient.connect();
+//
+//        SignInButton signInButton = (SignInButton) view.findViewById(R.id.g_sign_in_button);
+//        signInButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                System.out.println("HERE");
+//                googleSignIn();
+//            }
+//        });
+//        signInButton.setSize(SignInButton.SIZE_STANDARD);
+//        signInButton.setScopes(gso.getScopeArray());
 
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-// options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        mGoogleApiClient.connect();
-
-        SignInButton signInButton = (SignInButton) view.findViewById(R.id.g_sign_in_button);
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        twitterLoginButton = (TwitterLoginButton) view.findViewById(R.id.twitter_login_button);
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
-            public void onClick(View view) {
-                System.out.println("HERE");
-                googleSignIn();
+            public void success(Result<TwitterSession> result) {
+                Log.d("TwitterKit", "IN SUCCESS");
+                // The TwitterSession is also available through:
+                // Twitter.getInstance().core.getSessionManager().getActiveSession()
+                TwitterSession session = result.data;
+
+                TwitterAuthClient authClient = new TwitterAuthClient();
+                authClient.requestEmail(session, new Callback<String>() {
+                    @Override
+                    public void success(Result<String> result) {
+                        // Do something with the result, which provides the email address
+                        Log.d("TwitterKit", result.data.toString());
+                    }
+
+                    @Override
+                    public void failure(TwitterException exception) {
+                        // Do something on failure
+                        Log.d("TwitterKit", "FAILED" + exception.toString());
+                    }
+                });
+
+                // with your app's user model
+                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.d("TwitterKit", "Login with Twitter failure", exception);
             }
         });
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setScopes(gso.getScopeArray());
+
 
         return view;
     }
 
-    private void googleSignIn() {
-        System.out.println("HERE2");
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
+//    private void googleSignIn() {
+//        System.out.println("HERE2");
+//        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+//        startActivityForResult(signInIntent, RC_SIGN_IN);
+//    }
 
     @Override
     public void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
+        //mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -226,27 +272,32 @@ public class LoginFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         System.out.println("HERE3 request code: " + requestCode);
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            System.out.println("HERE3");
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-        }
-        else
+//        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+//        if (requestCode == RC_SIGN_IN) {
+//            System.out.println("HERE3");
+//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+//            handleSignInResult(result);
+//        }
+//        else
+
+        if(requestCode == 64206)
             callbackManager.onActivityResult(requestCode, resultCode, data);
+        else
+            twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+
     }
 
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d("GOOGLE LOG IN", "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            Log.d("GOOGLE LOG IN", "handleSignInResult:" + acct.getDisplayName());
-        } else {
-            // Signed out, show unauthenticated UI.
-            Log.d("GOOGLE LOG OUT", "handleSignInResult:" + result.getStatus());
-        }
-    }
+//    private void handleSignInResult(GoogleSignInResult result) {
+//        Log.d("GOOGLE LOG IN", "handleSignInResult:" + result.isSuccess());
+//        if (result.isSuccess()) {
+//            // Signed in successfully, show authenticated UI.
+//            GoogleSignInAccount acct = result.getSignInAccount();
+//            Log.d("GOOGLE LOG IN", "handleSignInResult:" + acct.getDisplayName());
+//        } else {
+//            // Signed out, show unauthenticated UI.
+//            Log.d("GOOGLE LOG OUT", "handleSignInResult:" + result.getStatus() + "," + result.toString());
+//        }
+//    }
 
     private void createAccount() {  //displays the register fragment
         frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
@@ -324,6 +375,12 @@ public class LoginFragment extends Fragment {
                     JsonObject resultObj = result.getAsJsonObject();
                     System.out.println(resultObj.get("userId").getAsString());
                     System.out.println(resultObj.get("mobileServiceAuthenticationToken").getAsString());
+                    System.out.println(resultObj.get("verified").getAsBoolean());
+
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean("verified", resultObj.get("verified").getAsBoolean());
+                    editor.commit();
+
                     signinResult("SignedIn", resultObj.get("mobileServiceAuthenticationToken").getAsString());
                 } else
                     signinResult("SignedIn", "");
@@ -344,17 +401,14 @@ public class LoginFragment extends Fragment {
 //            }
             if(token != "")
             {
-                SharedPreferences sharedPref = getActivity().getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("userId", email.getText().toString());
                 editor.putString("mobileServiceAuthenticationToken", token);
                 editor.putString("loginType", "custom");
                 editor.commit();
 
-                Toast.makeText(getActivity(),"Successful sign in",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(),DecisionActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                startNextActivity();
             }
 
 
@@ -363,5 +417,14 @@ public class LoginFragment extends Fragment {
             Toast.makeText(getActivity(),"Incorrect email or password",Toast.LENGTH_LONG).show();
         else
             Toast.makeText(getActivity(),"Please check your internet connection",Toast.LENGTH_LONG).show();
+    }
+
+    public void startNextActivity() //starts the next activity and finishes the current one
+    { //using this method avoids duplicate code
+        Toast.makeText(getActivity(),"Successful sign in",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(),DecisionActivity.class);
+        intent.putExtra("comingFrom", "loggingIn");
+        startActivity(intent);
+        getActivity().finish();
     }
 }

@@ -30,6 +30,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import android.widget.Button;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import io.fabric.sdk.android.Fabric;
 import java.io.UnsupportedEncodingException;
 import android.content.Context;
 import java.util.HashSet;
@@ -48,6 +53,9 @@ import com.microsoft.windowsazure.mobileservices.*;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -56,7 +64,12 @@ import finalproject.homesecurity.Utils.CleanUserId;
 import finalproject.homesecurity.Utils.GCMRegistration;
 import finalproject.homesecurity.model.User;
 
-public class MainActivity extends ActionBarActivity { //deals with sign in and register (should split the two later on for cleaner code)
+public class MainActivity extends ActionBarActivity {
+
+    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    private static final String TWITTER_KEY = "bQI11wMVmjerVzK3fUtE0Mz3N";
+    private static final String TWITTER_SECRET = "yhnuJBfI8GD2FEwTyhSwXs9n83vfhfvQeIO9HImEXAj0nkl1n9";
+     //deals with sign in and register (should split the two later on for cleaner code)
     public static MobileServiceClient mClient;
     private RegisterFragment frag;
     private LoginFragment loginFrag;
@@ -67,11 +80,13 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
     public static GoogleCloudMessaging gcm;
     private Toolbar toolbar;
     private GCMRegistration gcmReg;
-    private CallbackManager callbackManager;
+    private TwitterLoginButton loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
         setContentView(R.layout.activity_main);
 
         try {
@@ -131,14 +146,22 @@ public class MainActivity extends ActionBarActivity { //deals with sign in and r
                 ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
                 ft.commit();
             }
+
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result to the fragment, which will then pass the result to the login
+        // button.
+        loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
+        if (loginFrag != null) {
+            loginFrag.onActivityResult(requestCode, resultCode, data);
+        }
     }
+
 
 
     @Override
