@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
 
-    <ScrollView
-        android:scrollbars="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:fillViewport="true"
-        android:layout_weight="1">
-
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:id="@+id/relLayout"
     android:background="#ffffff">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/register_emailTextInput"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tcreateAccountText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp">
 
     <EditText
         android:layout_width="320dp"
@@ -26,24 +21,27 @@
         android:textColor="#212121"
         android:id="@+id/register_email"
         android:drawableLeft="@mipmap/ic_person"
-        android:hint="@string/email"
-        android:layout_below="@+id/tcreateAccountText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"/>
+        android:hint="@string/email" />
+    </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/register_passwordTextInput"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/register_emailTextInput"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp">
     <EditText
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:id="@+id/register_password"
-        android:layout_below="@+id/register_email"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
         android:drawableLeft="@mipmap/ic_lock"
         android:hint="@string/password"
         android:textColorHint="#212121"
         android:textColor="#212121"
         android:imeOptions="actionGo"/>
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:textAllCaps="false"
@@ -53,11 +51,11 @@
         android:text="@string/createAccount"
         android:id="@+id/signup_button"
         android:onClick="errorCheckingForSignup"
-        android:layout_below="@+id/register_password"
-        android:layout_alignLeft="@+id/register_password"
-        android:layout_alignStart="@+id/register_password"
-        android:layout_alignRight="@+id/register_password"
-        android:layout_alignEnd="@+id/register_password"
+        android:layout_below="@+id/register_passwordTextInput"
+        android:layout_alignLeft="@+id/register_passwordTextInput"
+        android:layout_alignStart="@+id/register_passwordTextInput"
+        android:layout_alignRight="@+id/register_passwordTextInput"
+        android:layout_alignEnd="@+id/register_passwordTextInput"
         android:background="#4CAF50"
         android:textColor="#ffffff" />
 
@@ -73,5 +71,3 @@
 
 
 </RelativeLayout>
-        </ScrollView>
-    </LinearLayout>

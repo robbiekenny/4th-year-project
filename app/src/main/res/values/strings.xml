@@ -9,6 +9,10 @@
     <string name="createAccount">Create Account</string>
     <string name="forgotPassword"><u>Forgot password?</u></string>
     <string name="facebook_app_id">943296682432023</string>
+    <string name="device_activity_string">Please choose whether this device is being used as a security device or a personal device. Security devices will be used to monitor your home, while personal devices are devices you use on a regular basis</string>
+    <string name="security">Security</string>
+    <string name="personal">Personal</string>
+    <string name="roomname">Room Name</string>
 
     <string name="start">Start/Stop Streaming</string>
     <string name="flash">Flash</string>
@@ -23,5 +27,5 @@
     <string name="default_bitrate">0 kbps</string>
     <string name="default_stream">rtsp://40.127.139.63:1935/live/myStream</string>
     <string name="username_text">robbie</string>
-    <string name="password_text">dublin5512</string>
+    <string name="password_text"></string>
 </resources>

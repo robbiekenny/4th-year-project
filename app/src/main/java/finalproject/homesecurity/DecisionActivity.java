@@ -20,9 +20,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 
 import finalproject.homesecurity.Utils.CleanUserId;
@@ -36,8 +39,8 @@ public class DecisionActivity extends ActionBarActivity {
     private SharedPreferences.Editor editor;
     private SecurityDetailsFragment frag;
     private FragmentManager fragmentManager;
-    private Button pButton,sButton;
-    private TextView text1,text2,singedInAs;
+    private RelativeLayout securityLayout,personalLayout;
+    private TextView text1,singedInAs;
     private Toolbar toolbar;
     private SharedPreferences sharedPref;
     private CoordinatorLayout coordinatorLayout;
@@ -61,10 +64,10 @@ public class DecisionActivity extends ActionBarActivity {
 
         prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
         editor = prefs.edit();
-        pButton = (Button) findViewById(R.id.personal);
-        sButton = (Button) findViewById(R.id.security);
+        securityLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+        personalLayout = (RelativeLayout) findViewById(R.id.relativeLayout2);
         text1 = (TextView) findViewById(R.id.textView);
-        text2 = (TextView) findViewById(R.id.textView2);
+
         singedInAs = (TextView) findViewById(R.id.signedInAs);
         SharedPreferences sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         String signedinas = singedInAs.getText().toString() + sharedPref.getString("userId",null);
@@ -98,7 +101,15 @@ public class DecisionActivity extends ActionBarActivity {
 
             if(prefs.getString("loginType",null).equals("facebook"))
             {
+                try
+                {
                     LoginManager.getInstance().logOut();
+                }catch(Exception e)
+                {
+                    FacebookSdk.sdkInitialize(this);
+                    LoginManager.getInstance().logOut();
+                }
+
             }
             prefs.edit().putString("userId", null).apply();
 
@@ -119,27 +130,26 @@ public class DecisionActivity extends ActionBarActivity {
             displaySnackbar();
         }
         else {
-            //        pButton.setVisibility(View.INVISIBLE);
-//        sButton.setVisibility(View.INVISIBLE);
-//        text1.setVisibility(View.INVISIBLE);
-//        text2.setVisibility(View.INVISIBLE);
-//
-//        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
-//        if(frag == null)
-//        {
-//            fragmentManager = getFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            frag = new SecurityDetailsFragment();
-//            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
-//            fragmentTransaction.commit();
-//        }
-//        else
-//        {
-//            fragmentManager = getFragmentManager();
-//            FragmentTransaction ft = fragmentManager.beginTransaction();
-//            ft.replace(R.id.security_details_fragment_container, frag);
-//            ft.commit();
-//        }
+            securityLayout.setVisibility(View.INVISIBLE);
+        personalLayout.setVisibility(View.INVISIBLE);
+        text1.setVisibility(View.INVISIBLE);
+
+        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
+        if(frag == null)
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            frag = new SecurityDetailsFragment();
+            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
+            fragmentTransaction.commit();
+        }
+        else
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.replace(R.id.security_details_fragment_container, frag);
+            ft.commit();
+        }
         /*
         TESTING STREAMING FUNCTIONALITY
          */
@@ -149,8 +159,8 @@ public class DecisionActivity extends ActionBarActivity {
         /*
         TESTING SENDING PHOTO FUNCTIONALITY
          */
-            Intent intent = new Intent(this,CameraActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this,CameraActivity.class);
+//            startActivity(intent);
         }
     }
 
@@ -191,10 +201,10 @@ public class DecisionActivity extends ActionBarActivity {
         fragmentTransaction.remove(frag);
         fragmentTransaction.commit();
 
-        pButton.setVisibility(View.VISIBLE);
-        sButton.setVisibility(View.VISIBLE);
+        securityLayout.setVisibility(View.VISIBLE);
+        personalLayout.setVisibility(View.VISIBLE);
         text1.setVisibility(View.VISIBLE);
-        text2.setVisibility(View.VISIBLE);
+
     }
 
     public void messageDialog() {
@@ -216,7 +226,7 @@ public class DecisionActivity extends ActionBarActivity {
     public void displaySnackbar()
     {
         Snackbar snackbar = Snackbar
-                .make(coordinatorLayout, "Verify your account", Snackbar.LENGTH_LONG);
+                .make(coordinatorLayout, "Verify your email account", Snackbar.LENGTH_LONG);
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.parseColor("#0288D1"));
