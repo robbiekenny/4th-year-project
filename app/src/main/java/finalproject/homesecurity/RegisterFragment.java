@@ -12,8 +12,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -63,6 +65,25 @@ public class RegisterFragment extends Fragment {
                     signUp();
                     return true;
                 }
+                return false;
+            }
+        });
+
+        regPass.setOnTouchListener(new View.OnTouchListener() { //allows user to see their password
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    //http://stackoverflow.com/questions/11713642/android-to-detect-when-you-are-holding-down-a-button
+                    if (event.getRawX() >= (regPass.getRight() - regPass.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        //http://stackoverflow.com/questions/9307680/show-the-password-with-edittext
+                        regPass.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        return true;
+                    }
+                } else
+                    regPass.setInputType(129); //129 is the input type set when setting android:inputType="textPassword"
+
                 return false;
             }
         });

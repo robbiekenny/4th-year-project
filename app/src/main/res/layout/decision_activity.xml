@@ -15,21 +15,6 @@
         layout="@layout/tool_bar"
         ></include>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/device_activity_string"
-        android:id="@+id/textView"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="84dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <!--<Button-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
@@ -59,30 +44,28 @@
         android:text="Signed in as: "
         android:id="@+id/signedInAs"
         android:layout_gravity="center"
-        android:layout_below="@+id/relativeLayout"
-        android:layout_toLeftOf="@+id/relativeLayout2"
-        android:layout_toStartOf="@+id/relativeLayout2"
-        android:layout_marginTop="56dp" />
+        android:layout_marginTop="293dp" />
 
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="46dp"
-        android:layout_below="@+id/textView"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_marginLeft="60dp"
-        android:layout_marginStart="60dp"
-        android:id="@+id/relativeLayout">
+        android:layout_marginTop="55dp"
+        android:paddingTop="20dp"
+        android:layout_marginLeft="57dp"
+        android:layout_marginStart="57dp"
+        android:id="@+id/relativeLayout"
+        android:layout_below="@+id/tool_bar2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:scaleType="fitCenter"
-            android:background="@drawable/security_round_button"
-            android:gravity="center_vertical|center_horizontal"
-            android:src="@drawable/security"
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@drawable/ic_security"
+            app:layout_anchor="@id/relativeLayout"
+            app:backgroundTint="@color/SecurityGreen"
             android:id="@+id/security"
             android:onClick="security"
             android:layout_alignParentTop="true"
@@ -101,20 +84,20 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="54dp"
-        android:layout_marginStart="54dp"
-        android:layout_alignTop="@+id/relativeLayout"
+        android:layout_marginLeft="61dp"
+        android:layout_marginStart="61dp"
+        android:id="@+id/relativeLayout2"
+        android:layout_alignBottom="@+id/relativeLayout"
         android:layout_toRightOf="@+id/relativeLayout"
-        android:layout_toEndOf="@+id/relativeLayout"
-        android:id="@+id/relativeLayout2">
+        android:layout_toEndOf="@+id/relativeLayout">
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/personal_round_button"
-            android:gravity="center_vertical|center_horizontal"
-            android:src="@drawable/personal"
-            android:scaleType="fitCenter"
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@drawable/ic_account_circle"
+            app:layout_anchor="@id/relativeLayout2"
+            app:backgroundTint="@color/ColorPrimary"
             android:id="@+id/personal"
             android:onClick="personal"
             android:layout_alignParentTop="true"

@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,11 +57,16 @@ public class PersonalDeviceActivity extends ActionBarActivity {
     private CommandControlsFragment frag;
     private FragmentManager fragmentManager;
     private Room room;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.personal_activity_layout);
+
+        toolbar = (Toolbar) findViewById(R.id.personal_activity_toolbar);
+        setSupportActionBar(toolbar);
+
         spinner = (ProgressBar)findViewById(R.id.spinner);
         settings = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
 
@@ -69,8 +75,17 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         // Attach the adapter to a ListView
          listView = (ListView) findViewById(R.id.rooms);
         listView.setAdapter(adapter);
+        adapter.add(new Room("Kitchen"));
         handleListViewItemClick();
         //getSecurityDevices();
+        spinner.setVisibility(View.GONE);
+        listView.setVisibility(View.VISIBLE);
+
+        frag = (CommandControlsFragment) getFragmentManager().findFragmentByTag("frag");
+        if(frag != null)
+        {
+            listView.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void getSecurityDevices() //retrieve security devices linked to this account
@@ -114,6 +129,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
                     frag.setArguments(bundle);
                     fragmentTransaction.add(R.id.command_controls_fragment_container, frag, "frag");
                     fragmentTransaction.commit();
+                    toolbar.setTitle(room.getRoomName());
                 }
                 else
                 {
@@ -160,7 +176,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.remove(frag);
         fragmentTransaction.commit();
-
+        toolbar.setTitle(R.string.app_name);
         listView.setVisibility(View.VISIBLE);
     }
 }
@@ -171,12 +187,11 @@ public class PersonalDeviceActivity extends ActionBarActivity {
  *
  *
  ***************************************************************************************/
-     class RoomsAdapter extends ArrayAdapter<Room> { //this will use users as an example for now
+     class RoomsAdapter extends ArrayAdapter<Room> {
 
          // View lookup cache  -- used to improve performance
          private static class ViewHolder {
              TextView name;
-
          }
 
 

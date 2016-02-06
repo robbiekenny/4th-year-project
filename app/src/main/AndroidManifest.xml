@@ -60,7 +60,8 @@
             android:name=".Image">
         </activity>
         <activity
-            android:name=".PersonalDeviceActivity">
+            android:name=".PersonalDeviceActivity"
+            android:theme="@style/NoActionBar">
         </activity>
         <activity
             android:name=".StreamingActivity">

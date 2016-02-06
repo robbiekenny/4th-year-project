@@ -37,6 +37,7 @@
         android:inputType="textPassword"
         android:id="@+id/register_password"
         android:drawableLeft="@mipmap/ic_lock"
+        android:drawableRight="@drawable/ic_visibility"
         android:hint="@string/password"
         android:textColorHint="#212121"
         android:textColor="#212121"

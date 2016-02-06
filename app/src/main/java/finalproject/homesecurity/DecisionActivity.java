@@ -16,10 +16,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,41 +37,48 @@ import finalproject.homesecurity.Utils.SendMessage;
  * Created by Robbie on 13/08/2015.
  */
 public class DecisionActivity extends ActionBarActivity {
-    private SharedPreferences prefs;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences.Editor editor,edit; //edit is used for saving dont show me again, editor used for saving whether the device is security or personal
     private SecurityDetailsFragment frag;
     private FragmentManager fragmentManager;
     private RelativeLayout securityLayout,personalLayout;
-    private TextView text1,singedInAs;
+    private TextView singedInAs;
     private Toolbar toolbar;
-    private SharedPreferences sharedPref;
+    private SharedPreferences sharedPref,sharedPrefs,prefs;
     private CoordinatorLayout coordinatorLayout;
+    private AlertDialog b; //this is used to close the custom dialog displayed to the user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.decision_activity);
-        toolbar = (Toolbar) findViewById(R.id.tool_bar2);
-        setSupportActionBar(toolbar);
+//        toolbar = (Toolbar) findViewById(R.id.tool_bar2);
+//        setSupportActionBar(toolbar);
 
+        sharedPrefs = getSharedPreferences("DontShowAgain", Context.MODE_PRIVATE); //save dont show me again value
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+        prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
+        editor = prefs.edit();
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             if(extras.getString("comingFrom").equals("registering"))
             {
-                messageDialog();
+                registerDialog();
             }
         }
 
-        prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
-        editor = prefs.edit();
+
+        if(sharedPrefs.getBoolean("showAgain",true) == true)
+        {
+            messageDialog();
+        }
+
+
         securityLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
         personalLayout = (RelativeLayout) findViewById(R.id.relativeLayout2);
-        text1 = (TextView) findViewById(R.id.textView);
 
         singedInAs = (TextView) findViewById(R.id.signedInAs);
-        SharedPreferences sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+
         String signedinas = singedInAs.getText().toString() + sharedPref.getString("userId",null);
         singedInAs.setText(signedinas);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
@@ -94,12 +103,15 @@ public class DecisionActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        /*
+        Put in an option for users to get help with security and personal selection
+         */
 
         if (id == R.id.action_signout) { //Remove user from shared preferences thus making the user signs in the next time
-            SharedPreferences prefs = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
-            System.out.println("LOGIN TYPE: " + prefs.getString("loginType",null));
 
-            if(prefs.getString("loginType",null).equals("facebook"))
+            System.out.println("LOGIN TYPE: " + sharedPref.getString("loginType", null));
+
+            if(sharedPref.getString("loginType",null).equals("facebook"))
             {
                 try
                 {
@@ -111,7 +123,8 @@ public class DecisionActivity extends ActionBarActivity {
                 }
 
             }
-            prefs.edit().putString("userId", null).apply();
+           sharedPref.edit().putString("userId", null).apply(); //remove userId that was associated with this user
+           sharedPrefs.edit().putBoolean("showAgain", true).apply(); //reset the show again boolean so that it should be displayed the next time
 
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
@@ -132,7 +145,6 @@ public class DecisionActivity extends ActionBarActivity {
         else {
             securityLayout.setVisibility(View.INVISIBLE);
         personalLayout.setVisibility(View.INVISIBLE);
-        text1.setVisibility(View.INVISIBLE);
 
         frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
         if(frag == null)
@@ -203,11 +215,35 @@ public class DecisionActivity extends ActionBarActivity {
 
         securityLayout.setVisibility(View.VISIBLE);
         personalLayout.setVisibility(View.VISIBLE);
-        text1.setVisibility(View.VISIBLE);
 
     }
 
-    public void messageDialog() {
+    public void messageDialog() //displays a dialog informaing them of the choice between security and personal
+    {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.message_dialog_layout, null);
+        dialogBuilder.setView(dialogView);
+
+        final CheckBox cb = (CheckBox) dialogView.findViewById(R.id.dontShowAgainCBox);
+
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                if(cb.isChecked())
+                {
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.putBoolean("showAgain", false); //user doesnt want to see the message again
+                    editor.commit();
+                }
+                b.dismiss();
+            }
+        });
+
+        b = dialogBuilder.create();
+        b.show();
+    }
+
+    public void registerDialog() { //displays a dialog informing the user they must verify their account
 
         new AlertDialog.Builder(this)
                 .setTitle("Validate Email")
@@ -223,7 +259,7 @@ public class DecisionActivity extends ActionBarActivity {
 
     }
 
-    public void displaySnackbar()
+    public void displaySnackbar() //very simply notifys the user that they must verify their account before continuing
     {
         Snackbar snackbar = Snackbar
                 .make(coordinatorLayout, "Verify your email account", Snackbar.LENGTH_LONG);

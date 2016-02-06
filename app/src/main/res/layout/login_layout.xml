@@ -68,6 +68,7 @@
         android:textColor="#212121"
         android:id="@+id/password"
         android:drawableLeft="@mipmap/ic_lock"
+        android:drawableRight="@drawable/ic_visibility"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:hint="@string/password"

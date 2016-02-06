@@ -11,9 +11,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -108,6 +110,25 @@ public class LoginFragment extends Fragment {
                     handled = true;
                 }
                 return handled;
+            }
+        });
+        password.setOnTouchListener(new View.OnTouchListener() { //allows user to see their password
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    //http://stackoverflow.com/questions/11713642/android-to-detect-when-you-are-holding-down-a-button
+                    if(event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        //http://stackoverflow.com/questions/9307680/show-the-password-with-edittext
+                        password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        return true;
+                    }
+                }
+                else
+                    password.setInputType(129); //129 is the input type set when setting android:inputType="textPassword"
+
+                return false;
             }
         });
         signin = (Button) view.findViewById(R.id.signIn);
@@ -359,7 +380,6 @@ public class LoginFragment extends Fragment {
 
 
         ListenableFuture<JsonElement> result = MainActivity.mClient.invokeApi( "CustomLogin", newUser, JsonElement.class );
-        System.out.println("HELLO-------------------");
         Futures.addCallback(result, new FutureCallback<JsonElement>() {
             @Override
             public void onFailure(Throwable exc) {

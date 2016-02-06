@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">HomeSecurity</string>
     <string name="back">Back</string>
+    <string name="ok">OK</string>
     <string name="motionDetection">Motion Detection</string>
     <string name="flashLight">Flash Light</string>
     <string name="email">Email</string>
@@ -13,6 +14,11 @@
     <string name="security">Security</string>
     <string name="personal">Personal</string>
     <string name="roomname">Room Name</string>
+    <string name="dontshowmeagain">Don\'t show me again</string>
+    <string name="lighton">Light On</string>
+    <string name="lightoff">Light Off</string>
+    <string name="mdon">Motion Detection On</string>
+    <string name="mdoff">Motion Detection Off</string>
 
     <string name="start">Start/Stop Streaming</string>
     <string name="flash">Flash</string>

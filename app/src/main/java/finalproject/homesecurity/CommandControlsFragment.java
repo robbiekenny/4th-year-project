@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import java.io.IOException;
 
@@ -18,6 +20,10 @@ import finalproject.homesecurity.Utils.SendMessage;
  */
 public class CommandControlsFragment extends Fragment {
     private String userID,roomName;
+    private ImageView lights,motion;
+    private boolean lightsOn = false,motionOn = false;
+    private TextView lightText,motionText;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.command_controls_layout,
@@ -25,27 +31,51 @@ public class CommandControlsFragment extends Fragment {
         userID = getArguments().getString("user");
         roomName = getArguments().getString("room");
 
-        Switch motion = (Switch) view.findViewById(R.id.motionDetectionSwitch);
-        motion.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        lightText = (TextView) view.findViewById(R.id.lights_textView);
+        motionText = (TextView) view.findViewById(R.id.motion_textView);
+
+        lights = (ImageView) view.findViewById(R.id.lights);
+        lights.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-                if (isChecked)//switched on
-                    enableMotion();
+            public void onClick(View v) {
+                if(lightsOn)
+                {
+                    lightsOn = false;
+                    lights.setImageResource(R.drawable.lighton);
+                    lightText.setText(R.string.lighton);
+                    //disableFlashLight();
+                }
                 else
-                    disableMotion();
+                {
+                    lightsOn = true;
+                    lights.setImageResource(R.drawable.lightoff);
+                    lightText.setText(R.string.lightoff);
+                    //enableFlashLight();
+                }
             }
         });
 
-        Switch flashlight = (Switch) view.findViewById(R.id.flashlightSwitch);
-        flashlight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        motion = (ImageView) view.findViewById(R.id.motion);
+        motion.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-                if (isChecked)//switched on
-                    enableFlashLight();
+            public void onClick(View v) {
+                if(motionOn)
+                {
+                    motionOn = false;
+                    motion.setImageResource(R.drawable.motion_on);
+                    motionText.setText(R.string.mdon);
+                    //disableMotion();
+                }
                 else
-                    disableFlashLight();
+                {
+                    motionOn = true;
+                    motion.setImageResource(R.drawable.motion_off);
+                    motionText.setText(R.string.mdoff);
+                    //enableMotion();
+                }
             }
         });
+
         return view;
     }
 
