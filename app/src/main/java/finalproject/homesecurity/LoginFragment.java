@@ -181,6 +181,13 @@ public class LoginFragment extends Fragment {
                                         editor.putBoolean("verified", true);
                                         editor.commit();
 
+                                        try {
+                                            gcmReg.registerClientForGCM(registerClient, object.getString("email"), getActivity(), gcm);
+                                        } catch (UnsupportedEncodingException e) {
+                                            System.out.println("FAILED TO REGISTER FOR GCM");
+                                            e.printStackTrace();
+                                        }
+
                                         startNextActivity();
                                     } else {
                                         //turn this into a alert dialog of some sort
@@ -413,12 +420,12 @@ public class LoginFragment extends Fragment {
         progress.dismiss();
         if(message.equals("SignedIn"))
         {
-//            try { //Disabled because notification hubs costs loads
-//                gcmReg.registerClientForGCM(registerClient, email.getText().toString(), getActivity(), gcm);
-//            } catch (UnsupportedEncodingException e) {
-//                System.out.println("FAILED TO REGISTER FOR GCM");
-//                e.printStackTrace();
-//            }
+            try {
+                gcmReg.registerClientForGCM(registerClient, email.getText().toString(), getActivity(), gcm);
+            } catch (UnsupportedEncodingException e) {
+                System.out.println("FAILED TO REGISTER FOR GCM");
+                e.printStackTrace();
+            }
             if(token != "")
             {
 

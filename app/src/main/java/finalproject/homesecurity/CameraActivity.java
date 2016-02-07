@@ -55,7 +55,7 @@ public class CameraActivity extends SensorsActivity {
     private static IMotionDetection detector = null;
     private static Context con;
     private static volatile AtomicBoolean processing = new AtomicBoolean(false);
-    private static boolean detectMotion = true; //PUT BACK TO FALSE
+    private static boolean detectMotion = false;
     private ImageView changeCamera;
     private int cameraID = 0; //camera is initially facing back
     /**
@@ -84,7 +84,7 @@ public class CameraActivity extends SensorsActivity {
         System.out.println("Room Name in Camera Activity: " + roomName);
 
         editor.putString("RoomName",roomName);
-        editor.commit();
+        editor.apply();
 
         if (Preferences.USE_RGB) {
             detector = new RgbMotionDetection();
@@ -157,9 +157,39 @@ public class CameraActivity extends SensorsActivity {
         camera = Camera.open();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        /*
+        Remove this device as a security device
+        Don't need to worry about removing the room name because the room name will never be used if the device isn't a security device
+         */
+        editor.putString("DeviceMode", null);
+        editor.apply();
+        System.out.println("OnDestroy: " + prefs.getString("DeviceMode", null));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        editor.putString("DeviceMode", null);
+        editor.apply();
+        System.out.println("OnStop: " + prefs.getString("DeviceMode", null));
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        editor.putString("DeviceMode", "Security");
+        editor.apply();
+        System.out.println("OnRestart: " + prefs.getString("DeviceMode",null));
+    }
+
     /*
-    METHODS ACCESSED BY NOTIFICATIONS HANDLER
-     */
+                METHODS ACCESSED BY NOTIFICATIONS HANDLER
+                 */
     public static void setDetectMotion(boolean motion)
     {
         detectMotion = motion;

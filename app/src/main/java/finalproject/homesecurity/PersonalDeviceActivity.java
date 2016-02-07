@@ -3,12 +3,16 @@ package finalproject.homesecurity;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -48,7 +52,7 @@ import finalproject.homesecurity.model.User;
  * Created by Robbie on 04/11/2015.
  */
 public class PersonalDeviceActivity extends ActionBarActivity {
-    public static ProgressBar spinner;
+    public static ProgressDialog pd;
     private ArrayList<Room> arrayOfRooms = new ArrayList<Room>();
     public static ListView listView;
     public static RoomsAdapter adapter; //static makes this adapter accessible in the notifications handler
@@ -58,6 +62,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
     private FragmentManager fragmentManager;
     private Room room;
     private Toolbar toolbar;
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +71,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
 
         toolbar = (Toolbar) findViewById(R.id.personal_activity_toolbar);
         setSupportActionBar(toolbar);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.pd_coordinator_layout);
 
-        spinner = (ProgressBar)findViewById(R.id.spinner);
         settings = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
 
         // Create the adapter to convert the array to views
@@ -75,11 +80,20 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         // Attach the adapter to a ListView
          listView = (ListView) findViewById(R.id.rooms);
         listView.setAdapter(adapter);
-        adapter.add(new Room("Kitchen"));
+        /*
+        FOR TESTING
+         */
+//        adapter.add(new Room("Kitchen"));
+//        adapter.add(new Room("Sitting room"));
+//        adapter.add(new Room("Garden"));
+//        adapter.add(new Room("Bedroom"));
         handleListViewItemClick();
-        //getSecurityDevices();
-        spinner.setVisibility(View.GONE);
-        listView.setVisibility(View.VISIBLE);
+        getSecurityDevices();
+        /*
+        FOR TESTING
+         */
+//        spinner.setVisibility(View.GONE);
+//        listView.setVisibility(View.VISIBLE);
 
         frag = (CommandControlsFragment) getFragmentManager().findFragmentByTag("frag");
         if(frag != null)
@@ -90,6 +104,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
 
     public void getSecurityDevices() //retrieve security devices linked to this account
     {
+        pd = ProgressDialog.show(this, "Retrieving Security Devices",
+                "Please Wait..", true);
         adapter.clear();
         userID = settings.getString("userId",null); //default value is null
         if(userID != null) //send message to all devices linked to this account
@@ -104,6 +120,17 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         }
         else
             System.out.println("USERID IS NULL");
+
+
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+               if(adapter.isEmpty()) //if no devices have been found
+               {
+                   pd.dismiss();
+                   displaySnackbar();
+               }
+            }
+        }, 20000); //after 20 seconds prompt the user to try search for security devices again
 
     }
 
@@ -129,7 +156,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
                     frag.setArguments(bundle);
                     fragmentTransaction.add(R.id.command_controls_fragment_container, frag, "frag");
                     fragmentTransaction.commit();
-                    toolbar.setTitle(room.getRoomName());
+                    String[] roomName = room.getRoomName().split("@"); //get room name without UUID
+                    toolbar.setTitle(roomName[0]);
                 }
                 else
                 {
@@ -143,6 +171,23 @@ public class PersonalDeviceActivity extends ActionBarActivity {
     }
 
 
+    public void displaySnackbar() //Notify the user that no security devices were found and allow them to retry
+    {
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, "Failed to find any security devices", Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        getSecurityDevices();
+                    }
+                });
+
+        snackbar.setActionTextColor(Color.GREEN);
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.parseColor("#0288D1"));
+        snackbar.show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -216,7 +261,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
                  viewHolder = (ViewHolder) convertView.getTag();
              }
              // Populate the data into the template view using the data object
-             viewHolder.name.setText(room.getRoomName());
+             String[] roomName = room.getRoomName().split("@"); //get room name without
+             viewHolder.name.setText(roomName[0]);
 
              // Return the completed view to render on screen
              return convertView;

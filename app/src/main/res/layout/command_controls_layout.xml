@@ -121,6 +121,10 @@
         android:layout_gravity="center_horizontal"
         android:text="@string/back"
         android:onClick="back"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@color/ColorPrimary"
+        android:textColor="#ffffff"
         android:layout_marginTop="20dp"
     />
 </LinearLayout>

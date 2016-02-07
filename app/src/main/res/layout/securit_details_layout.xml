@@ -49,14 +49,18 @@
         <Button
             android:id="@+id/cancelButton"
             android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:layout_weight="1.0"
+            android:background="@color/Red"
+            android:textColor="#ffffff"
             android:onClick="cancelDetails"/>
 
         <Button
             android:id="@+id/saveButton"
             android:layout_width="0.0dip" android:layout_height="fill_parent"
-            android:text="Save"
+            android:text="@string/save"
+            android:background="@color/ColorPrimary"
+            android:textColor="#ffffff"
             android:layout_weight="1.0" />
 
     </LinearLayout>

@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.UUID;
+
 /**
  * Created by Robbie on 11/11/2015.
  */
@@ -58,7 +60,10 @@ public class SecurityDetailsFragment  extends Fragment {
         else
         {
             Intent it = new Intent(getActivity(),CameraActivity.class);
-            it.putExtra("roomName", roomName.getText().toString().trim()); //send the name of the room to the camera activity
+            //UUID only uses the following characters abcdefABCDEF1234567890-
+            //inserting an @ symbol will allow me to seperate the room name and UUID
+            it.putExtra("roomName", roomName.getText().toString().trim()
+                    + "@" + UUID.randomUUID().toString()); //send the name and the UUID of the room to the camera activity
             startActivity(it);                                      //camera activity will save it to shared preferences
         }
     }

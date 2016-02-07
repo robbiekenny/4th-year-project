@@ -4,4 +4,5 @@
     <color name="ColorPrimaryDark">#01579B</color>
 
     <color name="SecurityGreen">#43A047</color>
+    <color name="Red">#D32F2F</color>
 </resources>

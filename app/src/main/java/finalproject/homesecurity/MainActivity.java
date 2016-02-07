@@ -112,12 +112,12 @@ public class MainActivity extends ActionBarActivity {
         {
             gcmReg = new GCMRegistration();
 
-//            try { //Disabled because notification hubs costs loads
-//                gcmReg.registerClientForGCM(registerClient,user,this,gcm);
-//            } catch (UnsupportedEncodingException e) {
-//                System.out.println("FAILED TO REGISTER FOR GCM");
-//                e.printStackTrace();
-//            }
+            try {
+                gcmReg.registerClientForGCM(registerClient,user,this,gcm);
+            } catch (UnsupportedEncodingException e) {
+                System.out.println("FAILED TO REGISTER FOR GCM");
+                e.printStackTrace();
+            }
             Intent intent = new Intent(this,DecisionActivity.class);
             startActivity(intent);
             finish();

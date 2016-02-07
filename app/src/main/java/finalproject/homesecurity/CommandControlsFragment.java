@@ -43,14 +43,14 @@ public class CommandControlsFragment extends Fragment {
                     lightsOn = false;
                     lights.setImageResource(R.drawable.lighton);
                     lightText.setText(R.string.lighton);
-                    //disableFlashLight();
+                    disableFlashLight();
                 }
                 else
                 {
                     lightsOn = true;
                     lights.setImageResource(R.drawable.lightoff);
                     lightText.setText(R.string.lightoff);
-                    //enableFlashLight();
+                    enableFlashLight();
                 }
             }
         });
@@ -64,14 +64,14 @@ public class CommandControlsFragment extends Fragment {
                     motionOn = false;
                     motion.setImageResource(R.drawable.motion_on);
                     motionText.setText(R.string.mdon);
-                    //disableMotion();
+                    disableMotion();
                 }
                 else
                 {
                     motionOn = true;
                     motion.setImageResource(R.drawable.motion_off);
                     motionText.setText(R.string.mdoff);
-                    //enableMotion();
+                    enableMotion();
                 }
             }
         });

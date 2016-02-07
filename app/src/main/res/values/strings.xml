@@ -19,12 +19,13 @@
     <string name="lightoff">Light Off</string>
     <string name="mdon">Motion Detection On</string>
     <string name="mdoff">Motion Detection Off</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 
     <string name="start">Start/Stop Streaming</string>
     <string name="flash">Flash</string>
     <string name="camera">Camera</string>
     <string name="video">Video Settings</string>
-    <string name="save">OK</string>
     <string name="username">Username</string>
 
     <string name="uri">URI</string>

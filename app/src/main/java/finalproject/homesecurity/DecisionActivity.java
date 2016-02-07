@@ -51,8 +51,8 @@ public class DecisionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.decision_activity);
-//        toolbar = (Toolbar) findViewById(R.id.tool_bar2);
-//        setSupportActionBar(toolbar);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar2);
+        setSupportActionBar(toolbar);
 
         sharedPrefs = getSharedPreferences("DontShowAgain", Context.MODE_PRIVATE); //save dont show me again value
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
@@ -206,7 +206,7 @@ public class DecisionActivity extends ActionBarActivity {
         }
     }
 
-    public void cancelDetails(View v) //remove fragment
+    public void cancelDetails(View v) //remove SecurityDetailsFragment from view and make other elements visible again
     {
         fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
