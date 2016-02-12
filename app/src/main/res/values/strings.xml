@@ -21,6 +21,10 @@
     <string name="mdoff">Motion Detection Off</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="first_login_text">Monitor Your Home</string>
+    <string name="second_login_text">With</string>
+    <string name="first_register_text">Give Yourself Peace</string>
+    <string name="second_register_text">Of Mind With</string>
 
     <string name="start">Start/Stop Streaming</string>
     <string name="flash">Flash</string>

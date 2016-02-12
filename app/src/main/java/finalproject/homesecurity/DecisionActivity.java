@@ -30,9 +30,6 @@ import android.widget.Toast;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 
-import finalproject.homesecurity.Utils.CleanUserId;
-import finalproject.homesecurity.Utils.SendMessage;
-
 /**
  * Created by Robbie on 13/08/2015.
  */
@@ -51,6 +48,7 @@ public class DecisionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.decision_activity);
+        //http://www.android4devs.com/2014/12/how-to-make-material-design-app.html
         toolbar = (Toolbar) findViewById(R.id.tool_bar2);
         setSupportActionBar(toolbar);
 
@@ -138,30 +136,30 @@ public class DecisionActivity extends ActionBarActivity {
     public void security(View v)
     {
         System.out.println("security method called");
-        if(sharedPref.getBoolean("verified",false) == false)
-        {
-            displaySnackbar();
-        }
-        else {
-            securityLayout.setVisibility(View.INVISIBLE);
-        personalLayout.setVisibility(View.INVISIBLE);
-
-        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
-        if(frag == null)
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            frag = new SecurityDetailsFragment();
-            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
-            fragmentTransaction.commit();
-        }
-        else
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.security_details_fragment_container, frag);
-            ft.commit();
-        }
+//        if(sharedPref.getBoolean("verified",false) == false)
+//        {
+//            displaySnackbar();
+//        }
+//        else {
+//            securityLayout.setVisibility(View.INVISIBLE);
+//        personalLayout.setVisibility(View.INVISIBLE);
+//
+//        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
+//        if(frag == null)
+//        {
+//            fragmentManager = getFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            frag = new SecurityDetailsFragment();
+//            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
+//            fragmentTransaction.commit();
+//        }
+//        else
+//        {
+//            fragmentManager = getFragmentManager();
+//            FragmentTransaction ft = fragmentManager.beginTransaction();
+//            ft.replace(R.id.security_details_fragment_container, frag);
+//            ft.commit();
+//        }
         /*
         TESTING STREAMING FUNCTIONALITY
          */
@@ -173,7 +171,12 @@ public class DecisionActivity extends ActionBarActivity {
          */
 //            Intent intent = new Intent(this,CameraActivity.class);
 //            startActivity(intent);
-        }
+        /*
+        TESTING VIDEO RECORDING FUNCTIONALITY
+        */
+            Intent intent = new Intent(this,RecordVideoActivity.class);
+            startActivity(intent);
+//        }
     }
 
     public void personal(View v)
@@ -191,19 +194,6 @@ public class DecisionActivity extends ActionBarActivity {
             startActivity(it);
         }
 
-    }
-
-    /** Check if this device has a camera
-     * this method is used at runtime to determine if there is a camera but ideally i'd like to know before this.
-     * investigate further to determine what i can do if i already know the device doesnt have a camera*/
-    private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
     }
 
     public void cancelDetails(View v) //remove SecurityDetailsFragment from view and make other elements visible again

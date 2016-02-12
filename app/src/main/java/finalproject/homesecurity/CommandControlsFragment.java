@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import java.io.IOException;
 
-import finalproject.homesecurity.Utils.CleanUserId;
 import finalproject.homesecurity.Utils.SendMessage;
 
 /**
@@ -82,7 +81,7 @@ public class CommandControlsFragment extends Fragment {
     private void disableFlashLight() {
         try {
             //room name needs to be unique behind the scenes
-            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "LightsOff" + roomName);
+            SendMessage.sendPush("gcm", userID, "LightsOff" + roomName);
             System.out.println("SENT PUSH TO TURN Lights OFF");
         } catch (IOException e) {
             e.printStackTrace();
@@ -92,7 +91,7 @@ public class CommandControlsFragment extends Fragment {
 
     private void enableFlashLight() {
         try {
-            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "LightsOn" + roomName);
+            SendMessage.sendPush("gcm", userID, "LightsOn" + roomName);
             System.out.println("SENT PUSH TO TURN Lights ON");
         } catch (IOException e) {
             e.printStackTrace();
@@ -102,7 +101,7 @@ public class CommandControlsFragment extends Fragment {
 
     private void enableMotion() {
         try {
-            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "MotionOn" + roomName);
+            SendMessage.sendPush("gcm", userID, "MotionOn" + roomName);
             System.out.println("SENT PUSH TO TURN Motion ON");
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,7 +111,7 @@ public class CommandControlsFragment extends Fragment {
 
     private void disableMotion() {
         try {
-            SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "MotionOff" + roomName);
+            SendMessage.sendPush("gcm", userID, "MotionOff" + roomName);
             System.out.println("SENT PUSH TO TURN Motion OFF");
         } catch (IOException e) {
             e.printStackTrace();

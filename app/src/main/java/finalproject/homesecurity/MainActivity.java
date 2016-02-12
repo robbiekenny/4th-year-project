@@ -58,11 +58,8 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 
-import finalproject.homesecurity.Utils.CleanUserId;
 import finalproject.homesecurity.Utils.GCMRegistration;
-import finalproject.homesecurity.model.User;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -124,9 +121,9 @@ public class MainActivity extends ActionBarActivity {
         }
         else
         {
-            //http://www.android4devs.com/2014/12/how-to-make-material-design-app.html
-            toolbar = (Toolbar) findViewById(R.id.tool_bar);
-            setSupportActionBar(toolbar);
+
+//            toolbar = (Toolbar) findViewById(R.id.tool_bar);
+//            setSupportActionBar(toolbar);
             container = (FrameLayout) findViewById(R.id.fragment_container);
             loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
             if(loginFrag == null)

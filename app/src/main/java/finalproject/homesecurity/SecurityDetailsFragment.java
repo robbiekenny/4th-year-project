@@ -59,7 +59,7 @@ public class SecurityDetailsFragment  extends Fragment {
         }
         else
         {
-            Intent it = new Intent(getActivity(),CameraActivity.class);
+            Intent it = new Intent(getActivity(),MotionDetectionActivity.class);
             //UUID only uses the following characters abcdefABCDEF1234567890-
             //inserting an @ symbol will allow me to seperate the room name and UUID
             it.putExtra("roomName", roomName.getText().toString().trim()

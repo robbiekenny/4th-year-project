@@ -43,7 +43,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import finalproject.homesecurity.Utils.CleanUserId;
 import finalproject.homesecurity.Utils.SendMessage;
 import finalproject.homesecurity.model.Room;
 import finalproject.homesecurity.model.User;
@@ -112,7 +111,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         {
             System.out.println("GETTING SECURITY DEVICES");
             try {
-                SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID),"Retrieve");
+                SendMessage.sendPush("gcm", userID,"Retrieve");
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("ERROR SENDING PUSH FOR SECURITY DEVICE RETRIEVAL");

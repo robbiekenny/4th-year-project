@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="finalproject.homesecurity" >
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -52,7 +52,7 @@
         <!--<activity-->
             <!--android:name=".RecordActivity">-->
         <!--</activity>-->
-        <activity android:name=".CameraActivity"
+        <activity android:name=".MotionDetectionActivity"
             android:screenOrientation="portrait">
             <!-- configure this activity to use landscape orientation -->
         </activity>
@@ -65,6 +65,9 @@
         </activity>
         <activity
             android:name=".StreamingActivity">
+        </activity>
+        <activity
+            android:name=".RecordVideoActivity">
         </activity>
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=

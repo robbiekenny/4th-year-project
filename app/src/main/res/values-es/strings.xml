@@ -10,7 +10,6 @@
     <string name="signIn">Ingresar</string>
     <string name="createAccount">Crear una cuenta</string>
     <string name="forgotPassword"><u>Se te olvidó tu contraseña?</u></string>
-    <string name="facebook_app_id">943296682432023</string>
     <string name="device_activity_string">Por favor, elija si este dispositivo está siendo utilizado como un dispositivo de seguridad o un dispositivo personal . Los dispositivos de seguridad serán utilizados para vigilar su casa , mientras que los dispositivos personales son dispositivos que utilice de forma regular</string>
     <string name="security">Seguridad</string>
     <string name="personal">Personal</string>
@@ -22,4 +21,8 @@
     <string name="mdoff">el movimiento de la detección</string>
     <string name="save">Ahorrar</string>
     <string name="cancel">Cancelar</string>
+    <string name="first_login_text">Vigilar su casa</string>
+    <string name="second_login_text">Con</string>
+    <string name="first_register_text">Dése la Paz</string>
+    <string name="second_register_text">De la mente con</string>
 </resources>

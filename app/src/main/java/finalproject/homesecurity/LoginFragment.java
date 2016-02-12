@@ -69,14 +69,13 @@ import io.fabric.sdk.android.Fabric;
  */
 public class LoginFragment extends Fragment {
     private EditText email,password;
-    private Button signin;
+    private Button signin,signup;
     private ProgressDialog progress;
     private RegisterClient registerClient;
     private RegisterFragment frag;
     private GoogleCloudMessaging gcm;
     private FragmentManager fragmentManager;
     private GCMRegistration gcmReg; //responsible for invoking the registerClientForGCM method
-    private FloatingActionButton fab;
     private LoginButton loginButton;
     private TwitterLoginButton twitterLoginButton;
     private CallbackManager callbackManager;
@@ -140,12 +139,11 @@ public class LoginFragment extends Fragment {
         });
 
 
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        signup = (Button) view.findViewById(R.id.signUp);
+        signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createAccount();
-                fab.hide();
             }
         });
         
@@ -244,40 +242,40 @@ public class LoginFragment extends Fragment {
 //        signInButton.setSize(SignInButton.SIZE_STANDARD);
 //        signInButton.setScopes(gso.getScopeArray());
 
-        twitterLoginButton = (TwitterLoginButton) view.findViewById(R.id.twitter_login_button);
-        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                Log.d("TwitterKit", "IN SUCCESS");
-                // The TwitterSession is also available through:
-                // Twitter.getInstance().core.getSessionManager().getActiveSession()
-                TwitterSession session = result.data;
-
-                TwitterAuthClient authClient = new TwitterAuthClient();
-                authClient.requestEmail(session, new Callback<String>() {
-                    @Override
-                    public void success(Result<String> result) {
-                        // Do something with the result, which provides the email address
-                        Log.d("TwitterKit", result.data.toString());
-                    }
-
-                    @Override
-                    public void failure(TwitterException exception) {
-                        // Do something on failure
-                        Log.d("TwitterKit", "FAILED" + exception.toString());
-                    }
-                });
-
-                // with your app's user model
-                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                Log.d("TwitterKit", "Login with Twitter failure", exception);
-            }
-        });
+//        twitterLoginButton = (TwitterLoginButton) view.findViewById(R.id.twitter_login_button);
+//        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+//            @Override
+//            public void success(Result<TwitterSession> result) {
+//                Log.d("TwitterKit", "IN SUCCESS");
+//                // The TwitterSession is also available through:
+//                // Twitter.getInstance().core.getSessionManager().getActiveSession()
+//                TwitterSession session = result.data;
+//
+//                TwitterAuthClient authClient = new TwitterAuthClient();
+//                authClient.requestEmail(session, new Callback<String>() {
+//                    @Override
+//                    public void success(Result<String> result) {
+//                        // Do something with the result, which provides the email address
+//                        Log.d("TwitterKit", result.data.toString());
+//                    }
+//
+//                    @Override
+//                    public void failure(TwitterException exception) {
+//                        // Do something on failure
+//                        Log.d("TwitterKit", "FAILED" + exception.toString());
+//                    }
+//                });
+//
+//                // with your app's user model
+//                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
+//                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void failure(TwitterException exception) {
+//                Log.d("TwitterKit", "Login with Twitter failure", exception);
+//            }
+//        });
 
 
         return view;

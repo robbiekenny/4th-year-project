@@ -41,7 +41,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-public class CameraActivity extends SensorsActivity {
+public class MotionDetectionActivity extends SensorsActivity {
     //https://github.com/phishman3579/android-motion-detection/tree/master/src/com/jwetherell/motion_detection
     private static final String TAG = "CameraActivity";
     private String email; //we use the users email in this activity so that we can send them an email if motion is detected
@@ -66,7 +66,7 @@ public class CameraActivity extends SensorsActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_activity_layout);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        con = CameraActivity.this;
+        con = MotionDetectionActivity.this;
         changeCamera = (ImageView) findViewById(R.id.changeCamera);
         preview = (SurfaceView) findViewById(R.id.preview);
         previewHolder = preview.getHolder();
@@ -195,13 +195,14 @@ public class CameraActivity extends SensorsActivity {
         detectMotion = motion;
     }
 
+    public static boolean getMotionDetection(){return detectMotion;}
 
     public static Camera getCamera() {
         return camera;
     }
 
     public static void setCamera(Camera camera) {
-        CameraActivity.camera = camera;
+        MotionDetectionActivity.camera = camera;
     }
 
     private PreviewCallback previewCallback = new PreviewCallback() {

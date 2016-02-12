@@ -9,10 +9,8 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;;import java.io.IOException;
-import java.security.Policy;
+import android.widget.Toast;
 
-import finalproject.homesecurity.Utils.CleanUserId;
 import finalproject.homesecurity.Utils.SendMessage;
 import finalproject.homesecurity.model.Room;
 
@@ -90,7 +88,7 @@ public class MyHandler extends NotificationsHandler {
                 Appended to each room name is the @ symbol and a UUID
                  */
                 try {
-                    SendMessage.sendPush("gcm", CleanUserId.RemoveSpecialCharacters(userID), "Details" + roomName);
+                    SendMessage.sendPush("gcm", userID, "Details" + roomName);
                     //Toast.makeText(ctx, "SENT", Toast.LENGTH_LONG);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -100,14 +98,14 @@ public class MyHandler extends NotificationsHandler {
         }
         else //these messages are device specific
         {
-            System.out.println("IN specific case" + "," + message);
-            System.out.println(message.substring(9, message.length()).equals(roomName));
-            System.out.println(message.substring(8, message.length()).equals(roomName));
-            System.out.println(message.substring(7, message.length()).equals(roomName));
-
-            System.out.println(message.substring(9, message.length()));
-            System.out.println(message.substring(8, message.length()));
-            System.out.println(message.substring(7, message.length()));
+//            System.out.println("IN specific case" + "," + message);
+//            System.out.println(message.substring(9, message.length()).equals(roomName));
+//            System.out.println(message.substring(8, message.length()).equals(roomName));
+//            System.out.println(message.substring(7, message.length()).equals(roomName));
+//
+//            System.out.println(message.substring(9, message.length()));
+//            System.out.println(message.substring(8, message.length()));
+//            System.out.println(message.substring(7, message.length()));
 
             if(message.substring(8, message.length()).equals(roomName) || message.substring(9, message.length()).equals(roomName)) {
             //find out whether or not this message is for this device
@@ -122,7 +120,7 @@ public class MyHandler extends NotificationsHandler {
              */
                 if (substringSecurityMessage.equals("MotionOn") || substringSecurityMessage.equals("LightsOn")) {
                     if (substringSecurityMessage.equals("MotionOn"))
-                        CameraActivity.setDetectMotion(true); //turn motion detection on WORKING
+                        MotionDetectionActivity.setDetectMotion(true); //turn motion detection on WORKING
                     else {
                         //turn flash light on
                 /*
@@ -134,11 +132,12 @@ public class MyHandler extends NotificationsHandler {
                         /*
                         No need to check if the camera is open, if the phone is listed as a security device the camera should alread be open
                          */
-                            CameraActivity.setDetectMotion(false); //ensure turning on the light doesnt trigger motion detection
-                            Camera.Parameters p = CameraActivity.getCamera().getParameters();
+                            //need to check if motion detection is already enabled
+                            //CameraActivity.setDetectMotion(false); //ensure turning on the light doesnt trigger motion detection
+                            Camera.Parameters p = MotionDetectionActivity.getCamera().getParameters();
                             p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                            CameraActivity.getCamera().setParameters(p);
-                            CameraActivity.setDetectMotion(true);
+                            MotionDetectionActivity.getCamera().setParameters(p);
+                            //CameraActivity.setDetectMotion(true);
                         } else {
                             System.out.println("DOESN'T SUPPORT FLASH LIGHT FUNCTION");
                         }
@@ -147,14 +146,14 @@ public class MyHandler extends NotificationsHandler {
                     substringSecurityMessage = message.substring(0, 9); //should produce either MotionOff or LightsOff
                     System.out.println(substringSecurityMessage);
                     if (substringSecurityMessage.equals("MotionOff"))
-                        CameraActivity.setDetectMotion(false); //turn motion detection off
+                        MotionDetectionActivity.setDetectMotion(false); //turn motion detection off
                     else if(substringSecurityMessage.equals("LightsOff")){ //needs to be else if not else
                         //turn flash light off
-                        CameraActivity.setDetectMotion(false);
-                        Camera.Parameters p = CameraActivity.getCamera().getParameters();
+                        //CameraActivity.setDetectMotion(false);
+                        Camera.Parameters p = MotionDetectionActivity.getCamera().getParameters();
                         p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                        CameraActivity.getCamera().setParameters(p);
-                        CameraActivity.setDetectMotion(true);
+                        MotionDetectionActivity.getCamera().setParameters(p);
+                        //CameraActivity.setDetectMotion(true);
                     }
                 }
             }

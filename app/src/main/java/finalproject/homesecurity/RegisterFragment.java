@@ -37,7 +37,7 @@ import finalproject.homesecurity.model.User;
  * Created by Robbie on 30/09/2015.
  */
 public class RegisterFragment extends Fragment {
-    private Button signup;
+    private Button signup,back;
     private FragmentManager fragmentManager;
     private RegisterFragment frag;
     private LoginFragment loginFrag;
@@ -51,10 +51,6 @@ public class RegisterFragment extends Fragment {
                 container, false);
 
         sharedPref = getActivity().getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
-
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
 
         regEmail = (EditText) view.findViewById(R.id.register_email);
         regPass = (EditText) view.findViewById(R.id.register_password);
@@ -93,6 +89,14 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 signUp();
+            }
+        });
+
+        back = (Button) view.findViewById(R.id.back_button);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goBack();
             }
         });
         return view;
@@ -172,7 +176,6 @@ public class RegisterFragment extends Fragment {
     public void goBack() { //gets rid of register fragment
         frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
         loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         if(frag != null)
         {
             fragmentManager = getFragmentManager();

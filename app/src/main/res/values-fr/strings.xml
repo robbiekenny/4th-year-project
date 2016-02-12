@@ -10,7 +10,6 @@
     <string name="signIn">Se Connecter</string>
     <string name="createAccount">Créer le Compte</string>
     <string name="forgotPassword"><u>Mot de Passe Oublié?</u></string>
-    <string name="facebook_app_id">943296682432023</string>
     <string name="device_activity_string">S\'il vous plaît choisir si cet appareil est utilisé comme un dispositif de sécurité ou un dispositif personnel . Les dispositifs de sécurité seront utilisés pour surveiller votre maison , tandis que les dispositifs personnels sont des appareils que vous utilisez sur une base régulière</string>
     <string name="security">Sécurité</string>
     <string name="personal">Personnel</string>
@@ -22,18 +21,8 @@
     <string name="mdoff">Détection de mouvement hors</string>
     <string name="save">Sauvegarder</string>
     <string name="cancel">Annuler</string>
-
-    <string name="start">Start/Stop Streaming</string>
-    <string name="flash">Flash</string>
-    <string name="camera">Camera</string>
-    <string name="video">Video Settings</string>
-    <string name="username">Username</string>
-
-    <string name="uri">URI</string>
-    <string name="password_hint">Leave empty if not needed</string>
-    <string name="username_hint">Leave empty if not needed</string>
-    <string name="default_bitrate">0 kbps</string>
-    <string name="default_stream">rtsp://40.127.139.63:1935/live/myStream</string>
-    <string name="username_text">robbie</string>
-    <string name="password_text"></string>
+    <string name="first_login_text">Surveiller votre maison</string>
+    <string name="second_login_text">Avec</string>
+    <string name="first_register_text">Donnez-vous la paix</string>
+    <string name="second_register_text">D\'esprit</string>
 </resources>
