@@ -14,7 +14,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:textColorHint="#ffffff"
-    android:textColor="#ffffff">
+    android:textColor="#ffffff"
+        android:theme="@style/TextLabel">
 
     <EditText
         android:layout_width="match_parent"
@@ -35,7 +36,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:textColorHint="#ffffff"
-        android:textColor="#ffffff">
+        android:textColor="#ffffff"
+        android:theme="@style/TextLabel">
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,41 +49,21 @@
         android:imeOptions="actionGo"/>
     </android.support.design.widget.TextInputLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:weightSum="1"
-        android:id="@+id/linLayout"
-        android:layout_below="@+id/register_passwordTextInput"
-        android:layout_alignLeft="@+id/register_passwordTextInput"
-        android:layout_alignStart="@+id/register_passwordTextInput"
-        android:layout_alignRight="@+id/register_passwordTextInput"
-        android:layout_alignEnd="@+id/register_passwordTextInput">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/back"
-            android:id="@+id/back_button"
-            android:layout_weight="0.5"
-            android:background="@drawable/transaprent_button"
-            android:textColor="#ffffff"
-            android:layout_marginRight="5dp"/>
-
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
             android:text="@string/createAccount"
             android:id="@+id/signup_button"
-            android:onClick="errorCheckingForSignup"
-            android:background="@drawable/transaprent_button"
+            android:background="#01579B"
             android:textColor="#ffffff"
-            android:layout_marginLeft="5dp"/>
+            android:layout_below="@+id/register_passwordTextInput"
+            android:layout_alignLeft="@+id/register_passwordTextInput"
+            android:layout_alignStart="@+id/register_passwordTextInput"
+            android:layout_alignRight="@+id/register_passwordTextInput"
+            android:layout_alignEnd="@+id/register_passwordTextInput"/>
 
 
-    </LinearLayout>
+
 
 </RelativeLayout>

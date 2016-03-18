@@ -1,27 +1,52 @@
 package finalproject.homesecurity;
 
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.provider.Settings;
+import android.provider.SyncStateContract;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
+import com.android.internal.http.multipart.MultipartEntity;
+import com.android.internal.http.multipart.Part;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.HttpMultipart;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,6 +65,8 @@ public class RecordVideoActivity extends Activity {
     private MediaRecorder mMediaRecorder;
     private boolean isRecording = false;
     public static final int MEDIA_TYPE_VIDEO = 2;
+    static String fileName = "/storage/emulated/0/Pictures/HomeSecurity/VID_20160217_102058.mp4";
+    private long totalSize = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,19 +98,26 @@ public class RecordVideoActivity extends Activity {
                             isRecording = false;
                         } else {
                             // initialize video camera
-                            if (prepareVideoRecorder()) {
-                                // Camera is available and unlocked, MediaRecorder is prepared,
-                                // now you can start recording
-                                mMediaRecorder.start();
-
-                                // inform the user that recording has started
-                                captureButton.setText("Stop");
-                                isRecording = true;
-                            } else {
-                                // prepare didn't work, release the camera
-                                releaseMediaRecorder();
+//                            if (prepareVideoRecorder()) {
+//                                // Camera is available and unlocked, MediaRecorder is prepared,
+//                                // now you can start recording
+//                                mMediaRecorder.start();
+//                                System.out.println("START RECORDING");
+//                                new Handler().postDelayed(new Runnable() {
+//                                    public void run() {
+//                                        new UploadVideoTask().execute(fileName);
+//                                    }
+//                                }, 31000);
+//                                // inform the user that recording has started
+//                                captureButton.setText("Stop");
+//                                isRecording = true;
+//                            } else {
+//                                // prepare didn't work, release the camera
+//                                releaseMediaRecorder();
                                 // inform user
-                            }
+
+                            new UploadVideoTask().execute(fileName);
+//                            }
                         }
                     }
                 }
@@ -103,7 +137,7 @@ public class RecordVideoActivity extends Activity {
     }
 
     private boolean prepareVideoRecorder(){
-
+        System.out.println("PREPARING RECORDER");
         //mCamera = getCameraInstance();
         mMediaRecorder = new MediaRecorder();
 
@@ -123,6 +157,7 @@ public class RecordVideoActivity extends Activity {
 
         //Max duration of 30 seconds
         mMediaRecorder.setMaxDuration(30000);
+        System.out.println("MAX DURATION IS SET");
 
         // Step 5: Set the preview output
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
@@ -172,6 +207,7 @@ public class RecordVideoActivity extends Activity {
 
     /** Create a File for saving an image or video */
     private static File getOutputMediaFile(int type){
+        System.out.println("CREATING FILE");
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
@@ -194,9 +230,182 @@ public class RecordVideoActivity extends Activity {
         if(type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "VID_"+ timeStamp + ".mp4");
+            System.out.println("FILE CREATED");
+             fileName = mediaStorageDir.getPath() + File.separator +
+                    "VID_"+ timeStamp + ".mp4";
+            //uploadFile();
         } else {
             return null;
         }
         return mediaFile;
     }
+
+    private class UploadVideoTask extends AsyncTask<String, Void, Void> {
+
+        protected Void doInBackground(String... filePath) {
+
+            uploadFile(filePath[0]);
+            return null;
+        }
+
+        public void uploadFile(String filePath)
+        {
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(Constants.UPLOADVIDEO_ENDPOINT);
+//            httppost.addHeader("ZUMO-API-VERSION","2.0.0" );
+//            httppost.addHeader("Content-Type", "multipart/form-data");
+//
+//
+//            try {
+//                AndroidMultipartEntity entity = new AndroidMultipartEntity(
+//                        new AndroidMultipartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+//                                System.out.println(num);
+//                            }
+//                        });
+//
+//                File sourceFile = new File(filePath);
+//
+//                if(sourceFile == null)
+//                    System.out.println("FILE IS NULL");
+//
+//                // Adding file data to http body
+//                entity.addPart("videoFile", new FileBody(sourceFile));
+//
+//                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    System.out.println("200 OK");
+//                } else {
+//                    System.out.println("Error occurred! Http Status Code: "
+//                            + statusCode);
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//               e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+
+            String response = "error";
+            Log.i("Image filename", filePath);
+            Log.i("url", Constants.UPLOADVIDEO_ENDPOINT);
+            HttpURLConnection connection = null;
+            DataOutputStream outputStream = null;
+            // DataInputStream inputStream = null;
+
+            String pathToOurFile = filePath;
+            String urlServer = Constants.UPLOADVIDEO_ENDPOINT;
+            String lineEnd = "\r\n";
+            String twoHyphens = "--";
+            String boundary = "*****";
+            DateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH:mm:ss");
+
+            int bytesRead, bytesAvailable, bufferSize;
+            byte[] buffer;
+            int maxBufferSize = 1 * 1024;
+            try {
+                FileInputStream fileInputStream = new FileInputStream(new File(
+                        pathToOurFile));
+
+                URL url = new URL(urlServer);
+                connection = (HttpURLConnection) url.openConnection();
+
+                // Allow Inputs & Outputs
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setUseCaches(false);
+                connection.setChunkedStreamingMode(1024);
+                // Enable POST method
+                connection.setRequestMethod("POST");
+
+                connection.setRequestProperty("Connection", "Keep-Alive");
+                connection.setRequestProperty("Content-Type",
+                        "multipart/form-data;boundary=" + boundary);
+                //connection.setRequestProperty("content-length", fileInputStream.available() + "");
+                connection.setRequestProperty("ZUMO-API-VERSION","2.0.0");
+
+                outputStream = new DataOutputStream(connection.getOutputStream());
+                outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+
+                String connstr = null;
+                connstr = "Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
+                        + pathToOurFile + "\"" + lineEnd;
+                Log.i("Connstr", connstr);
+
+                outputStream.writeBytes(connstr);
+                outputStream.writeBytes(lineEnd);
+
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                buffer = new byte[bufferSize];
+
+                // Read file
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                Log.e("Image length", bytesAvailable + "");
+                try {
+                    while (bytesRead > 0) {
+                        try {
+                            outputStream.write(buffer, 0, bufferSize);
+                        } catch (OutOfMemoryError e) {
+                            e.printStackTrace();
+                            response = "outofmemoryerror";
+                        }
+                        bytesAvailable = fileInputStream.available();
+                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response = "error";
+                }
+                outputStream.writeBytes(lineEnd);
+                outputStream.writeBytes(twoHyphens + boundary + twoHyphens
+                        + lineEnd);
+
+                // Responses from the server (code and message)
+                int serverResponseCode = connection.getResponseCode();
+                String serverResponseMessage = connection.getResponseMessage();
+                Log.i("Server Response Code ", "" + serverResponseCode);
+                Log.i("Server Response Message", serverResponseMessage);
+                Log.i("Server Response Message", connection.toString());
+
+                if (serverResponseCode == 200) {
+                    response = "true";
+                }
+
+                String CDate = null;
+                Date serverTime = new Date(connection.getDate());
+                try {
+                    CDate = df.format(serverTime);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("Date Exception", e.getMessage() + " Parse Exception");
+                }
+                Log.i("Server Response Time", CDate + "");
+
+                fileInputStream.close();
+                outputStream.flush();
+                outputStream.close();
+                outputStream = null;
+            } catch (Exception ex) {
+                // Exception handling
+                response = "error";
+                Log.e("Send file Exception", ex.getMessage() + "");
+                ex.printStackTrace();
+            }
+        }
+    }
+
 }

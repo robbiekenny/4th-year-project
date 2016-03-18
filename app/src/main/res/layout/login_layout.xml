@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:id="@+id/login_relLayout">
+    android:id="@+id/login_relLayout"
+    >
+
+
 
     <android.support.design.widget.TextInputLayout
     android:id="@+id/emailTextInput"
@@ -14,6 +22,7 @@
         android:layout_marginTop="20dp"
         android:textColorHint="#FFFFFF"
         android:textColor="#FFFFFF"
+        android:theme="@style/TextLabel"
         >
 
     <EditText
@@ -21,6 +30,7 @@
     android:layout_height="wrap_content"
     android:inputType="textEmailAddress"
     android:drawableLeft="@drawable/ic_person"
+        android:textColor="#ffffff"
     android:id="@+id/email"
     android:hint="@string/email"
      />
@@ -30,13 +40,14 @@
         android:id="@+id/passwordTextInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/emailTextInput"
-        android:layout_alignLeft="@+id/emailTextInput"
-        android:layout_alignStart="@+id/emailTextInput"
-        android:layout_alignRight="@+id/emailTextInput"
-        android:layout_alignEnd="@+id/emailTextInput"
-        android:textColorHint="#ffffff"
-        android:textColor="#ffffff">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@id/emailTextInput"
+        android:layout_centerHorizontal="true"
+        android:textColorHint="#FFFFFF"
+        android:textColor="#FFFFFF"
+android:theme="@style/TextLabel"
+        >
 
         <EditText
             android:layout_width="match_parent"
@@ -47,50 +58,41 @@
             android:drawableLeft="@drawable/ic_lock"
             android:drawableEnd="@drawable/ic_visibility"
             android:drawableRight="@drawable/ic_visibility"
-            android:layout_centerHorizontal="true"
             android:hint="@string/password"
             android:imeOptions="actionGo"
             />
     </android.support.design.widget.TextInputLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/signIn"
+        android:id="@+id/signIn"
+        android:layout_below="@+id/passwordTextInput"
+        android:background="#01579B"
+        android:textColor="#ffffff"
+        android:layout_alignLeft="@+id/passwordTextInput"
+        android:layout_alignStart="@+id/passwordTextInput"
+        android:layout_alignRight="@+id/passwordTextInput"
+        android:layout_alignEnd="@+id/passwordTextInput"
+        android:layout_marginTop="10dp"/>
 
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_below="@id/passwordTextInput"
-       android:layout_marginTop="20dp"
-       android:layout_alignRight="@+id/passwordTextInput"
-       android:layout_alignEnd="@+id/passwordTextInput"
-       android:weightSum="1"
-       android:id="@+id/linLayout"
-       android:layout_alignLeft="@+id/passwordTextInput"
-       android:layout_alignStart="@+id/passwordTextInput">
+
 
        <Button
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="@string/signIn"
-           android:id="@+id/signIn"
-           android:layout_weight="0.5"
-           android:layout_marginRight="5dp"
-           android:layout_below="@+id/passwordTextInput"
-           android:background="@drawable/transaprent_button"
-           android:textColor="#ffffff" />
-
-       <Button
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="Sign up"
-           android:layout_weight="0.5"
-           android:layout_marginLeft="5dp"
-           android:background="@drawable/transaprent_button"
-           android:textColor="#ffffff"
+           android:text="@string/register"
+           android:background="@drawable/button_with_border"
+           android:textColor="#000000"
            android:id="@+id/signUp"
-
+           android:layout_below="@+id/signIn"
+           android:layout_alignLeft="@+id/passwordTextInput"
+           android:layout_alignStart="@+id/passwordTextInput"
+           android:layout_alignRight="@+id/passwordTextInput"
+           android:layout_alignEnd="@+id/passwordTextInput"
             />
-
-   </LinearLayout>
 
 
 
@@ -98,11 +100,12 @@
         android:id="@+id/fb_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/linLayout"
-        android:layout_alignLeft="@+id/linLayout"
-        android:layout_alignStart="@+id/linLayout"
-        android:layout_alignRight="@+id/linLayout"
-        android:layout_alignEnd="@+id/linLayout" />
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/signUp"
+        android:layout_alignLeft="@+id/signUp"
+        android:layout_alignStart="@+id/signUp"
+        android:layout_alignRight="@+id/signUp"
+        android:layout_alignEnd="@+id/signUp" />
 
 </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

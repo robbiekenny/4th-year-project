@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
 import android.view.KeyEvent;
@@ -44,6 +45,7 @@ public class RegisterFragment extends Fragment {
     private EditText regEmail,regPass;
     private ProgressDialog progress;
     private SharedPreferences sharedPref;
+    private TextInputLayout emailTextInput,passwordTextInput;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -51,6 +53,9 @@ public class RegisterFragment extends Fragment {
                 container, false);
 
         sharedPref = getActivity().getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+
+        emailTextInput = (TextInputLayout) view.findViewById(R.id.register_emailTextInput);
+        passwordTextInput = (TextInputLayout) view.findViewById(R.id.register_passwordTextInput);
 
         regEmail = (EditText) view.findViewById(R.id.register_email);
         regPass = (EditText) view.findViewById(R.id.register_password);
@@ -92,13 +97,13 @@ public class RegisterFragment extends Fragment {
             }
         });
 
-        back = (Button) view.findViewById(R.id.back_button);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goBack();
-            }
-        });
+//        back = (Button) view.findViewById(R.id.back_button);
+//        back.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                goBack();
+//            }
+//        });
         return view;
     }
 
@@ -112,10 +117,14 @@ public class RegisterFragment extends Fragment {
             else
             {
                 if(!isValidEmail(regEmail.getText()))  //returns true if email is valid
-                    regEmail.setError("Invalid email address");
+                    emailTextInput.setError("Invalid email address");
+                else
+                    emailTextInput.setError(null);
 
                 if(!isValidPassword(regPass.getText().toString())) //returns true if password is valid
-                    regPass.setError("Invalid password\nPassword must be greater than 5 characters");
+                    passwordTextInput.setError("Invalid password\nPassword must be greater than 5 characters");
+                else
+                    passwordTextInput.setError(null);
             }
         }
 
@@ -173,19 +182,19 @@ public class RegisterFragment extends Fragment {
     }
 
 
-    public void goBack() { //gets rid of register fragment
-        frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
-        loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
-        if(frag != null)
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
-            fragmentTransaction.replace(R.id.fragment_container, loginFrag,"loginFrag");
-            //fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        }
-    }
+//    public void goBack() { //gets rid of register fragment
+//        frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
+//        loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
+//        if(frag != null)
+//        {
+//            fragmentManager = getFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            //fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
+//            fragmentTransaction.replace(R.id.fragment_container, loginFrag,"loginFrag");
+//            //fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+//        }
+//    }
 
 
     public boolean isValidPassword(String pass) //password must be greater than 5 characters

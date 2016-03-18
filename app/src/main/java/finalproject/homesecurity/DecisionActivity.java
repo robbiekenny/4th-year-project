@@ -169,7 +169,7 @@ public class DecisionActivity extends ActionBarActivity {
         /*
         TESTING SENDING PHOTO FUNCTIONALITY
          */
-//            Intent intent = new Intent(this,CameraActivity.class);
+//            Intent intent = new Intent(this,MotionDetectionActivity.class);
 //            startActivity(intent);
         /*
         TESTING VIDEO RECORDING FUNCTIONALITY

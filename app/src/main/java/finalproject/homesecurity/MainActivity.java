@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import android.widget.Button;
+import com.crashlytics.android.Crashlytics;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -72,19 +74,28 @@ public class MainActivity extends ActionBarActivity {
     private LoginFragment loginFrag;
     private FragmentManager fragmentManager;
     private FrameLayout container;
-    private ProgressDialog progress;
+    //private ProgressDialog progress;
     public static RegisterClient registerClient;
     public static GoogleCloudMessaging gcm;
     private Toolbar toolbar;
     private GCMRegistration gcmReg;
-    private TwitterLoginButton loginButton;
+//    private TwitterLoginButton loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(authConfig));
+        Fabric.with(this, new Crashlytics());
+//        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+//        Fabric.with(this, new Twitter(authConfig));
         setContentView(R.layout.activity_main);
+        // text view label
+        TextView title = (TextView) findViewById(R.id.textView2);
+
+        // Loading Font Face
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/Candice.ttf");
+
+        // Applying font
+        title.setTypeface(tf);
 
         try {
             mClient = new MobileServiceClient(
@@ -132,7 +143,7 @@ public class MainActivity extends ActionBarActivity {
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 loginFrag = new LoginFragment();
                 fragmentTransaction.add(R.id.fragment_container, loginFrag, "loginFrag");
-                fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
+                //fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
                 fragmentTransaction.commit();
             }
             else
@@ -140,7 +151,7 @@ public class MainActivity extends ActionBarActivity {
                 fragmentManager = getFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.fragment_container, loginFrag);
-                ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
+                //ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
                 ft.commit();
             }
 
@@ -159,7 +170,14 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -188,7 +206,7 @@ public class MainActivity extends ActionBarActivity {
             {
                 fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
+                //fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
                 fragmentTransaction.replace(R.id.fragment_container, loginFrag,"loginFrag");
                 //fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();

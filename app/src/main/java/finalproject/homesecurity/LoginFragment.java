@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,10 +80,12 @@ public class LoginFragment extends Fragment {
     private FragmentManager fragmentManager;
     private GCMRegistration gcmReg; //responsible for invoking the registerClientForGCM method
     private LoginButton loginButton;
-    private TwitterLoginButton twitterLoginButton;
+//    private TwitterLoginButton twitterLoginButton;
     private CallbackManager callbackManager;
     private SharedPreferences sharedPref;
-   // private GoogleApiClient mGoogleApiClient;
+    private boolean displayOptions = false;
+    private TextInputLayout emailTextInput,passwordTextInput;
+    // private GoogleApiClient mGoogleApiClient;
     //private static final int RC_SIGN_IN = 0;
 
     @Override
@@ -97,6 +102,10 @@ public class LoginFragment extends Fragment {
         gcm = MainActivity.gcm;
 
         gcmReg = new GCMRegistration();
+
+        emailTextInput = (TextInputLayout) view.findViewById(R.id.emailTextInput);
+        passwordTextInput = (TextInputLayout) view.findViewById(R.id.passwordTextInput);
+
 
         email = (EditText) view.findViewById(R.id.email);
         password = (EditText) view.findViewById(R.id.password);
@@ -139,6 +148,8 @@ public class LoginFragment extends Fragment {
         });
 
 
+
+
         signup = (Button) view.findViewById(R.id.signUp);
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +157,7 @@ public class LoginFragment extends Fragment {
                 createAccount();
             }
         });
-        
+
         //Facebook Login
         loginButton = (LoginButton) view.findViewById(R.id.fb_login_button);
         loginButton.setReadPermissions("email");
@@ -308,10 +319,11 @@ public class LoginFragment extends Fragment {
 
         if(requestCode == 64206)
             callbackManager.onActivityResult(requestCode, resultCode, data);
-        else
-            twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+        //else
+            //twitterLoginButton.onActivityResult(requestCode, resultCode, data);
 
     }
+
 
 //    private void handleSignInResult(GoogleSignInResult result) {
 //        Log.d("GOOGLE LOG IN", "handleSignInResult:" + result.isSuccess());
@@ -331,18 +343,18 @@ public class LoginFragment extends Fragment {
         {
             fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
+            //fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
             frag = new RegisterFragment();
             fragmentTransaction.replace(R.id.fragment_container, frag, "frag");
-            //fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
+            fragmentTransaction.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
             fragmentTransaction.commit();
         }
         else
         {
             fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
-            ft.replace(R.id.fragment_container, frag);
+            //ft.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
+            ft.replace(R.id.fragment_container, frag,"frag");
             //ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
             ft.commit();
         }
@@ -355,11 +367,17 @@ public class LoginFragment extends Fragment {
         else
         {
             if(!isValidEmail(email.getText().toString()))
-                email.setError("Valid email required");
+                emailTextInput.setError("Valid email required");
+            else
+                emailTextInput.setError(null);
             if(!isValidPassword(password.getText().toString()))
-                password.setError("Password must be greater than 5 characters");
+                passwordTextInput.setError("Password must be greater than 5 characters");
+            else
+                passwordTextInput.setError(null);
+
         }
     }
+
 
     public boolean isValidPassword(String pass) //password must be greater than 5 characters
     {

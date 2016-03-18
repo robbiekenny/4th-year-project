@@ -15,25 +15,23 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fillViewport="true"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:isScrollContainer="false">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/burglar2"
-        android:scaleType="centerCrop"/>
+    android:layout_height="fill_parent"
+    android:background="@drawable/burglar2">
 
     <View
         android:id="@+id/title"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#000000"
-        android:alpha="0.8" />
+        android:alpha="0.79"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,7 +43,8 @@
         android:id="@+id/textView2"
         android:layout_marginTop="58dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        />
 
 
     <FrameLayout
@@ -57,5 +56,6 @@
         ></FrameLayout>
 
 </RelativeLayout>
+</LinearLayout>
         </ScrollView>
     </LinearLayout>

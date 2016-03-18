@@ -8,6 +8,8 @@
     <string name="password">Password</string>
     <string name="signIn">Sign In</string>
     <string name="createAccount">Create Account</string>
+    <string name="register">Register</string>
+
     <string name="forgotPassword"><u>Forgot password?</u></string>
     <string name="facebook_app_id">943296682432023</string>
     <string name="device_activity_string">Please choose whether this device is being used as a security device or a personal device. Security devices will be used to monitor your home, while personal devices are devices you use on a regular basis</string>
@@ -39,4 +41,18 @@
     <string name="default_stream">rtsp://40.127.139.63:1935/live/myStream</string>
     <string name="username_text">robbie</string>
     <string name="password_text"></string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 </resources>
