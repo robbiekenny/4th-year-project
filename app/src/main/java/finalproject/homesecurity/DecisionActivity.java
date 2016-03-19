@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,8 +37,10 @@ import com.facebook.login.LoginManager;
 public class DecisionActivity extends ActionBarActivity {
     private SharedPreferences.Editor editor,edit; //edit is used for saving dont show me again, editor used for saving whether the device is security or personal
     private SecurityDetailsFragment frag;
+    private SecurityHelpFragment helpFrag;
+    private PersonalHelpFragment personalHelpFrag;
     private FragmentManager fragmentManager;
-    private RelativeLayout securityLayout,personalLayout;
+    private LinearLayout linearLayout;
     private TextView singedInAs;
     private Toolbar toolbar;
     private SharedPreferences sharedPref,sharedPrefs,prefs;
@@ -59,39 +62,75 @@ public class DecisionActivity extends ActionBarActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if(extras.getString("comingFrom").equals("registering"))
+            if(extras.getString("comingFrom").equals("registering")) //DISPLAY AMESSAGE TO THE USER INFORMING THEM THEY MUST VERIFY THEIR ACCOUNT
             {
                 registerDialog();
             }
         }
 
-
         if(sharedPrefs.getBoolean("showAgain",true) == true)
         {
             messageDialog();
         }
-
-
-        securityLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
-        personalLayout = (RelativeLayout) findViewById(R.id.relativeLayout2);
-
-        singedInAs = (TextView) findViewById(R.id.signedInAs);
-
-        String signedinas = singedInAs.getText().toString() + sharedPref.getString("userId",null);
-        singedInAs.setText(signedinas);
+        linearLayout = (LinearLayout) findViewById(R.id.linear_layout_decision);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+
+        //check if security details fragment was displayed
+        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
+        helpFrag = (SecurityHelpFragment) getFragmentManager().findFragmentByTag("helpFrag");
+        personalHelpFrag = (PersonalHelpFragment) getFragmentManager().findFragmentByTag("personalHelpFrag");
+
+        if(frag != null)
+            linearLayout.setVisibility(View.INVISIBLE);
+        else if(helpFrag != null)
+            linearLayout.setVisibility(View.INVISIBLE);
+        else if(personalHelpFrag != null)
+            linearLayout.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.logout_menu, menu);
+        getMenuInflater().inflate(R.menu.decision_activity__menu, menu);
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(true);
+        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
+        helpFrag = (SecurityHelpFragment) getFragmentManager().findFragmentByTag("helpFrag");
+        personalHelpFrag = (PersonalHelpFragment) getFragmentManager().findFragmentByTag("personalHelpFrag");
+        if(frag != null && frag.isVisible()) //remove SecurityDetailsFragment from view and make other elements visible again
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(frag);
+            fragmentTransaction.commit();
+
+            linearLayout.setVisibility(View.VISIBLE);
+        }
+        else if(helpFrag != null && helpFrag.isVisible())
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(helpFrag);
+            fragmentTransaction.commit();
+
+            linearLayout.setVisibility(View.VISIBLE);
+        }
+        else if(personalHelpFrag != null && personalHelpFrag.isVisible())
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(personalHelpFrag);
+            fragmentTransaction.commit();
+
+            linearLayout.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            moveTaskToBack(true);
+        }
     }
 
     @Override
@@ -129,6 +168,48 @@ public class DecisionActivity extends ActionBarActivity {
             finish();
             return true;
         }
+        else if(id == R.id.action_security)
+        {
+            linearLayout.setVisibility(View.INVISIBLE);
+
+            helpFrag = (SecurityHelpFragment) getFragmentManager().findFragmentByTag("helpFrag");
+            if(helpFrag == null)
+            {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                helpFrag = new SecurityHelpFragment();
+                fragmentTransaction.replace(R.id.security_details_fragment_container, helpFrag, "helpFrag");
+                fragmentTransaction.commit();
+            }
+            else
+            {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.security_details_fragment_container, helpFrag,"helpFrag");
+                ft.commit();
+            }
+        }
+        else //personal option
+        {
+            linearLayout.setVisibility(View.INVISIBLE);
+
+            personalHelpFrag = (PersonalHelpFragment) getFragmentManager().findFragmentByTag("personalHelpFrag");
+            if(personalHelpFrag == null)
+            {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                personalHelpFrag = new PersonalHelpFragment();
+                fragmentTransaction.replace(R.id.security_details_fragment_container, personalHelpFrag, "personalHelpFrag");
+                fragmentTransaction.commit();
+            }
+            else
+            {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.security_details_fragment_container, personalHelpFrag,"personalHelpFrag");
+                ft.commit();
+            }
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -136,30 +217,29 @@ public class DecisionActivity extends ActionBarActivity {
     public void security(View v)
     {
         System.out.println("security method called");
-//        if(sharedPref.getBoolean("verified",false) == false)
-//        {
-//            displaySnackbar();
-//        }
-//        else {
-//            securityLayout.setVisibility(View.INVISIBLE);
-//        personalLayout.setVisibility(View.INVISIBLE);
-//
-//        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
-//        if(frag == null)
-//        {
-//            fragmentManager = getFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            frag = new SecurityDetailsFragment();
-//            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
-//            fragmentTransaction.commit();
-//        }
-//        else
-//        {
-//            fragmentManager = getFragmentManager();
-//            FragmentTransaction ft = fragmentManager.beginTransaction();
-//            ft.replace(R.id.security_details_fragment_container, frag);
-//            ft.commit();
-//        }
+        if(sharedPref.getBoolean("verified",false) == false)
+        {
+            displaySnackbar();
+        }
+        else {
+            linearLayout.setVisibility(View.INVISIBLE);
+
+        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
+        if(frag == null)
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            frag = new SecurityDetailsFragment();
+            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
+            fragmentTransaction.commit();
+        }
+        else
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.replace(R.id.security_details_fragment_container, frag);
+            ft.commit();
+        }
         /*
         TESTING STREAMING FUNCTIONALITY
          */
@@ -174,9 +254,9 @@ public class DecisionActivity extends ActionBarActivity {
         /*
         TESTING VIDEO RECORDING FUNCTIONALITY
         */
-            Intent intent = new Intent(this,RecordVideoActivity.class);
-            startActivity(intent);
-//        }
+//            Intent intent = new Intent(this,RecordVideoActivity.class);
+//            startActivity(intent);
+        }
     }
 
     public void personal(View v)
@@ -196,19 +276,7 @@ public class DecisionActivity extends ActionBarActivity {
 
     }
 
-    public void cancelDetails(View v) //remove SecurityDetailsFragment from view and make other elements visible again
-    {
-        fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.remove(frag);
-        fragmentTransaction.commit();
-
-        securityLayout.setVisibility(View.VISIBLE);
-        personalLayout.setVisibility(View.VISIBLE);
-
-    }
-
-    public void messageDialog() //displays a dialog informaing them of the choice between security and personal
+    public void messageDialog() //displays a dialog informing them of the choice between security and personal
     {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();

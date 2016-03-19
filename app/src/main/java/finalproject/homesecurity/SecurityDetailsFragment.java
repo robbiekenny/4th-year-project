@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class SecurityDetailsFragment  extends Fragment {
     private EditText roomName;
     private CoordinatorLayout coordinatorLayout;
+    private TextInputLayout roomNameInputLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class SecurityDetailsFragment  extends Fragment {
 
         Button saveButton = (Button) view.findViewById(R.id.saveButton);
         roomName = (EditText) view.findViewById(R.id.roomNameInput);
+        roomNameInputLayout = (TextInputLayout) view.findViewById(R.id.roomNameTextInput);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,16 +52,12 @@ public class SecurityDetailsFragment  extends Fragment {
         System.out.println("Room name: " + roomName);
         if(roomName.getText().toString() == null || roomName.getText().toString().isEmpty())
         {
-            Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, "Room name cannot be empty", Snackbar.LENGTH_LONG);
-            View sbView = snackbar.getView();
-            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(Color.parseColor("#0288D1"));
-            snackbar.show();
+            roomNameInputLayout.setError("Room name cannot be empty");
             roomName.setText("");
         }
         else
         {
+            roomNameInputLayout.setError(null);
             Intent it = new Intent(getActivity(),MotionDetectionActivity.class);
             //UUID only uses the following characters abcdefABCDEF1234567890-
             //inserting an @ symbol will allow me to seperate the room name and UUID

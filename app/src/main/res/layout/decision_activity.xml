@@ -6,65 +6,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DecisionActivity">
-<RelativeLayout
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="#ffffff">
 
     <include
         android:id="@+id/tool_bar2"
         layout="@layout/tool_bar"
         ></include>
 
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Security Device"-->
-        <!--android:id="@+id/security"-->
-        <!--android:onClick="security"-->
-        <!--android:layout_below="@+id/personal"-->
-        <!--android:layout_alignLeft="@+id/textView"-->
-        <!--android:layout_alignStart="@+id/textView" />-->
+    <ScrollView
+        android:scrollbars="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true"
+        android:layout_weight="1"
+        android:layout_marginTop="58dp"
+        android:isScrollContainer="false">
+<RelativeLayout
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#ffffff">
 
 
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Personal Device"-->
-        <!--android:id="@+id/personal"-->
-        <!--android:onClick="personal"-->
-        <!--android:layout_below="@+id/security_textView"-->
-        <!--android:layout_alignRight="@+id/textView"-->
-        <!--android:layout_alignEnd="@+id/textView"-->
-        <!--android:layout_marginTop="73dp" />-->
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Signed in as: "
-        android:id="@+id/signedInAs"
-        android:layout_gravity="center"
-        android:layout_marginTop="293dp" />
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:id="@+id/linear_layout_decision">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="55dp"
-        android:paddingTop="20dp"
-        android:layout_marginLeft="57dp"
-        android:layout_marginStart="57dp"
-        android:id="@+id/relativeLayout"
-        android:layout_below="@+id/tool_bar2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_weight="0.5"
+        >
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:src="@drawable/ic_security"
-            app:layout_anchor="@id/relativeLayout"
             app:backgroundTint="@color/SecurityGreen"
             android:id="@+id/security"
             android:onClick="security"
@@ -78,25 +57,20 @@
             android:text="@string/security"
             android:id="@+id/security_textView"
             android:layout_below="@+id/security"
+            android:layout_centerHorizontal="true"
             />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="61dp"
-        android:layout_marginStart="61dp"
-        android:id="@+id/relativeLayout2"
-        android:layout_alignBottom="@+id/relativeLayout"
-        android:layout_toRightOf="@+id/relativeLayout"
-        android:layout_toEndOf="@+id/relativeLayout">
+        android:layout_weight="0.5">
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:src="@drawable/ic_account_circle"
-            app:layout_anchor="@id/relativeLayout2"
             app:backgroundTint="@color/ColorPrimary"
             android:id="@+id/personal"
             android:onClick="personal"
@@ -110,9 +84,10 @@
             android:text="@string/personal"
             android:id="@+id/personal_textView"
             android:layout_below="@+id/personal"
+            android:layout_centerHorizontal="true"
             />
     </RelativeLayout>
-
+</LinearLayout>
 
     <FrameLayout
         android:layout_width="fill_parent"
@@ -124,4 +99,5 @@
     </FrameLayout>
 
 </RelativeLayout>
+    </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

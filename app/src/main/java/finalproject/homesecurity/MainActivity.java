@@ -136,6 +136,7 @@ public class MainActivity extends ActionBarActivity {
 //            toolbar = (Toolbar) findViewById(R.id.tool_bar);
 //            setSupportActionBar(toolbar);
             container = (FrameLayout) findViewById(R.id.fragment_container);
+
             loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
             if(loginFrag == null)
             {
@@ -150,9 +151,19 @@ public class MainActivity extends ActionBarActivity {
             {
                 fragmentManager = getFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.replace(R.id.fragment_container, loginFrag);
-                //ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
-                ft.commit();
+
+                //CHECK TO SEE WHETHER THE USER WAS ON THE CREATE ACCOUNT PAGE
+                frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
+                if(frag != null) //DISPLAY REGISTER FRAG
+                {
+                    ft.replace(R.id.fragment_container, frag,"frag");
+                    ft.commit();
+                }
+                else {
+                    ft.replace(R.id.fragment_container, loginFrag);
+                    //ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
+                    ft.commit();
+                }
             }
 
         }

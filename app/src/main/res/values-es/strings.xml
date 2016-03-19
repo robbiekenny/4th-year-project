@@ -21,8 +21,12 @@
     <string name="mdoff">el movimiento de la detección</string>
     <string name="save">Ahorrar</string>
     <string name="cancel">Cancelar</string>
-    <string name="first_login_text">Vigilar su casa</string>
-    <string name="second_login_text">Con</string>
-    <string name="first_register_text">Dése la Paz</string>
-    <string name="second_register_text">De la mente con</string>
+    <string name="sign_out">Desconectar</string>
+
+    <string name="security_details_part1">Configurar el dispositivo como una cámara de seguridad se realiza en 2 pasos fáciles</string>
+    <string name="step1">Paso 1</string>
+    <string name="security_details_part2">Para empezar a configurar su dispositivo como una cámara de seguridad por favor seleccione el botón de seguridad se muestra por encima de un círculo rojo</string>
+    <string name="step2">Paso 2</string>
+    <string name="security_details_part3">A continuación, tenemos que proporcionar el nombre de la sala de esta cámara de seguridad se va a supervisar. El ejemplo anterior muestra una cámara de seguridad está configurado para una cocina . Para continuar con el nombre que ha elegido seleccionar el botón de guardar</string>
+    <string name="final_step">Eso es todo, el dispositivo ahora está registrado como dispositivo de seguridad. Ahora tendrá una vista de su cámara para que pueda colocarlo en un lugar ideal.</string>
 </resources>

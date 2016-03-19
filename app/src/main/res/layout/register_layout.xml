@@ -23,7 +23,8 @@
         android:inputType="textEmailAddress"
         android:id="@+id/register_email"
         android:drawableLeft="@drawable/ic_person"
-        android:hint="@string/email" />
+        android:hint="@string/email"
+        android:textColor="#ffffff"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -46,6 +47,7 @@
         android:drawableLeft="@drawable/ic_lock"
         android:drawableRight="@drawable/ic_visibility"
         android:hint="@string/password"
+        android:textColor="#ffffff"
         android:imeOptions="actionGo"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -55,7 +57,7 @@
             android:layout_height="wrap_content"
             android:text="@string/createAccount"
             android:id="@+id/signup_button"
-            android:background="#01579B"
+            android:background="@color/DarkBlue"
             android:textColor="#ffffff"
             android:layout_below="@+id/register_passwordTextInput"
             android:layout_alignLeft="@+id/register_passwordTextInput"

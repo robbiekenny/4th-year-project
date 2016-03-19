@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_security" android:title="@string/security"
+        android:orderInCategory="100" app:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/action_personal" android:title="@string/personal"
+        android:orderInCategory="200" app:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/action_signout" android:title="@string/sign_out"
+        android:orderInCategory="300" app:showAsAction="ifRoom">
+    </item>
+
+</menu>

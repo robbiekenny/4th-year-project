@@ -21,8 +21,13 @@
     <string name="mdoff">Détection de mouvement hors</string>
     <string name="save">Sauvegarder</string>
     <string name="cancel">Annuler</string>
-    <string name="first_login_text">Surveiller votre maison</string>
-    <string name="second_login_text">Avec</string>
-    <string name="first_register_text">Donnez-vous la paix</string>
-    <string name="second_register_text">D\'esprit</string>
+    <string name="sign_out">Se déconnecter</string>
+
+
+    <string name="security_details_part1">Configuration de votre appareil comme une caméra de sécurité se fait en 2 étapes faciles</string>
+    <string name="step1">Étape 1</string>
+    <string name="security_details_part2">Pour commencer la configuration de votre appareil comme une caméra de sécurité s\'il vous plaît sélectionner le bouton de sécurité ci-dessus entouré en rouge</string>
+    <string name="step2">Étape 2</string>
+    <string name="security_details_part3">Ensuite, nous devons fournir le nom de la salle de cette caméra de sécurité va suivre . L\'exemple ci-dessus montre une caméra de sécurité étant mis en place pour une cuisine. Pour poursuivre avec le nom que vous avez choisi de sélectionner le bouton Enregistrer</string>
+    <string name="final_step">Voilà, votre appareil est maintenant enregistré en tant que dispositif de sécurité . Vous aurez maintenant une vue de votre appareil photo de sorte que vous pouvez le placer dans un endroit idéal.</string>
 </resources>

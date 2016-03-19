@@ -9,7 +9,7 @@
     <string name="signIn">Sign In</string>
     <string name="createAccount">Create Account</string>
     <string name="register">Register</string>
-
+    <string name="sign_out">Sign Out</string>
     <string name="forgotPassword"><u>Forgot password?</u></string>
     <string name="facebook_app_id">943296682432023</string>
     <string name="device_activity_string">Please choose whether this device is being used as a security device or a personal device. Security devices will be used to monitor your home, while personal devices are devices you use on a regular basis</string>
@@ -23,10 +23,18 @@
     <string name="mdoff">Motion Detection Off</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-    <string name="first_login_text">Monitor Your Home</string>
-    <string name="second_login_text">With</string>
-    <string name="first_register_text">Give Yourself Peace</string>
-    <string name="second_register_text">Of Mind With</string>
+
+    <string name="security_details_part1">Setting up your device as a security camera is done in 2 easy steps</string>
+    <string name="step1">Step 1</string>
+    <string name="security_details_part2">To begin setting your device up as a security camera please select the security button shown above circled in red</string>
+    <string name="step2">Step 2</string>
+    <string name="security_details_part3">Next, we have to supply the name of the room this security camera is going to monitor. The above example shows a security camera being set up for a kitchen. To proceed with the name you\'ve chosen select the save button</string>
+    <string name="final_step">That\'s it, your device is now registered as a security device. You will now have a view of your camera so you can place it in an ideal spot.</string>
+
+    <string name="personal_details_part1">A personal device is the device you will use to control your security cameras. Enabling your device as a personal device is very simple as you will see below.</string>
+    <string name="personal_details_part2">To allow your device control your security cameras simply select the Personal button circled in red above</string>
+    <string name="personal_details_part3">Once you\'ve chosen the personal option your device will begin looking for security cameras you have set up. The below image shows what you can expect once you\'ve chosen the personal option.</string>
+    <string name="personal_details_part4">If any security devices are found then they will be presented to you in a list. If none are found then you will be given the option to search again</string>
 
     <string name="start">Start/Stop Streaming</string>
     <string name="flash">Flash</string>
@@ -42,17 +50,4 @@
     <string name="username_text">robbie</string>
     <string name="password_text"></string>
     <string name="title_activity_login">Sign in</string>
-
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
 </resources>
