@@ -217,45 +217,24 @@ public class DecisionActivity extends ActionBarActivity {
     public void security(View v)
     {
         System.out.println("security method called");
-        if(sharedPref.getBoolean("verified",false) == false)
-        {
+        if (sharedPref.getBoolean("verified", false) == false) {
             displaySnackbar();
-        }
-        else {
+        } else {
             linearLayout.setVisibility(View.INVISIBLE);
 
-        frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
-        if(frag == null)
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            frag = new SecurityDetailsFragment();
-            fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
-            fragmentTransaction.commit();
-        }
-        else
-        {
-            fragmentManager = getFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.security_details_fragment_container, frag);
-            ft.commit();
-        }
-        /*
-        TESTING STREAMING FUNCTIONALITY
-         */
-//        Intent intent = new Intent(this,RecordActivity.class);
-//        startActivity(intent);
-
-        /*
-        TESTING SENDING PHOTO FUNCTIONALITY
-         */
-//            Intent intent = new Intent(this,MotionDetectionActivity.class);
-//            startActivity(intent);
-        /*
-        TESTING VIDEO RECORDING FUNCTIONALITY
-        */
-//            Intent intent = new Intent(this,RecordVideoActivity.class);
-//            startActivity(intent);
+            frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
+            if (frag == null) {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                frag = new SecurityDetailsFragment();
+                fragmentTransaction.add(R.id.security_details_fragment_container, frag, "frag");
+                fragmentTransaction.commit();
+            } else {
+                fragmentManager = getFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.security_details_fragment_container, frag);
+                ft.commit();
+            }
         }
     }
 

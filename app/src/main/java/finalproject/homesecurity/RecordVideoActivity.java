@@ -1,6 +1,8 @@
 package finalproject.homesecurity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
@@ -8,137 +10,106 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileObserver;
 import android.os.Handler;
-import android.provider.Settings;
-import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.internal.http.multipart.MultipartEntity;
-import com.android.internal.http.multipart.Part;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.mime.HttpMultipart;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by Robbie on 12/02/2016.
  */
-public class RecordVideoActivity extends Activity {
+public class RecordVideoActivity extends Activity implements MediaRecorder.OnInfoListener {
 
     /*
     http://developer.android.com/guide/topics/media/camera.html
+    http://developer.android.com/training/basics/data-storage/files.html
      */
 
     private final String TAG = "RECORDVIDEO";
     private Camera mCamera;
     private CameraPreview mPreview;
     private MediaRecorder mMediaRecorder;
-    private boolean isRecording = false;
-    public static final int MEDIA_TYPE_VIDEO = 2;
-    static String fileName = "/storage/emulated/0/Pictures/HomeSecurity/VID_20160217_102058.mp4";
-    private long totalSize = 0;
+    private MyFileObserver fb;
+    private String filePath = "";
+    private SharedPreferences sharedPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_video_layout);
-
+        sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         // Create an instance of Camera
         mCamera = getCameraInstance();
 
-        // Create our Preview view and set it as the content of our activity.
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+        if (mCamera != null) {
+            // Create our Preview view and set it as the content of our activity.
+            mPreview = new CameraPreview(this, mCamera);
 
-        // Add a listener to the Capture button
-        final Button captureButton = (Button) findViewById(R.id.button_capture);
-        captureButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (isRecording) {
-                            // stop recording and release camera
-                            mMediaRecorder.stop();  // stop the recording
-                            releaseMediaRecorder(); // release the MediaRecorder object
-                            mCamera.lock();         // take camera access back from MediaRecorder
-
-                            // inform the user that recording has stopped
-                            captureButton.setText("Capture");
-                            isRecording = false;
-                        } else {
-                            // initialize video camera
-//                            if (prepareVideoRecorder()) {
-//                                // Camera is available and unlocked, MediaRecorder is prepared,
-//                                // now you can start recording
-//                                mMediaRecorder.start();
-//                                System.out.println("START RECORDING");
-//                                new Handler().postDelayed(new Runnable() {
-//                                    public void run() {
-//                                        new UploadVideoTask().execute(fileName);
-//                                    }
-//                                }, 31000);
-//                                // inform the user that recording has started
-//                                captureButton.setText("Stop");
-//                                isRecording = true;
-//                            } else {
-//                                // prepare didn't work, release the camera
-//                                releaseMediaRecorder();
-                                // inform user
-
-                            new UploadVideoTask().execute(fileName);
-//                            }
-                        }
+            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+            preview.addView(mPreview);
+            // initialize video camera
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    if (prepareVideoRecorder()) {
+                        // Camera is available and unlocked, MediaRecorder is prepared,
+                        // now you can start recording
+                        mMediaRecorder.start();
+                        System.out.println("START RECORDING");
+                        fb = new MyFileObserver(filePath, FileObserver.CLOSE_WRITE);
+                        fb.startWatching();
+                    } else {
+                        // prepare didn't work, release the camera
+                        System.out.println("NOT RECORDING");
+                        releaseMediaRecorder();
+                        // inform user
                     }
                 }
-        );
+            }, 1000);
+        } else {
+            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.recordLayoutContainer);
+
+            TextView message = new TextView(this);
+            message.setText(R.string.error_text);
+            message.setTextAppearance(this, android.R.style.TextAppearance_Large);
+
+            message.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            linearLayout.addView(message);
+        }
+
     }
 
-    /** A safe way to get an instance of the Camera object. */
-    public static Camera getCameraInstance(){
+    /**
+     * A safe way to get an instance of the Camera object.
+     */
+    public Camera getCameraInstance() {
         Camera c = null;
         try {
             c = Camera.open(); // attempt to get a Camera instance
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             // Camera is not available (in use or does not exist)
         }
         return c; // returns null if camera is unavailable
     }
 
-    private boolean prepareVideoRecorder(){
+    private boolean prepareVideoRecorder() {
         System.out.println("PREPARING RECORDER");
-        //mCamera = getCameraInstance();
         mMediaRecorder = new MediaRecorder();
 
         // Step 1: Unlock and set camera to MediaRecorder
@@ -153,11 +124,11 @@ public class RecordVideoActivity extends Activity {
         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
         // Step 4: Set output file
-        mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
+        mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
 
         //Max duration of 30 seconds
         mMediaRecorder.setMaxDuration(30000);
-        System.out.println("MAX DURATION IS SET");
+        mMediaRecorder.setOnInfoListener(this);
 
         // Step 5: Set the preview output
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
@@ -184,7 +155,7 @@ public class RecordVideoActivity extends Activity {
         releaseCamera();              // release the camera immediately on pause event
     }
 
-    private void releaseMediaRecorder(){
+    private void releaseMediaRecorder() {
         if (mMediaRecorder != null) {
             mMediaRecorder.reset();   // clear recorder configuration
             mMediaRecorder.release(); // release the recorder object
@@ -193,51 +164,94 @@ public class RecordVideoActivity extends Activity {
         }
     }
 
-    private void releaseCamera(){
-        if (mCamera != null){
+    private void releaseCamera() {
+        if (mCamera != null) {
             mCamera.release();        // release the camera for other applications
             mCamera = null;
         }
     }
 
-    /** Create a file Uri for saving an image or video */
-    private static Uri getOutputMediaFileUri(int type){
-        return Uri.fromFile(getOutputMediaFile(type));
+    /* Checks if external storage is available*/
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
-    /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type){
+    /**
+     * Create a File for saving a video
+     */
+    private File getOutputMediaFile() {
         System.out.println("CREATING FILE");
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "HomeSecurity");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
+        File mediaFile = null;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        /*
+        TRY TO SAVE THE FILE TO PUBLIC EXTERNAL STORAGE (E.G SD CARD) FIRST
+        IF THAT FAILS THEN TRY TO SAVE THE FILE TO INTERNAL STORAGE
+         */
+        if (isExternalStorageWritable()) {
 
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("HomeSecurity", "failed to create directory");
-                return null;
+            try {
+                File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_MOVIES), "HomeSecurity");
+
+                // Create the storage directory if it does not exist
+                if (!mediaStorageDir.exists()) {
+                    if (!mediaStorageDir.mkdirs()) {
+                        Log.d("HomeSecurity", "failed to create directory");
+                        return null;
+                    }
+                }
+
+                // Create a media file name
+                mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                        "VID_" + timeStamp + ".mp4");
+
+                System.out.println("FILE CREATED IN EXTERNAL STORAGE");
+
+                filePath = mediaStorageDir.getPath() + File.separator +
+                        "VID_" + timeStamp + ".mp4";
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.i("RECORDVIDEOACTIVITY", "Unable to create video");
+                try {
+                    //TRY CREQATE THE VIDEO IN INTERNAL STORAGE AS EXTERNAL STORAGE MAY NOT BE MOUNTED OR NOT ENOUGH SPACE
+                    mediaFile = new File(getApplicationContext().getFilesDir() + File.separator +
+                            "VID_" + timeStamp + ".mp4");
+                    filePath = getApplicationContext().getFilesDir() + File.separator +
+                            "VID_" + timeStamp + ".mp4";
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        } else //INTERNAL STORAGE
+        {
+            try {
+                mediaFile = new File(getApplicationContext().getFilesDir() + File.separator +
+                        "VID_" + timeStamp + ".mp4");
+                filePath = getApplicationContext().getFilesDir() + File.separator +
+                        "VID_" + timeStamp + ".mp4";
+                System.out.println("FILE CREATED IN INTERNAL STORAGE");
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
 
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-
-        if(type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
-            System.out.println("FILE CREATED");
-             fileName = mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4";
-            //uploadFile();
-        } else {
-            return null;
-        }
         return mediaFile;
+    }
+
+    @Override
+    public void onInfo(MediaRecorder mr, int what, int extra) {
+        if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+            Log.i(TAG, "Maximum Duration Reached");
+            mr.stop();
+           releaseMediaRecorder();
+            mCamera.lock();
+            fb.stopWatching();
+        }
     }
 
     private class UploadVideoTask extends AsyncTask<String, Void, Void> {
@@ -248,77 +262,33 @@ public class RecordVideoActivity extends Activity {
             return null;
         }
 
-        public void uploadFile(String filePath)
-        {
-//            HttpClient httpclient = new DefaultHttpClient();
-//            HttpPost httppost = new HttpPost(Constants.UPLOADVIDEO_ENDPOINT);
-//            httppost.addHeader("ZUMO-API-VERSION","2.0.0" );
-//            httppost.addHeader("Content-Type", "multipart/form-data");
-//
-//
-//            try {
-//                AndroidMultipartEntity entity = new AndroidMultipartEntity(
-//                        new AndroidMultipartEntity.ProgressListener() {
-//
-//                            @Override
-//                            public void transferred(long num) {
-//                                System.out.println(num);
-//                            }
-//                        });
-//
-//                File sourceFile = new File(filePath);
-//
-//                if(sourceFile == null)
-//                    System.out.println("FILE IS NULL");
-//
-//                // Adding file data to http body
-//                entity.addPart("videoFile", new FileBody(sourceFile));
-//
-//                totalSize = entity.getContentLength();
-//                httppost.setEntity(entity);
-//
-//                // Making server call
-//                HttpResponse response = httpclient.execute(httppost);
-//                HttpEntity r_entity = response.getEntity();
-//
-//                int statusCode = response.getStatusLine().getStatusCode();
-//                if (statusCode == 200) {
-//                    // Server response
-//                    System.out.println("200 OK");
-//                } else {
-//                    System.out.println("Error occurred! Http Status Code: "
-//                            + statusCode);
-//                }
-//
-//            } catch (ClientProtocolException e) {
-//               e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+        protected void onPostExecute(Void result) {
+            File file = new File(filePath);
+            boolean deleted = file.delete();
+            if (deleted)
+                System.out.println("DELETED");
+            finish();
+        }
 
-
-            String response = "error";
+        public void uploadFile(String filePath) {
             Log.i("Image filename", filePath);
             Log.i("url", Constants.UPLOADVIDEO_ENDPOINT);
             HttpURLConnection connection = null;
             DataOutputStream outputStream = null;
-            // DataInputStream inputStream = null;
 
-            String pathToOurFile = filePath;
             String urlServer = Constants.UPLOADVIDEO_ENDPOINT;
             String lineEnd = "\r\n";
             String twoHyphens = "--";
             String boundary = "*****";
-            DateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH:mm:ss");
 
             int bytesRead, bytesAvailable, bufferSize;
             byte[] buffer;
             int maxBufferSize = 1 * 1024;
             try {
                 FileInputStream fileInputStream = new FileInputStream(new File(
-                        pathToOurFile));
+                        filePath));
 
-                URL url = new URL(urlServer);
+                URL url = new URL(urlServer + "?email=" + sharedPref.getString("userId",null));
                 connection = (HttpURLConnection) url.openConnection();
 
                 // Allow Inputs & Outputs
@@ -332,16 +302,14 @@ public class RecordVideoActivity extends Activity {
                 connection.setRequestProperty("Connection", "Keep-Alive");
                 connection.setRequestProperty("Content-Type",
                         "multipart/form-data;boundary=" + boundary);
-                //connection.setRequestProperty("content-length", fileInputStream.available() + "");
-                connection.setRequestProperty("ZUMO-API-VERSION","2.0.0");
+                connection.setRequestProperty("ZUMO-API-VERSION", "2.0.0");
 
                 outputStream = new DataOutputStream(connection.getOutputStream());
                 outputStream.writeBytes(twoHyphens + boundary + lineEnd);
 
                 String connstr = null;
                 connstr = "Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
-                        + pathToOurFile + "\"" + lineEnd;
-                Log.i("Connstr", connstr);
+                        + filePath + "\"" + lineEnd;
 
                 outputStream.writeBytes(connstr);
                 outputStream.writeBytes(lineEnd);
@@ -360,7 +328,6 @@ public class RecordVideoActivity extends Activity {
                             outputStream.write(buffer, 0, bufferSize);
                         } catch (OutOfMemoryError e) {
                             e.printStackTrace();
-                            response = "outofmemoryerror";
                         }
                         bytesAvailable = fileInputStream.available();
                         bufferSize = Math.min(bytesAvailable, maxBufferSize);
@@ -368,32 +335,16 @@ public class RecordVideoActivity extends Activity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    response = "error";
                 }
                 outputStream.writeBytes(lineEnd);
                 outputStream.writeBytes(twoHyphens + boundary + twoHyphens
                         + lineEnd);
 
-                // Responses from the server (code and message)
-                int serverResponseCode = connection.getResponseCode();
-                String serverResponseMessage = connection.getResponseMessage();
-                Log.i("Server Response Code ", "" + serverResponseCode);
-                Log.i("Server Response Message", serverResponseMessage);
-                Log.i("Server Response Message", connection.toString());
+                Log.i("Server Response Code ", "" + connection.getResponseCode());
 
-                if (serverResponseCode == 200) {
-                    response = "true";
-                }
-
-                String CDate = null;
-                Date serverTime = new Date(connection.getDate());
-                try {
-                    CDate = df.format(serverTime);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e("Date Exception", e.getMessage() + " Parse Exception");
-                }
-                Log.i("Server Response Time", CDate + "");
+//                if (serverResponseCode == 200) {
+//
+//                }
 
                 fileInputStream.close();
                 outputStream.flush();
@@ -401,10 +352,29 @@ public class RecordVideoActivity extends Activity {
                 outputStream = null;
             } catch (Exception ex) {
                 // Exception handling
-                response = "error";
                 Log.e("Send file Exception", ex.getMessage() + "");
                 ex.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * THIS CLASS WILL BE USED TO CHECK WHEN A VIDEO RECORDING HAS STOPPED AND THE FILE IS READ TO USE
+     * http://stackoverflow.com/questions/7418446/how-to-know-when-mediarecorder-has-finished-writing-data-to-file
+     */
+    private class MyFileObserver extends FileObserver {
+        public MyFileObserver(String path, int mask) {
+            super(path, mask);
+        }
+
+        @Override
+        public void onEvent(int event, String path) {
+            if(event == FileObserver.CLOSE_WRITE)
+            {
+                System.out.println("HIYOOOOO");
+                new UploadVideoTask().execute(filePath);
+            }
+
         }
     }
 

@@ -70,7 +70,10 @@
             android:name=".PersonalDeviceActivity"
             android:theme="@style/NoActionBar"></activity>
         <activity android:name=".StreamingActivity"></activity>
-        <activity android:name=".RecordVideoActivity"></activity>
+        <activity
+            android:name=".RecordVideoActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"

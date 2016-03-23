@@ -50,4 +50,7 @@
     <string name="username_text">robbie</string>
     <string name="password_text"></string>
     <string name="title_activity_login">Sign in</string>
+
+    <!--YET TO CONVERT TO FR AND ES-->
+    <string name="error_text">Unable to access camera at this time</string>
 </resources>

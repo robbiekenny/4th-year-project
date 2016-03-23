@@ -115,7 +115,6 @@ public class MotionDetectionActivity extends SensorsActivity {
                 cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
             }
             camera = Camera.open(cameraID);
-            //Code snippet for this method from somewhere on android developers, i forget where
             camera.setDisplayOrientation(90);
             try {
                 //this step is critical or preview on new camera will no know where to render to
@@ -369,18 +368,14 @@ public class MotionDetectionActivity extends SensorsActivity {
 
                         Log.i(TAG, "Saving.. previous=" + previous + " original=" + original + " bitmap=" + bitmap);
                         Looper.prepare();
-                        System.out.println("SAVING IMAGE AND LAUNCHING ACTIVITY");
+                        System.out.println("SENDING IMAGE TO USER");
                         /*
                         MOTION HAS BEEN DETECTED AT THIS POINT
                         WE NOW HAVE AN IMAGE SHOWING WHAT HAS TRIGGERED THE MOTION DETECTION
                         SEND THIS TO A USER
                          */
-                            Intent intent = new Intent(con, Image.class);
-                            intent.putExtra("BitmapImage", original); //this will fail if image is too big
-                            con.startActivity(intent);
 
                         new SendPhotoToUser(email).execute(original);
-                        //new SavePhotoTask().execute(previous, original, bitmap);
                     } else {
                         Log.i(TAG, "Not taking picture because not enough time has passed since the creation of the Surface");
                     }
@@ -391,42 +386,11 @@ public class MotionDetectionActivity extends SensorsActivity {
             } finally {
                 processing.set(false);
             }
-            // Log.d(TAG, "END PROCESSING...");
-
             processing.set(false);
         }
     }
 
     ;
-
-//    private static final class SavePhotoTask extends AsyncTask<Bitmap, Integer, Integer> {
-//
-//        /**
-//         * {@inheritDoc}
-//         */
-//        @Override
-//        protected Integer doInBackground(Bitmap... data) {
-//            for (int i = 0; i < data.length; i++) {
-//                Bitmap bitmap = data[i];
-//                String name = String.valueOf(System.currentTimeMillis());
-//                if (bitmap != null) save(name, bitmap);
-//            }
-//            return 1;
-//        }
-//
-//        private void save(String name, Bitmap bitmap) {
-//            File photo = new File(Environment.getExternalStorageDirectory(), name + ".jpg");
-//            if (photo.exists()) photo.delete();
-//
-//            try {
-//                FileOutputStream fos = new FileOutputStream(photo.getPath());
-//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-//                fos.close();
-//            } catch (java.io.IOException e) {
-//                Log.e("PictureDemo", "Exception in photoCallback", e);
-//            }
-//        }
-//    }
 
     private static final class SendPhotoToUser extends AsyncTask<Bitmap, Void, Void> {
         private String user;
@@ -436,9 +400,6 @@ public class MotionDetectionActivity extends SensorsActivity {
             user = email;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         protected Void doInBackground(Bitmap... data) {
                 Bitmap bitmap = data[0];

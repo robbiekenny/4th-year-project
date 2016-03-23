@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -75,7 +76,26 @@ public class CommandControlsFragment extends Fragment {
             }
         });
 
+        Button vid = (Button) view.findViewById(R.id.videoButton);
+        vid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takeVideo();
+            }
+        });
+
         return view;
+    }
+
+    private void takeVideo() {
+        try {
+            //room name needs to be unique behind the scenes
+            SendMessage.sendPush("gcm", userID, "TakeVideo" + roomName);
+            System.out.println("SENT PUSH TO TAKE VIDEO");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR SENDING PUSH FROM LIST VIEW CLICK HANDLER");
+        }
     }
 
     private void disableFlashLight() {

@@ -133,6 +133,22 @@ public class PersonalDeviceActivity extends ActionBarActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        frag = (CommandControlsFragment) getFragmentManager().findFragmentByTag("frag");
+        if(frag != null && frag.isVisible()) //remove the fragment and make the listview visible again
+        {
+            fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(frag);
+            fragmentTransaction.commit();
+            toolbar.setTitle(R.string.app_name);
+            listView.setVisibility(View.VISIBLE);
+        }
+        else
+            super.onBackPressed();
+    }
+
     public void handleListViewItemClick()
     {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -212,16 +228,6 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void back(View v) //remove the fragment and make the listview visible again
-    {
-        fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.remove(frag);
-        fragmentTransaction.commit();
-        toolbar.setTitle(R.string.app_name);
-        listView.setVisibility(View.VISIBLE);
     }
 }
 /***************************************************************************************

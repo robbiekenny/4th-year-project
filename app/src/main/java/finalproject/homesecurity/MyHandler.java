@@ -3,6 +3,7 @@ package finalproject.homesecurity;
 import com.microsoft.windowsazure.notifications.NotificationsHandler;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -96,7 +97,7 @@ public class MyHandler extends NotificationsHandler {
                 }
             }
         }
-        else //these messages are device specific
+        else //these messages are device specific and messages are in the format [COMMAND][ROOMNAME]
         {
 //            System.out.println("IN specific case" + "," + message);
 //            System.out.println(message.substring(9, message.length()).equals(roomName));
@@ -110,14 +111,11 @@ public class MyHandler extends NotificationsHandler {
             if(message.substring(8, message.length()).equals(roomName) || message.substring(9, message.length()).equals(roomName)) {
             //find out whether or not this message is for this device
                 //by taking away either 8 or 9 letters from the message
-                //the reason its 7 or 9 is because everything after MotionOn or MotionOff is the room name and the UUID
+                //the reason its 8 or 9 is because everything after MotionOn or MotionOff is the room name and the UUID
 
                 substringSecurityMessage = message.substring(0, 8); //should produce either MotionOn or LightsOn
                 System.out.println(substringSecurityMessage);
-            /*
-            AFTER THIS PART I NEED TO CHECK IF THE MESSAGE IS FOR THIS DEVICE OR NOT BY CHECKING THE ROOM NAME
-            FOR NOW THOUGH THIS IS IGNORED
-             */
+
                 if (substringSecurityMessage.equals("MotionOn") || substringSecurityMessage.equals("LightsOn")) {
                     if (substringSecurityMessage.equals("MotionOn"))
                         MotionDetectionActivity.setDetectMotion(true); //turn motion detection on WORKING
@@ -154,6 +152,12 @@ public class MyHandler extends NotificationsHandler {
                         p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                         MotionDetectionActivity.getCamera().setParameters(p);
                         //CameraActivity.setDetectMotion(true);
+                    }
+                    else if(substringSecurityMessage.equals("TakeVideo")) //Record a 30 second video
+                    {
+                        Intent intent = new Intent(ctx,RecordVideoActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        ctx.startActivity(intent);
                     }
                 }
             }
