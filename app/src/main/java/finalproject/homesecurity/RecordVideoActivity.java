@@ -14,6 +14,7 @@ import android.os.FileObserver;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -51,6 +52,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_video_layout);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         // Create an instance of Camera
         mCamera = getCameraInstance();
@@ -371,7 +373,6 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
         public void onEvent(int event, String path) {
             if(event == FileObserver.CLOSE_WRITE)
             {
-                System.out.println("HIYOOOOO");
                 new UploadVideoTask().execute(filePath);
             }
 

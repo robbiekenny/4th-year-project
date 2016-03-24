@@ -20,9 +20,9 @@ import finalproject.homesecurity.Utils.SendMessage;
  */
 public class CommandControlsFragment extends Fragment {
     private String userID,roomName;
-    private ImageView lights,motion;
-    private boolean lightsOn = false,motionOn = false;
-    private TextView lightText,motionText;
+    private ImageView lights,motion,takeVideo;
+    private boolean lightsOn = false,motionOn = false,takingVideo = false;
+    private TextView lightText,motionText,takeVideoText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -33,6 +33,7 @@ public class CommandControlsFragment extends Fragment {
 
         lightText = (TextView) view.findViewById(R.id.lights_textView);
         motionText = (TextView) view.findViewById(R.id.motion_textView);
+        takeVideoText = (TextView) view.findViewById(R.id.takeVideo_textView);
 
         lights = (ImageView) view.findViewById(R.id.lights);
         lights.setOnClickListener(new View.OnClickListener() {
@@ -76,11 +77,20 @@ public class CommandControlsFragment extends Fragment {
             }
         });
 
-        Button vid = (Button) view.findViewById(R.id.videoButton);
-        vid.setOnClickListener(new View.OnClickListener() {
+        takeVideo = (ImageView) view.findViewById(R.id.takeVideo);
+        takeVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takeVideo();
+                if(takingVideo)
+                {
+
+                }
+                else
+                {
+                    takingVideo = true;
+                    takeVideoText.setText(R.string.takingVideoText);
+                    takeVideo();
+                }
             }
         });
 
@@ -89,7 +99,6 @@ public class CommandControlsFragment extends Fragment {
 
     private void takeVideo() {
         try {
-            //room name needs to be unique behind the scenes
             SendMessage.sendPush("gcm", userID, "TakeVideo" + roomName);
             System.out.println("SENT PUSH TO TAKE VIDEO");
         } catch (IOException e) {
@@ -100,7 +109,6 @@ public class CommandControlsFragment extends Fragment {
 
     private void disableFlashLight() {
         try {
-            //room name needs to be unique behind the scenes
             SendMessage.sendPush("gcm", userID, "LightsOff" + roomName);
             System.out.println("SENT PUSH TO TURN Lights OFF");
         } catch (IOException e) {

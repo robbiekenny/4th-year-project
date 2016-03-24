@@ -4,69 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-<LinearLayout
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/motionDetection"-->
-            <!--android:textSize="32dp"-->
-            <!--android:layout_weight="1"-->
-            <!--/>-->
-
-        <!--<Switch-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/motionDetectionSwitch"-->
-            <!--android:layout_gravity="right"/>-->
-    <!--</LinearLayout>-->
-
-    <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/flashLight"-->
-            <!--android:textSize="32dp"-->
-            <!--android:layout_weight="1"-->
-            <!--/>-->
-
-        <!--<Switch-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/flashlightSwitch"-->
-            <!--android:layout_gravity="right"/>-->
-    <!--</LinearLayout>-->
-
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/back"-->
-        <!--android:onClick="back"-->
-        <!--android:layout_marginTop="12dp"-->
-        <!--android:layout_gravity="center_horizontal" />-->
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="61dp"
-        android:layout_marginStart="61dp"
-        android:id="@+id/lightLayout"
-        android:layout_alignBottom="@+id/relativeLayout"
-        android:layout_toRightOf="@+id/relativeLayout"
-        android:layout_toEndOf="@+id/relativeLayout">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -74,8 +17,8 @@
             android:clickable="true"
             android:src="@drawable/lighton"
             android:id="@+id/lights"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_gravity="center"
+           />
 
         <TextView
             android:layout_width="wrap_content"
@@ -83,15 +26,25 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/lighton"
             android:id="@+id/lights_textView"
-            android:layout_below="@+id/lights"
+            android:layout_gravity="center"
             />
-    </RelativeLayout>
+    </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/motionLayout"
-        android:layout_marginLeft="50dp">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@android:color/darker_gray">
+
+    </View>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -99,8 +52,8 @@
             android:clickable="true"
             android:src="@drawable/motion_on"
             android:id="@+id/motion"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_gravity="center"
+             />
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,21 +61,41 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/mdon"
             android:id="@+id/motion_textView"
-            android:layout_below="@+id/motion"
-            android:gravity="center"
-            />
-    </RelativeLayout>
-</LinearLayout>
-    <Button
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/videoButton"
-        android:layout_gravity="center_horizontal"
-        android:text="Take video"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:background="@color/ColorPrimary"
-        android:textColor="#ffffff"
-        android:layout_marginTop="20dp"
-        />
+        android:layout_height="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@android:color/darker_gray">
+
+    </View>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@drawable/ic_camcorder"
+            android:id="@+id/takeVideo"
+            android:layout_gravity="center"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/takeVideoText"
+            android:id="@+id/takeVideo_textView"
+            android:layout_gravity="center" />
+    </LinearLayout>
 </LinearLayout>

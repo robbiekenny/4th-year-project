@@ -6,9 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".PersonalDeviceActivity">
 
+    <ScrollView
+        android:scrollbars="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true"
+        android:layout_weight="1"
+        android:isScrollContainer="false">
+
 <RelativeLayout
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/personalRelativeLayout">
 
     <include
         android:id="@+id/personal_activity_toolbar"
@@ -33,4 +42,5 @@
         android:layout_alignTop="@+id/rooms"></FrameLayout>
 
 </RelativeLayout>
+    </ScrollView>
     </android.support.design.widget.CoordinatorLayout>

@@ -94,8 +94,6 @@ public class SensorsActivity extends Activity implements SensorEventListener {
     @Override
     public void onStop() {
         super.onStop();
-
-
         try {
             try {
                 sensorMgr.unregisterListener(this, sensorGrav);

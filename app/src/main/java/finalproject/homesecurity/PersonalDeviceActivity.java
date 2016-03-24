@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -66,39 +68,36 @@ public class PersonalDeviceActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.personal_activity_layout);
+            setContentView(R.layout.personal_activity_layout);
 
-        toolbar = (Toolbar) findViewById(R.id.personal_activity_toolbar);
-        setSupportActionBar(toolbar);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.pd_coordinator_layout);
+            toolbar = (Toolbar) findViewById(R.id.personal_activity_toolbar);
+            setSupportActionBar(toolbar);
+            coordinatorLayout = (CoordinatorLayout) findViewById(R.id.pd_coordinator_layout);
 
-        settings = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+            settings = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
 
-        // Create the adapter to convert the array to views
-         adapter = new RoomsAdapter(this, arrayOfRooms);
-        // Attach the adapter to a ListView
-         listView = (ListView) findViewById(R.id.rooms);
-        listView.setAdapter(adapter);
+            // Create the adapter to convert the array to views
+            adapter = new RoomsAdapter(this, arrayOfRooms);
+            // Attach the adapter to a ListView
+            listView = (ListView) findViewById(R.id.rooms);
+            listView.setAdapter(adapter);
+
+            handleListViewItemClick();
+
+
         /*
         FOR TESTING
          */
-//        adapter.add(new Room("Kitchen"));
+        //adapter.add(new Room("Kitchen"));
 //        adapter.add(new Room("Sitting room"));
 //        adapter.add(new Room("Garden"));
 //        adapter.add(new Room("Bedroom"));
-        handleListViewItemClick();
-        getSecurityDevices();
         /*
         FOR TESTING
          */
 //        spinner.setVisibility(View.GONE);
 //        listView.setVisibility(View.VISIBLE);
-
-        frag = (CommandControlsFragment) getFragmentManager().findFragmentByTag("frag");
-        if(frag != null)
-        {
-            listView.setVisibility(View.INVISIBLE);
-        }
+        getSecurityDevices();
     }
 
     public void getSecurityDevices() //retrieve security devices linked to this account
@@ -132,6 +131,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         }, 20000); //after 20 seconds prompt the user to try search for security devices again
 
     }
+
+
 
     @Override
     public void onBackPressed() {

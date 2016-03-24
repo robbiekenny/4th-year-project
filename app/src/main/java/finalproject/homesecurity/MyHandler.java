@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -127,31 +128,54 @@ public class MyHandler extends NotificationsHandler {
                         if (ctx.getPackageManager().hasSystemFeature( //WORKING ON MY DEVICE
                                 PackageManager.FEATURE_CAMERA_FLASH)) { //if this device has a flash light
                             System.out.println("SUPPORTS FLASH LIGHT FUNCTION");
-                        /*
-                        No need to check if the camera is open, if the phone is listed as a security device the camera should alread be open
-                         */
                             //need to check if motion detection is already enabled
-                            //CameraActivity.setDetectMotion(false); //ensure turning on the light doesnt trigger motion detection
+                            //if it is set it to false and set it back to true once the light has been turned on
+                            int motion = 0;
+                            if(MotionDetectionActivity.getMotionDetection()) {
+                                motion = 1;
+                                MotionDetectionActivity.setDetectMotion(false);
+                            }
+
                             Camera.Parameters p = MotionDetectionActivity.getCamera().getParameters();
                             p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                             MotionDetectionActivity.getCamera().setParameters(p);
-                            //CameraActivity.setDetectMotion(true);
+
+                            if(motion == 1) {
+                                new Handler().postDelayed(new Runnable() {
+                                    public void run() {
+                                        MotionDetectionActivity.setDetectMotion(false);
+                                    }
+                                }, 1000);
+                            }
+
                         } else {
                             System.out.println("DOESN'T SUPPORT FLASH LIGHT FUNCTION");
                         }
                     }
                 } else {
-                    substringSecurityMessage = message.substring(0, 9); //should produce either MotionOff or LightsOff
+                    substringSecurityMessage = message.substring(0, 9); //handle MotionOff, LightsOff and TakeVideo
                     System.out.println(substringSecurityMessage);
                     if (substringSecurityMessage.equals("MotionOff"))
                         MotionDetectionActivity.setDetectMotion(false); //turn motion detection off
-                    else if(substringSecurityMessage.equals("LightsOff")){ //needs to be else if not else
+                    else if(substringSecurityMessage.equals("LightsOff")){
                         //turn flash light off
-                        //CameraActivity.setDetectMotion(false);
+
+                        int motion = 0;
+                        if(MotionDetectionActivity.getMotionDetection()) {
+                            motion = 1;
+                            MotionDetectionActivity.setDetectMotion(false);
+                        }
                         Camera.Parameters p = MotionDetectionActivity.getCamera().getParameters();
                         p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                         MotionDetectionActivity.getCamera().setParameters(p);
-                        //CameraActivity.setDetectMotion(true);
+
+                        if(motion == 1) {
+                            new Handler().postDelayed(new Runnable() {
+                                public void run() {
+                                    MotionDetectionActivity.setDetectMotion(false);
+                                }
+                            }, 1000);
+                        }
                     }
                     else if(substringSecurityMessage.equals("TakeVideo")) //Record a 30 second video
                     {

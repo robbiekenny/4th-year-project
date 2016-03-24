@@ -62,13 +62,13 @@
         <activity
             android:name=".MotionDetectionActivity"
             android:screenOrientation="portrait">
-
-            <!-- configure this activity to use landscape orientation -->
         </activity>
         <activity android:name=".Image"></activity>
         <activity
             android:name=".PersonalDeviceActivity"
-            android:theme="@style/NoActionBar"></activity>
+            android:theme="@style/NoActionBar"
+            android:configChanges="orientation|screenSize">
+        </activity>
         <activity android:name=".StreamingActivity"></activity>
         <activity
             android:name=".RecordVideoActivity"
