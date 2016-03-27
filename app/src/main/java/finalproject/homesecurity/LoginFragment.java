@@ -47,14 +47,6 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.identity.TwitterAuthClient;
-import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,7 +72,6 @@ public class LoginFragment extends Fragment {
     private FragmentManager fragmentManager;
     private GCMRegistration gcmReg; //responsible for invoking the registerClientForGCM method
     private LoginButton loginButton;
-//    private TwitterLoginButton twitterLoginButton;
     private CallbackManager callbackManager;
     private SharedPreferences sharedPref;
     private boolean displayOptions = false;
@@ -253,42 +244,6 @@ public class LoginFragment extends Fragment {
 //        signInButton.setSize(SignInButton.SIZE_STANDARD);
 //        signInButton.setScopes(gso.getScopeArray());
 
-//        twitterLoginButton = (TwitterLoginButton) view.findViewById(R.id.twitter_login_button);
-//        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
-//            @Override
-//            public void success(Result<TwitterSession> result) {
-//                Log.d("TwitterKit", "IN SUCCESS");
-//                // The TwitterSession is also available through:
-//                // Twitter.getInstance().core.getSessionManager().getActiveSession()
-//                TwitterSession session = result.data;
-//
-//                TwitterAuthClient authClient = new TwitterAuthClient();
-//                authClient.requestEmail(session, new Callback<String>() {
-//                    @Override
-//                    public void success(Result<String> result) {
-//                        // Do something with the result, which provides the email address
-//                        Log.d("TwitterKit", result.data.toString());
-//                    }
-//
-//                    @Override
-//                    public void failure(TwitterException exception) {
-//                        // Do something on failure
-//                        Log.d("TwitterKit", "FAILED" + exception.toString());
-//                    }
-//                });
-//
-//                // with your app's user model
-//                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
-//                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            public void failure(TwitterException exception) {
-//                Log.d("TwitterKit", "Login with Twitter failure", exception);
-//            }
-//        });
-
-
         return view;
     }
 
@@ -319,8 +274,6 @@ public class LoginFragment extends Fragment {
 
         if(requestCode == 64206)
             callbackManager.onActivityResult(requestCode, resultCode, data);
-        //else
-            //twitterLoginButton.onActivityResult(requestCode, resultCode, data);
 
     }
 

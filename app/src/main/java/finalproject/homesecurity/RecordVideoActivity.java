@@ -30,6 +30,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import finalproject.homesecurity.Utils.SendMessage;
+
 /**
  * Created by Robbie on 12/02/2016.
  */
@@ -46,7 +48,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
     private MediaRecorder mMediaRecorder;
     private MyFileObserver fb;
     private String filePath = "";
-    private SharedPreferences sharedPref;
+    private SharedPreferences sharedPref,settings;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
         setContentView(R.layout.record_video_layout);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+        settings = getSharedPreferences("PhoneMode", Context.MODE_PRIVATE);
         // Create an instance of Camera
         mCamera = getCameraInstance();
 
@@ -355,6 +358,13 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
             } catch (Exception ex) {
                 // Exception handling
                 Log.e("Send file Exception", ex.getMessage() + "");
+                try
+                {
+                    SendMessage.sendPush("gcm",sharedPref.getString("userId",null),"Unable to take video in " + settings.getString("RoomName",null));
+                }catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
                 ex.printStackTrace();
             }
         }

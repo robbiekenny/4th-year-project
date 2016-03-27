@@ -28,24 +28,31 @@ public class GCMRegistration {
         registerClient.setUserID(email);
 
 
-        new AsyncTask<Object, Object, Object>() {
+        new AsyncTask<Void, Void, String>() {
             @Override
-            protected Object doInBackground(Object... params) {
+            protected String doInBackground(Void... params) {
                 try {
                     String regid = gcm.register(Constants.SENDER_ID);
                     System.out.println("GCM ID: " + regid);
                     registerClient.register(regid, new HashSet<String>());
+                    return "Success";
                 } catch (Exception e) {
                     Log.e("Failed to register", e.getMessage()); //failed to register for GCM
-                    return e;
+                    return "Fail";
                 }
-                return null;
             }
 
-            protected void onPostExecute(Object result) { //registered for GCM
-                Toast.makeText(context, "Logged in and registered.",
-                        Toast.LENGTH_LONG).show();
-
+            protected void onPostExecute(String result) { //registered for GCM
+                if(result.equals("Success"))
+                {
+                    Toast.makeText(context, "This device has been added to your group of devices",
+                            Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(context, "Unable to add this device to your group of devices. Log out and try again",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         }.execute(null, null, null);
     }

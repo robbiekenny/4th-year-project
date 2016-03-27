@@ -39,7 +39,8 @@
             android:id="@+id/saveButton"
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:text="@string/save"
-            android:background="@color/DarkBlue"
+            android:background="@color/ColorPrimary"
+            android:layout_marginTop="10dp"
             android:textColor="#ffffff" />
     </LinearLayout>
 

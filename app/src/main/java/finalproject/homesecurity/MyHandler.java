@@ -2,6 +2,8 @@ package finalproject.homesecurity;
 
 import com.microsoft.windowsazure.notifications.NotificationsHandler;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -52,7 +56,7 @@ public class MyHandler extends NotificationsHandler {
         System.out.println("RECIEVED");
         substringPersonalMessage = message.substring(0,7);
         System.out.println(substringPersonalMessage + "------------");
-        if(substringPersonalMessage.equals("Details"))
+        if(substringPersonalMessage.equals("Details")) //take in the details of the security device
         {
             System.out.println("Message sub string: " + message.substring(7, message.length()));
             Room r = new Room(message.substring(7,message.length()));
@@ -67,6 +71,39 @@ public class MyHandler extends NotificationsHandler {
                 System.out.println("ERROR ADDING ROOM TO ADAPTER");
                 e.printStackTrace();
             }
+        }
+        else if(substringPersonalMessage.equals("Unable "))
+        {
+            System.out.println("Displaying error message");
+            String[] messageWithoutUUID = message.split("@"); //get message without UUID attached to room name
+            NotificationCompat.Builder mBuilder =
+                    (NotificationCompat.Builder) new NotificationCompat.Builder(ctx)
+                            .setSmallIcon(R.drawable.ic_stat_name)
+                            .setContentTitle("HomeSecurity")
+                            .setContentText(messageWithoutUUID[0]);
+// Creates an explicit intent for an Activity in your app
+            Intent resultIntent = new Intent(ctx, DecisionActivity.class);
+
+            int notificationID = 1;
+// The stack builder object will contain an artificial back stack for the
+// started Activity.
+// This ensures that navigating backward from the Activity leads out of
+// your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(ctx);
+// Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(DecisionActivity.class);
+// Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+// mId allows you to update the notification later on.
+            mNotificationManager.notify(notificationID, mBuilder.build());
         }
     }
 

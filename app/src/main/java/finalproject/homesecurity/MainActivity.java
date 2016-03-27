@@ -9,65 +9,30 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
-import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
-import android.util.Log;
-import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import android.widget.Button;
 import com.crashlytics.android.Crashlytics;
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
 import io.fabric.sdk.android.Fabric;
 import java.io.UnsupportedEncodingException;
-import android.content.Context;
-import java.util.HashSet;
-import android.widget.Toast;
 
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.microsoft.windowsazure.mobileservices.*;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.net.MalformedURLException;
 
 import finalproject.homesecurity.Utils.GCMRegistration;
 
 public class MainActivity extends ActionBarActivity {
-
-    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    private static final String TWITTER_KEY = "bQI11wMVmjerVzK3fUtE0Mz3N";
-    private static final String TWITTER_SECRET = "yhnuJBfI8GD2FEwTyhSwXs9n83vfhfvQeIO9HImEXAj0nkl1n9";
      //deals with sign in and register (should split the two later on for cleaner code)
     public static MobileServiceClient mClient;
     private RegisterFragment frag;
@@ -79,14 +44,11 @@ public class MainActivity extends ActionBarActivity {
     public static GoogleCloudMessaging gcm;
     private Toolbar toolbar;
     private GCMRegistration gcmReg;
-//    private TwitterLoginButton loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-//        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-//        Fabric.with(this, new Twitter(authConfig));
         setContentView(R.layout.activity_main);
         // text view label
         TextView title = (TextView) findViewById(R.id.textView2);
@@ -207,21 +169,6 @@ public class MainActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if(id == android.R.id.home)
-        {
-            frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
-            loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            if(frag != null)
-            {
-                fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                //fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
-                fragmentTransaction.replace(R.id.fragment_container, loginFrag,"loginFrag");
-                //fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
         }
 
         return super.onOptionsItemSelected(item);
