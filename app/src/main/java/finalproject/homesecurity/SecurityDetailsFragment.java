@@ -49,7 +49,6 @@ public class SecurityDetailsFragment  extends Fragment {
     public void save()
     {
         System.out.println("SAVE");
-        System.out.println("Room name: " + roomName);
         if(roomName.getText().toString() == null || roomName.getText().toString().isEmpty())
         {
             roomNameInputLayout.setError("Room name cannot be empty");

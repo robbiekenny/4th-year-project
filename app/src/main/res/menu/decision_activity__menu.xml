@@ -11,7 +11,7 @@
     </item>
 
     <item android:id="@+id/action_signout" android:title="@string/sign_out"
-        android:orderInCategory="300" app:showAsAction="ifRoom">
+        android:orderInCategory="300" app:showAsAction="never">
     </item>
 
 </menu>

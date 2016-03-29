@@ -52,7 +52,12 @@
     <string name="title_activity_login">Sign in</string>
 
     <!--YET TO CONVERT TO FR AND ES-->
+    <string name="sign_out_message">Are you sure you want to sign out</string>
     <string name="error_text">Unable to access camera at this time</string>
     <string name="takeVideoText">Take Video</string>
     <string name="takingVideoText">Taking Video</string>
+    <string name="roomDetails">Room Details</string>
+    <string name="verify">Verify your email account</string>
+    <string name="validateEmail">Validate Email</string>
+    <string name="emailVerificationMessage">To verify your account please check your inbox or junk folder for an email from HomeSecurity. Sign out and sign back in once you have verified your account</string>
 </resources>

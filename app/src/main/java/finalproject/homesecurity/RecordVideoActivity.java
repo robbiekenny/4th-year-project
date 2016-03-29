@@ -67,6 +67,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
             // initialize video camera
+            //delay is necessary to avoid crash because preview layout will not be ready
             new Handler().postDelayed(new Runnable() {
                 public void run() {
                     if (prepareVideoRecorder()) {
@@ -85,28 +86,28 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
                 }
             }, 1000);
         } else {
-            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.recordLayoutContainer);
-
-            TextView message = new TextView(this);
-            message.setText(R.string.error_text);
-            message.setTextAppearance(this, android.R.style.TextAppearance_Large);
-
-            message.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            linearLayout.addView(message);
+            try
+            {
+                SendMessage.sendPush("gcm",sharedPref.getString("userId",null),"Unable to take video in " + settings.getString("RoomName",null));
+                finish();
+            }catch(Exception e)
+            {
+                e.printStackTrace();
+            }
         }
 
     }
 
     /**
      * A safe way to get an instance of the Camera object.
+     * WE MUST ALSO TAKE INTO ACCOUNT THE CAMERA THAT THE USER HAS DECIDED TO USE FOR THIS DEVICE I.E FRONT OR BACK
      */
     public Camera getCameraInstance() {
         Camera c = null;
         try {
-            c = Camera.open(); // attempt to get a Camera instance
+            // attempt to get a Camera instance using the shared preferences that saves which camera the user was using.
+            // 0 will be used as the default
+            c = Camera.open(settings.getInt("Camera",0));
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
         }
@@ -126,7 +127,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+        mMediaRecorder.setProfile(CamcorderProfile.get(settings.getInt("Camera",0),CamcorderProfile.QUALITY_HIGH));
 
         // Step 4: Set output file
         mMediaRecorder.setOutputFile(getOutputMediaFile().toString());

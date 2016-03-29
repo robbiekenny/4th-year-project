@@ -15,6 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:src="@mipmap/ic_camera_flip"
+        android:src="@drawable/ic_camera_flip"
         android:onClick="changeCamera"/>
 </RelativeLayout>

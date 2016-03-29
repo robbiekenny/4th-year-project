@@ -62,7 +62,7 @@ public class DecisionActivity extends ActionBarActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if(extras.getString("comingFrom").equals("registering")) //DISPLAY AMESSAGE TO THE USER INFORMING THEM THEY MUST VERIFY THEIR ACCOUNT
+            if(extras.getString("comingFrom").equals("registering")) //DISPLAY A MESSAGE TO THE USER INFORMING THEM THEY MUST VERIFY THEIR ACCOUNT
             {
                 registerDialog();
             }
@@ -107,6 +107,7 @@ public class DecisionActivity extends ActionBarActivity {
             fragmentTransaction.remove(frag);
             fragmentTransaction.commit();
 
+            toolbar.setTitle(R.string.app_name);
             linearLayout.setVisibility(View.VISIBLE);
         }
         else if(helpFrag != null && helpFrag.isVisible())
@@ -140,37 +141,48 @@ public class DecisionActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        /*
-        Put in an option for users to get help with security and personal selection
-         */
-
         if (id == R.id.action_signout) { //Remove user from shared preferences thus making the user signs in the next time
 
             System.out.println("LOGIN TYPE: " + sharedPref.getString("loginType", null));
 
-            if(sharedPref.getString("loginType",null).equals("facebook"))
-            {
-                try
-                {
-                    LoginManager.getInstance().logOut();
-                }catch(Exception e)
-                {
-                    FacebookSdk.sdkInitialize(this);
-                    LoginManager.getInstance().logOut();
-                }
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.sign_out)
+                    .setMessage(R.string.sign_out_message)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(sharedPref.getString("loginType",null).equals("facebook"))
+                            {
+                                try
+                                {
+                                    LoginManager.getInstance().logOut();
+                                }catch(Exception e)
+                                {
+                                    FacebookSdk.sdkInitialize(getApplicationContext());
+                                    LoginManager.getInstance().logOut();
+                                }
 
-            }
-           sharedPref.edit().putString("userId", null).apply(); //remove userId that was associated with this user
-           sharedPrefs.edit().putBoolean("showAgain", true).apply(); //reset the show again boolean so that it should be displayed the next time
+                            }
+                            sharedPref.edit().putString("userId", null).apply(); //remove userId that was associated with this user
+                            sharedPrefs.edit().putBoolean("showAgain", true).apply(); //reset the show again boolean so that it should be displayed the next time
 
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-            finish();
+                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no,new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .show();
             return true;
         }
         else if(id == R.id.action_security)
         {
             linearLayout.setVisibility(View.INVISIBLE);
+            toolbar.setTitle(R.string.app_name);
 
             helpFrag = (SecurityHelpFragment) getFragmentManager().findFragmentByTag("helpFrag");
             if(helpFrag == null)
@@ -192,6 +204,7 @@ public class DecisionActivity extends ActionBarActivity {
         else //personal option
         {
             linearLayout.setVisibility(View.INVISIBLE);
+            toolbar.setTitle(R.string.app_name);
 
             personalHelpFrag = (PersonalHelpFragment) getFragmentManager().findFragmentByTag("personalHelpFrag");
             if(personalHelpFrag == null)
@@ -221,6 +234,7 @@ public class DecisionActivity extends ActionBarActivity {
             displaySnackbar();
         } else {
             linearLayout.setVisibility(View.INVISIBLE);
+            toolbar.setTitle(R.string.roomDetails);
 
             frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
             if (frag == null) {
@@ -283,9 +297,8 @@ public class DecisionActivity extends ActionBarActivity {
     public void registerDialog() { //displays a dialog informing the user they must verify their account
 
         new AlertDialog.Builder(this)
-                .setTitle("Validate Email")
-                .setMessage("To verify your account please check your inbox or junk folder for an email from HomeSecurity. " +
-                        "Sign out and sign back in once you have verified your account")
+                .setTitle(R.string.validateEmail)
+                .setMessage(R.string.emailVerificationMessage)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -299,7 +312,7 @@ public class DecisionActivity extends ActionBarActivity {
     public void displaySnackbar() //very simply notifys the user that they must verify their account before continuing
     {
         Snackbar snackbar = Snackbar
-                .make(coordinatorLayout, "Verify your email account", Snackbar.LENGTH_LONG);
+                .make(coordinatorLayout, R.string.verify, Snackbar.LENGTH_LONG);
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.parseColor("#0288D1"));

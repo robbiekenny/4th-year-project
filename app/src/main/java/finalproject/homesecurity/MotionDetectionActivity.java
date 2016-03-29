@@ -58,9 +58,7 @@ public class MotionDetectionActivity extends SensorsActivity {
     private static boolean detectMotion = false;
     private ImageView changeCamera;
     private int cameraID = 0; //camera is initially facing back
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +73,8 @@ public class MotionDetectionActivity extends SensorsActivity {
 
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         email = sharedPref.getString("userId", null);
-        prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
+        //indicates whether phone is security device or personal,room name of device and the current camera in use
+        prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE);
         editor = prefs.edit();
         editor.putString("DeviceMode", "Security"); //this device will be listed as security
 
@@ -84,6 +83,7 @@ public class MotionDetectionActivity extends SensorsActivity {
         System.out.println("Room Name in Camera Activity: " + roomName);
 
         editor.putString("RoomName",roomName);
+        editor.putInt("Camera",cameraID); //camera is the back camera initially and will only change in the chageCamera method
         editor.apply();
 
         if (Preferences.USE_RGB) {
@@ -94,15 +94,15 @@ public class MotionDetectionActivity extends SensorsActivity {
             // Using State based (aggregate map)
             detector = new AggregateLumaMotionDetection();
         }
-    }
 
-    public void changeCamera(View v)
-    {
         //if phone has only one camera, hide "switch camera" button
         if(Camera.getNumberOfCameras() == 1){
             changeCamera.setVisibility(View.INVISIBLE);
         }
-        else {
+    }
+
+    public void changeCamera(View v)
+    {
             camera.setPreviewCallback(null);
             camera.stopPreview();
             camera.release();
@@ -124,7 +124,10 @@ public class MotionDetectionActivity extends SensorsActivity {
                 e.printStackTrace();
             }
             camera.startPreview();
-        }
+
+        //save the state of the camera i.e whether its front or back facing
+        editor.putInt("Camera",cameraID); //camera is the back camera initially and will only change in the chageCamera method
+        editor.apply();
     }
 
     @Override
@@ -132,9 +135,6 @@ public class MotionDetectionActivity extends SensorsActivity {
         super.onConfigurationChanged(newConfig);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onPause() {
         super.onPause();
@@ -146,15 +146,12 @@ public class MotionDetectionActivity extends SensorsActivity {
         camera = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onResume() {
         super.onResume();
 
         try {
-            camera = Camera.open();
+            camera = Camera.open(cameraID);
         }catch(Exception e)
         {
             e.printStackTrace();
