@@ -35,17 +35,18 @@ import com.facebook.login.LoginManager;
  * Created by Robbie on 13/08/2015.
  */
 public class DecisionActivity extends ActionBarActivity {
-    private SharedPreferences.Editor editor,edit; //edit is used for saving dont show me again, editor used for saving whether the device is security or personal
+    private SharedPreferences.Editor editor;//editor used for saving whether the device is security or personal
     private SecurityDetailsFragment frag;
     private SecurityHelpFragment helpFrag;
     private PersonalHelpFragment personalHelpFrag;
     private FragmentManager fragmentManager;
     private LinearLayout linearLayout;
-    private TextView singedInAs;
+    private TextView signedInAs,toolbarTitle;
     private Toolbar toolbar;
     private SharedPreferences sharedPref,sharedPrefs,prefs;
     private CoordinatorLayout coordinatorLayout;
     private AlertDialog b; //this is used to close the custom dialog displayed to the user
+    private  Messaging messaging;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +56,15 @@ public class DecisionActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.tool_bar2);
         setSupportActionBar(toolbar);
 
+        signedInAs = (TextView) toolbar.findViewById(R.id.toolbar_text);
+        toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+
         sharedPrefs = getSharedPreferences("DontShowAgain", Context.MODE_PRIVATE); //save dont show me again value
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE); //indicates whether phone is security device or personal
         editor = prefs.edit();
+
+        signedInAs.setText(sharedPref.getString("userId","Email"));
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -86,6 +92,10 @@ public class DecisionActivity extends ActionBarActivity {
             linearLayout.setVisibility(View.INVISIBLE);
         else if(personalHelpFrag != null)
             linearLayout.setVisibility(View.INVISIBLE);
+
+
+        //use a users email address as a channel and attempt to subscribe to that channel
+         messaging = new Messaging(sharedPref.getString("userId",null),this);
     }
 
     @Override
@@ -107,7 +117,7 @@ public class DecisionActivity extends ActionBarActivity {
             fragmentTransaction.remove(frag);
             fragmentTransaction.commit();
 
-            toolbar.setTitle(R.string.app_name);
+            toolbarTitle.setText(R.string.app_name);
             linearLayout.setVisibility(View.VISIBLE);
         }
         else if(helpFrag != null && helpFrag.isVisible())
@@ -182,7 +192,7 @@ public class DecisionActivity extends ActionBarActivity {
         else if(id == R.id.action_security)
         {
             linearLayout.setVisibility(View.INVISIBLE);
-            toolbar.setTitle(R.string.app_name);
+            toolbarTitle.setText(R.string.app_name);
 
             helpFrag = (SecurityHelpFragment) getFragmentManager().findFragmentByTag("helpFrag");
             if(helpFrag == null)
@@ -204,7 +214,7 @@ public class DecisionActivity extends ActionBarActivity {
         else //personal option
         {
             linearLayout.setVisibility(View.INVISIBLE);
-            toolbar.setTitle(R.string.app_name);
+            toolbarTitle.setText(R.string.app_name);
 
             personalHelpFrag = (PersonalHelpFragment) getFragmentManager().findFragmentByTag("personalHelpFrag");
             if(personalHelpFrag == null)
@@ -226,7 +236,7 @@ public class DecisionActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
+ 
     public void security(View v)
     {
         System.out.println("security method called");
@@ -234,7 +244,7 @@ public class DecisionActivity extends ActionBarActivity {
             displaySnackbar();
         } else {
             linearLayout.setVisibility(View.INVISIBLE);
-            toolbar.setTitle(R.string.roomDetails);
+            toolbarTitle.setText(R.string.roomDetails);
 
             frag = (SecurityDetailsFragment) getFragmentManager().findFragmentByTag("frag");
             if (frag == null) {
@@ -309,13 +319,19 @@ public class DecisionActivity extends ActionBarActivity {
 
     }
 
-    public void displaySnackbar() //very simply notifys the user that they must verify their account before continuing
+    public void displaySnackbar() //very simply notifies the user that they must verify their account before continuing
     {
         Snackbar snackbar = Snackbar
                 .make(coordinatorLayout, R.string.verify, Snackbar.LENGTH_LONG);
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.parseColor("#0288D1"));
+        textView.setTextColor(Color.parseColor(String.valueOf(R.color.ColorPrimary)));
         snackbar.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        messaging.unsubscribeFromChannel(); //stop listening for messages on this channel
     }
 }

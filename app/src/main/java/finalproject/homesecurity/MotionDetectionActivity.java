@@ -73,6 +73,7 @@ public class MotionDetectionActivity extends SensorsActivity {
 
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         email = sharedPref.getString("userId", null);
+       // Messaging messagingService = new Messaging(email);
         //indicates whether phone is security device or personal,room name of device and the current camera in use
         prefs = this.getSharedPreferences("PhoneMode", Context.MODE_PRIVATE);
         editor = prefs.edit();

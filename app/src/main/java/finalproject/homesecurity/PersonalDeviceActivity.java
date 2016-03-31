@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -64,6 +65,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
     private Room room;
     private Toolbar toolbar;
     private CoordinatorLayout coordinatorLayout;
+    private TextView toolbarTitle,signedInAs;
+    private Messaging messagingService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +77,14 @@ public class PersonalDeviceActivity extends ActionBarActivity {
             setSupportActionBar(toolbar);
             coordinatorLayout = (CoordinatorLayout) findViewById(R.id.pd_coordinator_layout);
 
+        signedInAs = (TextView) toolbar.findViewById(R.id.toolbar_text);
+        toolbarTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+
             settings = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
+
+         messagingService = new Messaging();
+
+        signedInAs.setText(settings.getString("userId","Email"));
 
             // Create the adapter to convert the array to views
             adapter = new RoomsAdapter(this, arrayOfRooms);
@@ -110,7 +120,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
         {
             System.out.println("GETTING SECURITY DEVICES");
             try {
-                SendMessage.sendPush("gcm", userID,"Retrieve");
+               // SendMessage.sendPush("gcm", userID,"Retrieve");
+                messagingService.sendMessage("Retrieve",userID);
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("ERROR SENDING PUSH FOR SECURITY DEVICE RETRIEVAL");
@@ -130,6 +141,8 @@ public class PersonalDeviceActivity extends ActionBarActivity {
             }
         }, 20000); //after 20 seconds prompt the user to try search for security devices again
 
+        //messagingService.sendMessage("Oh Fuck! A bus");
+
     }
 
 
@@ -143,11 +156,21 @@ public class PersonalDeviceActivity extends ActionBarActivity {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(frag);
             fragmentTransaction.commit();
-            toolbar.setTitle(R.string.app_name);
+            toolbarTitle.setText(R.string.app_name);
             listView.setVisibility(View.VISIBLE);
         }
         else
-            super.onBackPressed();
+        {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.leavePersonalDevice)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            PersonalDeviceActivity.super.onBackPressed();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
+        }
     }
 
     public void handleListViewItemClick()
@@ -163,6 +186,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("user", userID);
                 bundle.putString("room", room.getRoomName());
+                bundle.putInt("position",position);
                 frag = (CommandControlsFragment) getFragmentManager().findFragmentByTag("frag");
                 if(frag == null)
                 {
@@ -173,7 +197,7 @@ public class PersonalDeviceActivity extends ActionBarActivity {
                     fragmentTransaction.add(R.id.command_controls_fragment_container, frag, "frag");
                     fragmentTransaction.commit();
                     String[] roomName = room.getRoomName().split("@"); //get room name without UUID
-                    toolbar.setTitle(roomName[0]);
+                    toolbarTitle.setText(roomName[0]);
                 }
                 else
                 {

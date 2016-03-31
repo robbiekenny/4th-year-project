@@ -38,10 +38,7 @@ import finalproject.homesecurity.model.User;
  * Created by Robbie on 30/09/2015.
  */
 public class RegisterFragment extends Fragment {
-    private Button signup,back;
-    private FragmentManager fragmentManager;
-    private RegisterFragment frag;
-    private LoginFragment loginFrag;
+    private Button signup;
     private EditText regEmail,regPass;
     private ProgressDialog progress;
     private SharedPreferences sharedPref;
@@ -96,14 +93,6 @@ public class RegisterFragment extends Fragment {
                 signUp();
             }
         });
-
-//        back = (Button) view.findViewById(R.id.back_button);
-//        back.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                goBack();
-//            }
-//        });
         return view;
     }
 
@@ -180,21 +169,6 @@ public class RegisterFragment extends Fragment {
             Toast.makeText(getActivity(),"A problem occurred and your request could not be completed\n" +
                     "Please check your internet connection",Toast.LENGTH_LONG).show();
     }
-
-
-//    public void goBack() { //gets rid of register fragment
-//        frag = (RegisterFragment) getFragmentManager().findFragmentByTag("frag");
-//        loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
-//        if(frag != null)
-//        {
-//            fragmentManager = getFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            //fragmentTransaction.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
-//            fragmentTransaction.replace(R.id.fragment_container, loginFrag,"loginFrag");
-//            //fragmentTransaction.addToBackStack(null);
-//            fragmentTransaction.commit();
-//        }
-//    }
 
 
     public boolean isValidPassword(String pass) //password must be greater than 5 characters

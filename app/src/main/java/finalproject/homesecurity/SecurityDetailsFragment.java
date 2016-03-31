@@ -22,15 +22,12 @@ import java.util.UUID;
  */
 public class SecurityDetailsFragment  extends Fragment {
     private EditText roomName;
-    private CoordinatorLayout coordinatorLayout;
     private TextInputLayout roomNameInputLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.securit_details_layout,
                 container, false);
-
-        coordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.security_details_coordinatorLayout);
 
         Button saveButton = (Button) view.findViewById(R.id.saveButton);
         roomName = (EditText) view.findViewById(R.id.roomNameInput);

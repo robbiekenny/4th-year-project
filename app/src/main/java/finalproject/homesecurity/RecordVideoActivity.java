@@ -86,14 +86,15 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
                 }
             }, 1000);
         } else {
-            try
-            {
-                SendMessage.sendPush("gcm",sharedPref.getString("userId",null),"Unable to take video in " + settings.getString("RoomName",null));
-                finish();
-            }catch(Exception e)
-            {
-                e.printStackTrace();
-            }
+//            try
+//            {
+//                SendMessage.sendPush("gcm",sharedPref.getString("userId",null),"Unable to take video in " + settings.getString("RoomName",null));
+//                finish();
+//            }catch(Exception e)
+//            {
+//                e.printStackTrace();
+//            }
+            Log.i(TAG,"UNABLE TO GET CAMERA");
         }
 
     }
@@ -359,13 +360,13 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
             } catch (Exception ex) {
                 // Exception handling
                 Log.e("Send file Exception", ex.getMessage() + "");
-                try
-                {
-                    SendMessage.sendPush("gcm",sharedPref.getString("userId",null),"Unable to take video in " + settings.getString("RoomName",null));
-                }catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
+//                try
+//                {
+//                    SendMessage.sendPush("gcm",sharedPref.getString("userId",null),"Unable to take video in " + settings.getString("RoomName",null));
+//                }catch(Exception e)
+//                {
+//                    e.printStackTrace();
+//                }
                 ex.printStackTrace();
             }
         }

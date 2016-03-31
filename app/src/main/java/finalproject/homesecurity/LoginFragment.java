@@ -66,15 +66,14 @@ public class LoginFragment extends Fragment {
     private EditText email,password;
     private Button signin,signup;
     private ProgressDialog progress;
-    private RegisterClient registerClient;
+    //private RegisterClient registerClient;
     private RegisterFragment frag;
-    private GoogleCloudMessaging gcm;
+    //private GoogleCloudMessaging gcm;
     private FragmentManager fragmentManager;
-    private GCMRegistration gcmReg; //responsible for invoking the registerClientForGCM method
+    //private GCMRegistration gcmReg; //responsible for invoking the registerClientForGCM method
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private SharedPreferences sharedPref;
-    private boolean displayOptions = false;
     private TextInputLayout emailTextInput,passwordTextInput;
     // private GoogleApiClient mGoogleApiClient;
     //private static final int RC_SIGN_IN = 0;
@@ -89,10 +88,10 @@ public class LoginFragment extends Fragment {
 
         callbackManager = CallbackManager.Factory.create();
 
-        registerClient = MainActivity.registerClient;
-        gcm = MainActivity.gcm;
+//        registerClient = MainActivity.registerClient;
+//        gcm = MainActivity.gcm;
 
-        gcmReg = new GCMRegistration();
+        //gcmReg = new GCMRegistration();
 
         emailTextInput = (TextInputLayout) view.findViewById(R.id.emailTextInput);
         passwordTextInput = (TextInputLayout) view.findViewById(R.id.passwordTextInput);
@@ -181,12 +180,12 @@ public class LoginFragment extends Fragment {
                                         editor.putBoolean("verified", true);
                                         editor.commit();
 
-                                        try {
-                                            gcmReg.registerClientForGCM(registerClient, object.getString("email"), getActivity(), gcm);
-                                        } catch (UnsupportedEncodingException e) {
-                                            System.out.println("FAILED TO REGISTER FOR GCM");
-                                            e.printStackTrace();
-                                        }
+//                                        try {
+//                                            gcmReg.registerClientForGCM(registerClient, object.getString("email"), getActivity(), gcm);
+//                                        } catch (UnsupportedEncodingException e) {
+//                                            System.out.println("FAILED TO REGISTER FOR GCM");
+//                                            e.printStackTrace();
+//                                        }
 
                                         startNextActivity();
                                     } else {
@@ -389,12 +388,12 @@ public class LoginFragment extends Fragment {
         progress.dismiss();
         if(message.equals("SignedIn"))
         {
-            try {
-                gcmReg.registerClientForGCM(registerClient, email.getText().toString(), getActivity(), gcm);
-            } catch (UnsupportedEncodingException e) {
-                System.out.println("FAILED TO REGISTER FOR GCM");
-                e.printStackTrace();
-            }
+//            try {
+//                gcmReg.registerClientForGCM(registerClient, email.getText().toString(), getActivity(), gcm);
+//            } catch (UnsupportedEncodingException e) {
+//                System.out.println("FAILED TO REGISTER FOR GCM");
+//                e.printStackTrace();
+//            }
             if(token != "")
             {
 

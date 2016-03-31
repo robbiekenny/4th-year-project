@@ -38,12 +38,12 @@ public class MainActivity extends ActionBarActivity {
     private RegisterFragment frag;
     private LoginFragment loginFrag;
     private FragmentManager fragmentManager;
-    private FrameLayout container;
+    //private FrameLayout container;
     //private ProgressDialog progress;
-    public static RegisterClient registerClient;
-    public static GoogleCloudMessaging gcm;
-    private Toolbar toolbar;
-    private GCMRegistration gcmReg;
+    //public static RegisterClient registerClient;
+    //public static GoogleCloudMessaging gcm;
+    //private Toolbar toolbar;
+    //private GCMRegistration gcmReg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,23 +71,23 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        NotificationsManager.handleNotifications(this, Constants.SENDER_ID, MyHandler.class);
-        gcm = GoogleCloudMessaging.getInstance(this);
-        registerClient = new RegisterClient(this, Constants.BACKEND_ENDPOINT);
+//        NotificationsManager.handleNotifications(this, Constants.SENDER_ID, MyHandler.class);
+//        gcm = GoogleCloudMessaging.getInstance(this);
+//        registerClient = new RegisterClient(this, Constants.BACKEND_ENDPOINT);
 
         SharedPreferences sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         String user = sharedPref.getString("userId",null);
 
         if(user != null) //checking to see if this user is already signed in
         {
-            gcmReg = new GCMRegistration();
-
-            try {
-                gcmReg.registerClientForGCM(registerClient,user,this,gcm);
-            } catch (UnsupportedEncodingException e) {
-                System.out.println("FAILED TO REGISTER FOR GCM");
-                e.printStackTrace();
-            }
+//            gcmReg = new GCMRegistration();
+//
+//            try {
+//                gcmReg.registerClientForGCM(registerClient,user,this,gcm);
+//            } catch (UnsupportedEncodingException e) {
+//                System.out.println("FAILED TO REGISTER FOR GCM");
+//                e.printStackTrace();
+//            }
             Intent intent = new Intent(this,DecisionActivity.class);
             startActivity(intent);
             finish();
@@ -97,7 +97,7 @@ public class MainActivity extends ActionBarActivity {
 
 //            toolbar = (Toolbar) findViewById(R.id.tool_bar);
 //            setSupportActionBar(toolbar);
-            container = (FrameLayout) findViewById(R.id.fragment_container);
+            //container = (FrameLayout) findViewById(R.id.fragment_container);
 
             loginFrag = (LoginFragment) getFragmentManager().findFragmentByTag("loginFrag");
             if(loginFrag == null)
