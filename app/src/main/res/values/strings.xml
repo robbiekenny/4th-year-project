@@ -66,6 +66,10 @@
     <string name="emailVerificationMessage">To verify your account please check your inbox or junk folder for an email from HomeSecurity. Sign out and sign back in once you have verified your account</string>
     <string name="failedToFindDevices">Failed to find any security devices</string>
     <string name="retry">RETRY</string>
+    <string name="searchVideos">Searching for your videos</string>
+    <string name="noVideos">No videos found</string>
+
+    <!--may not be used-->
     <string name="security_devices">Security Devices</string>
     <string name="video_files">Your Videos</string>
 

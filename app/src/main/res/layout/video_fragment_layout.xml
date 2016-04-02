@@ -36,6 +36,15 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/searchVideos"
+        android:id="@+id/progressText"
+        android:layout_below="@+id/videosProgressBar"
+        android:layout_centerHorizontal="true" />
+
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

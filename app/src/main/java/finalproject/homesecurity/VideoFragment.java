@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -47,6 +48,7 @@ public class VideoFragment extends Fragment {
     private Video video;
     private PlayVideoFragment frag;
     private FragmentManager fragmentManager;
+    private TextView progressText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class VideoFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
 
         pb = (ProgressBar) view.findViewById(R.id.videosProgressBar);
+        progressText = (TextView) view.findViewById(R.id.progressText);
 
         // Create the adapter to convert the array to views
         adapter = new VideosAdapter(getActivity(), arrayOfVideos);
@@ -84,7 +87,8 @@ public class VideoFragment extends Fragment {
                     public void onResponse(JSONArray response) {
                         // display response
                         Log.d("Response", response.toString());
-                        pb.setVisibility(View.INVISIBLE);
+                        pb.setVisibility(View.GONE);
+                        progressText.setVisibility(View.GONE);
                         JSONObject data;
                         Video v;
                         try
@@ -98,7 +102,7 @@ public class VideoFragment extends Fragment {
                             }
                         }catch(Exception e)
                         {
-
+                            e.printStackTrace();
                         }
                     }
                 },
@@ -107,6 +111,8 @@ public class VideoFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.i("Error.Response", error.toString());
+                        pb.setVisibility(View.INVISIBLE);
+                        progressText.setText(R.string.noVideos);
                     }
                 }
         ){
@@ -118,6 +124,9 @@ public class VideoFragment extends Fragment {
             }
         };
 
+        getRequest.setRetryPolicy(new DefaultRetryPolicy(10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 // add it to the RequestQueue
         queue.add(getRequest);
     }
@@ -130,7 +139,7 @@ public class VideoFragment extends Fragment {
                                     long id) {
                 video = (Video) parent.getItemAtPosition(position);
 
-                listView.setVisibility(View.INVISIBLE);
+                //listView.setVisibility(View.INVISIBLE);
                 Bundle bundle = new Bundle();
                 bundle.putString("video", video.getVideo());
 
