@@ -93,7 +93,7 @@ public class Messaging {
                         @Override
                         public void errorCallback(String channel, PubnubError error) {
                             System.out.println("SUBSCRIBE : ERROR on channel " + channel
-                                    + " : " + error.errorObject.toString());
+                                    + " : " + error.toString());
                         }
                     }
             );
@@ -133,15 +133,15 @@ public class Messaging {
             {
                 mHandler.post(new Runnable() {
                     public void run() {
-                        for(int i = 0; i < PersonalDeviceActivity.listView.getCount(); i++)
+                        for(int i = 0; i < SecurityFragment.listView.getCount(); i++)
                         {
-                            if(PersonalDeviceActivity.adapter.getItem(i).getRoomName().equals(r.getRoomName()))
-                                PersonalDeviceActivity.adapter.remove(PersonalDeviceActivity.adapter.getItem(i));
+                            if(SecurityFragment.adapter.getItem(i).getRoomName().equals(r.getRoomName()))
+                                SecurityFragment.adapter.remove(SecurityFragment.adapter.getItem(i));
                         }
-                        PersonalDeviceActivity.adapter.add(r);
-                        PersonalDeviceActivity.pd.dismiss();
-                        PersonalDeviceActivity.listView.setVisibility(View.VISIBLE);
-                        PersonalDeviceActivity.adapter.notifyDataSetChanged();
+                        SecurityFragment.adapter.add(r);
+                        SecurityFragment.pd.setVisibility(View.INVISIBLE);
+                        SecurityFragment.listView.setVisibility(View.VISIBLE);
+                        SecurityFragment.adapter.notifyDataSetChanged();
                     }
                 });
             }catch(Exception e)

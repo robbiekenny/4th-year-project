@@ -41,16 +41,16 @@ public class CommandControlsFragment extends Fragment {
         motion = (ImageView) view.findViewById(R.id.motion);
         takeVideo = (ImageView) view.findViewById(R.id.takeVideo);
 
-        if(PersonalDeviceActivity.adapter.getItem(position).isTakingVideo())
+        if(SecurityFragment.adapter.getItem(position).isTakingVideo())
         {
             takeVideoText.setText(R.string.takingVideoText);
         }
-        if(PersonalDeviceActivity.adapter.getItem(position).isMotionDetection())
+        if(SecurityFragment.adapter.getItem(position).isMotionDetection())
         {
             motion.setImageResource(R.drawable.motion_off);
             motionText.setText(R.string.mdoff);
         }
-        if(PersonalDeviceActivity.adapter.getItem(position).isLights())
+        if(SecurityFragment.adapter.getItem(position).isLights())
         {
             lights.setImageResource(R.drawable.lightoff);
             lightText.setText(R.string.lightoff);
@@ -59,7 +59,7 @@ public class CommandControlsFragment extends Fragment {
         takeVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(PersonalDeviceActivity.adapter.getItem(position).isTakingVideo())
+                if(SecurityFragment.adapter.getItem(position).isTakingVideo())
                 {
 
                 }
@@ -67,7 +67,7 @@ public class CommandControlsFragment extends Fragment {
                 {
                     takeVideo();
                     takeVideoText.setText(R.string.takingVideoText);
-                    PersonalDeviceActivity.adapter.getItem(position).setTakingVideo(true);
+                    SecurityFragment.adapter.getItem(position).setTakingVideo(true);
                 }
             }
         });
@@ -75,19 +75,19 @@ public class CommandControlsFragment extends Fragment {
         lights.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(PersonalDeviceActivity.adapter.getItem(position).isLights())
+                if(SecurityFragment.adapter.getItem(position).isLights())
                 {
                     lights.setImageResource(R.drawable.lighton);
                     lightText.setText(R.string.lighton);
                     disableFlashLight();
-                    PersonalDeviceActivity.adapter.getItem(position).setLights(false);
+                    SecurityFragment.adapter.getItem(position).setLights(false);
                 }
                 else
                 {
                     lights.setImageResource(R.drawable.lightoff);
                     lightText.setText(R.string.lightoff);
                     enableFlashLight();
-                    PersonalDeviceActivity.adapter.getItem(position).setLights(true);
+                    SecurityFragment.adapter.getItem(position).setLights(true);
                 }
             }
         });
@@ -95,19 +95,19 @@ public class CommandControlsFragment extends Fragment {
         motion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(PersonalDeviceActivity.adapter.getItem(position).isMotionDetection())
+                if(SecurityFragment.adapter.getItem(position).isMotionDetection())
                 {
                     motion.setImageResource(R.drawable.motion_on);
                     motionText.setText(R.string.mdon);
                     disableMotion();
-                    PersonalDeviceActivity.adapter.getItem(position).setMotionDetection(false);
+                    SecurityFragment.adapter.getItem(position).setMotionDetection(false);
                 }
                 else
                 {
                     motion.setImageResource(R.drawable.motion_off);
                     motionText.setText(R.string.mdoff);
                     enableMotion();
-                    PersonalDeviceActivity.adapter.getItem(position).setMotionDetection(true);
+                    SecurityFragment.adapter.getItem(position).setMotionDetection(true);
                 }
             }
         });

@@ -30,8 +30,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import finalproject.homesecurity.Utils.SendMessage;
-
 /**
  * Created by Robbie on 12/02/2016.
  */
@@ -49,6 +47,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
     private MyFileObserver fb;
     private String filePath = "";
     private SharedPreferences sharedPref,settings;
+    private String roomName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +56,8 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         sharedPref = getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
         settings = getSharedPreferences("PhoneMode", Context.MODE_PRIVATE);
+        String[] room_name = settings.getString("RoomName",null).split("@");
+        roomName = room_name[0];
         // Create an instance of Camera
         mCamera = getCameraInstance();
 
@@ -295,7 +296,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
                 FileInputStream fileInputStream = new FileInputStream(new File(
                         filePath));
 
-                URL url = new URL(urlServer + "?email=" + sharedPref.getString("userId",null));
+                URL url = new URL(urlServer + "?email=" + sharedPref.getString("userId",null) + "&roomName=" + roomName);
                 connection = (HttpURLConnection) url.openConnection();
 
                 // Allow Inputs & Outputs

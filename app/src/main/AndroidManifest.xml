@@ -10,19 +10,15 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
-
-    <permission
-        android:name="finalproject.homesecurity.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="finalproject.homesecurity.permission.C2D_MESSAGE" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <!-- <permission -->
+    <!-- android:name="finalproject.homesecurity.permission.C2D_MESSAGE" -->
+    <!-- android:protectionLevel="signature" /> -->
+    <!-- <uses-permission android:name="finalproject.homesecurity.permission.C2D_MESSAGE" /> -->
+    <!-- <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /> -->
+    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_security_camera"
@@ -32,15 +28,16 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <receiver
-            android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        <!-- <receiver -->
+        <!-- android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver" -->
+        <!-- android:permission="com.google.android.c2dm.permission.SEND"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.google.android.c2dm.intent.RECEIVE" /> -->
 
-                <category android:name="finalproject.homesecurity" />
-            </intent-filter>
-        </receiver>
+
+        <!-- <category android:name="finalproject.homesecurity" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
 
         <activity
             android:name=".MainActivity"
@@ -55,25 +52,21 @@
         </activity>
         <activity
             android:name=".DecisionActivity"
-            android:theme="@style/NoActionBar"></activity>
+            android:theme="@style/NoActionBar" />
         <!-- <activity -->
         <!-- android:name=".RecordActivity"> -->
         <!-- </activity> -->
         <activity
             android:name=".MotionDetectionActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".Image"></activity>
-        <activity
-            android:name=".PersonalDeviceActivity"
-            android:theme="@style/NoActionBar"
-            android:configChanges="orientation|screenSize">
-        </activity>
-        <activity android:name=".StreamingActivity"></activity>
+            android:screenOrientation="portrait" />
+        <!--<activity-->
+            <!--android:name=".PersonalDeviceActivity"-->
+            <!--android:configChanges="orientation|screenSize"-->
+            <!--android:theme="@style/NoActionBar" />-->
+        <activity android:name=".StreamingActivity" />
         <activity
             android:name=".RecordVideoActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -83,6 +76,11 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="45d182a30a8d7d1a15928444c4797ec7612a6bbd" />
+
+        <activity
+            android:name=".PersonalActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/NoActionBar"></activity>
     </application>
 
 </manifest>

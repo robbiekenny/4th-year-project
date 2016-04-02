@@ -53,11 +53,25 @@
 
     <!--YET TO CONVERT TO FR AND ES-->
     <string name="sign_out_message">Are you sure you want to sign out</string>
+    <string name="leavePersonalDevice">Are you sure you want to exit personal device mode</string>
+    <string name="leaveSecurityDevice">Are you sure you want to exit security device mode</string>
     <string name="error_text">Unable to access camera at this time</string>
     <string name="takeVideoText">Take Video</string>
     <string name="takingVideoText">Taking Video</string>
     <string name="roomDetails">Room Details</string>
     <string name="verify">Verify your email account</string>
     <string name="validateEmail">Validate Email</string>
+    <string name="addedDevice">This device has been added to your group of devices</string>
+    <string name="didnt_add_device">Unable to add this device to your group of devices. Log out and try again</string>
     <string name="emailVerificationMessage">To verify your account please check your inbox or junk folder for an email from HomeSecurity. Sign out and sign back in once you have verified your account</string>
+    <string name="failedToFindDevices">Failed to find any security devices</string>
+    <string name="retry">RETRY</string>
+    <string name="security_devices">Security Devices</string>
+    <string name="video_files">Your Videos</string>
+
+
+
+    <string name="title_activity_personal">PersonalActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>

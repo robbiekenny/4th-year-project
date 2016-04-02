@@ -60,17 +60,17 @@ public class MyHandler extends NotificationsHandler {
         {
             System.out.println("Message sub string: " + message.substring(7, message.length()));
             Room r = new Room(message.substring(7,message.length()));
-            try
-            {
-                PersonalDeviceActivity.adapter.add(r);
-                PersonalDeviceActivity.pd.dismiss();
-                PersonalDeviceActivity.listView.setVisibility(View.VISIBLE);
-                PersonalDeviceActivity.adapter.notifyDataSetChanged();
-            }catch(Exception e)
-            {
-                System.out.println("ERROR ADDING ROOM TO ADAPTER");
-                e.printStackTrace();
-            }
+//            try
+//            {
+//                PersonalDeviceActivity.adapter.add(r);
+//                PersonalDeviceActivity.pd.dismiss();
+//                PersonalDeviceActivity.listView.setVisibility(View.VISIBLE);
+//                PersonalDeviceActivity.adapter.notifyDataSetChanged();
+//            }catch(Exception e)
+//            {
+//                System.out.println("ERROR ADDING ROOM TO ADAPTER");
+//                e.printStackTrace();
+//            }
         }
         else if(substringPersonalMessage.equals("Unable "))
         {

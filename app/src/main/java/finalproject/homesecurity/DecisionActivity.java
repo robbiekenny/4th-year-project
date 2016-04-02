@@ -271,10 +271,14 @@ public class DecisionActivity extends ActionBarActivity {
         }
         else
         {
+//            editor.putString("DeviceMode", "Personal"); //this device will be listed as personal
+//            editor.commit();
+//            Intent it = new Intent(this,PersonalDeviceActivity.class);
+//            startActivity(it);
             editor.putString("DeviceMode", "Personal"); //this device will be listed as personal
-            editor.commit();
-            Intent it = new Intent(this,PersonalDeviceActivity.class);
-            startActivity(it);
+            editor.apply();
+            Intent intent = new Intent(this,PersonalActivity.class);
+            startActivity(intent);
         }
 
     }
