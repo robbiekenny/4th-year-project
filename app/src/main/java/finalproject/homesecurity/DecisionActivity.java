@@ -329,7 +329,7 @@ public class DecisionActivity extends ActionBarActivity {
                 .make(coordinatorLayout, R.string.verify, Snackbar.LENGTH_LONG);
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.parseColor(String.valueOf(R.color.ColorPrimary)));
+        textView.setTextColor(Color.parseColor("#3F51B5"));
         snackbar.show();
     }
 

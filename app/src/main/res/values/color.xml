@@ -4,6 +4,8 @@
     <color name="DarkBlue">#01579B</color>
     <color name="ColorPrimary">#3F51B5</color>
     <color name="ColorPrimaryDark">#303F9F</color>
+    <color name="ColorPrimaryDarker">#1A237E</color>
+    <color name="ColorAccent">#7986CB</color>
     <color name="GreenPrimary">#4CAF50</color>
     <color name="SecurityGreen">#43A047</color>
     <color name="Red">#D32F2F</color>

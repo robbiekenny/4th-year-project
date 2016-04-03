@@ -8,12 +8,20 @@
     <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/ColorPrimary</item>
         <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
+        <item name="colorAccent">@color/ColorAccent</item>
+        <item name="alertDialogTheme">@style/BaseDialogTheme</item>
+    </style>
+
+    <style name="BaseDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
+        <item name="colorAccent">@color/ColorAccent</item>
     </style>
 
     <style name="TextLabel" parent="AppTheme">
         <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
         <item name="colorAccent">#43A047</item>
-        <item name="colorControlNormal">#2196F3</item>
+        <item name="colorControlNormal">@color/ColorPrimary</item>
         <item name="colorControlActivated">#43A047</item>
     </style>
 

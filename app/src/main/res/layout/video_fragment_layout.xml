@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/video_coordinator_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<RelativeLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,6 +24,11 @@
             <!--android:layout_gravity="center_horizontal"/>-->
     <!--</LinearLayout>-->
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/video_swipeContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,13 +36,13 @@
         android:visibility="visible"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/videosProgressBar"
-        android:progressDrawable="@drawable/circular_progress_bar"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
@@ -52,3 +62,4 @@
         android:id="@+id/video_player_container"
         ></FrameLayout>
 </RelativeLayout>
+    </android.support.design.widget.CoordinatorLayout>

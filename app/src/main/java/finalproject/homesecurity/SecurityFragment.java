@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ public class SecurityFragment extends Fragment {
     private CoordinatorLayout coordinatorLayout;
     private SharedPreferences settings;
     private TextView toolbarTitle;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,6 +56,8 @@ public class SecurityFragment extends Fragment {
         coordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.security_coordinator_layout);
         pd = (ProgressBar) view.findViewById(R.id.roomsProgressBar);
         toolbarTitle = (TextView) getActivity().findViewById(R.id.toolbar_title);
+        //https://guides.codepath.com/android/Implementing-Pull-to-Refresh-Guide
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.room_swipeContainer);
 
         // Create the adapter to convert the array to views
         adapter = new RoomsAdapter(getActivity(), arrayOfRooms);
@@ -65,9 +69,49 @@ public class SecurityFragment extends Fragment {
 
         getSecurityDevices();
 
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources( R.color.ColorAccent,
+                R.color.ColorPrimary,
+                R.color.ColorPrimaryDark,
+               R.color.ColorPrimaryDarker);
+
+
         return view;
     }
 
+    private void refresh() {
+        adapter.clear();
+        userID = settings.getString("userId",null); //default value is null
+        if(userID != null) //send message to all devices linked to this account
+        {
+            System.out.println("GETTING SECURITY DEVICES");
+            try {
+                // SendMessage.sendPush("gcm", userID,"Retrieve");
+                messagingService.sendMessage("Retrieve",userID);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("ERROR SENDING PUSH FOR SECURITY DEVICE RETRIEVAL");
+            }
+        }
+        else
+            System.out.println("USERID IS NULL");
+
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                if(adapter.isEmpty()) //if no devices have been found
+                {
+                    displaySnackbar();
+                }
+                swipeContainer.setRefreshing(false);
+            }
+        }, 5000);
+    }
 
 
     public void getSecurityDevices() //retrieve security devices linked to this account
@@ -78,7 +122,6 @@ public class SecurityFragment extends Fragment {
         {
             System.out.println("GETTING SECURITY DEVICES");
             try {
-                // SendMessage.sendPush("gcm", userID,"Retrieve");
                 messagingService.sendMessage("Retrieve",userID);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -153,7 +196,7 @@ public class SecurityFragment extends Fragment {
         snackbar.setActionTextColor(Color.GREEN);
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.parseColor("#0288D1"));
+        textView.setTextColor(Color.parseColor("#3F51B5"));
         snackbar.show();
     }
 }

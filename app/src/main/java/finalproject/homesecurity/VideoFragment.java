@@ -4,8 +4,12 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,16 +53,21 @@ public class VideoFragment extends Fragment {
     private PlayVideoFragment frag;
     private FragmentManager fragmentManager;
     private TextView progressText;
+    private SwipeRefreshLayout swipeContainer;
+    private CoordinatorLayout coordinatorLayout;
+    private RequestQueue queue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.video_fragment_layout,
                 container, false);
-
+        queue = Volley.newRequestQueue(getActivity());
         sharedPreferences = getActivity().getSharedPreferences("AuthenticatedUserDetails", Context.MODE_PRIVATE);
 
         pb = (ProgressBar) view.findViewById(R.id.videosProgressBar);
         progressText = (TextView) view.findViewById(R.id.progressText);
+        coordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.video_coordinator_layout);
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.video_swipeContainer);
 
         // Create the adapter to convert the array to views
         adapter = new VideosAdapter(getActivity(), arrayOfVideos);
@@ -67,15 +76,29 @@ public class VideoFragment extends Fragment {
         listView.setAdapter(adapter);
 
         handleListViewItemClick();
-
-
         getVideos();
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources( R.color.ColorAccent,
+                R.color.ColorPrimary,
+                R.color.ColorPrimaryDark,
+                R.color.ColorPrimaryDarker);
         return view;
     }
 
-    private void getVideos() {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
+    private void refresh() {
+        adapter.clear();
+        getVideos();
+        swipeContainer.setRefreshing(false);
+    }
 
+    private void getVideos() {
         final String url = "http://homesecurityservice.azurewebsites.net/api/videos?email="
                 + sharedPreferences.getString("userId",null);
 
@@ -87,8 +110,8 @@ public class VideoFragment extends Fragment {
                     public void onResponse(JSONArray response) {
                         // display response
                         Log.d("Response", response.toString());
-                        pb.setVisibility(View.GONE);
-                        progressText.setVisibility(View.GONE);
+                        pb.setVisibility(View.INVISIBLE);
+                        progressText.setVisibility(View.INVISIBLE);
                         JSONObject data;
                         Video v;
                         try
@@ -112,7 +135,8 @@ public class VideoFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         Log.i("Error.Response", error.toString());
                         pb.setVisibility(View.INVISIBLE);
-                        progressText.setText(R.string.noVideos);
+                        progressText.setVisibility(View.INVISIBLE);
+                        displaySnackBar();
                     }
                 }
         ){
@@ -129,6 +153,25 @@ public class VideoFragment extends Fragment {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 // add it to the RequestQueue
         queue.add(getRequest);
+    }
+
+    private void displaySnackBar() {
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, R.string.noVideos, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pb.setVisibility(View.VISIBLE);
+                        progressText.setVisibility(View.VISIBLE);
+                        getVideos();
+                    }
+                });
+
+        snackbar.setActionTextColor(Color.GREEN);
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.parseColor("#3F51B5"));
+        snackbar.show();
     }
 
     public void handleListViewItemClick()
