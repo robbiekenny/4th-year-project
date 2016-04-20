@@ -6,13 +6,22 @@ package finalproject.homesecurity.model;
 public class Room {
     private String roomName;
     private boolean motionDetection,lights,takingVideo;
+    private int batteryLife;
 
-    public Room(String name)
+    public Room(String name,String battery)
     {
         roomName = name;
         motionDetection = false;
         lights = false;
         takingVideo = false;
+
+        //battery life will be a string in the range from 0 -1
+        //to display to the user I will convert battery to an int and multiply it by 100 so battery life will be in the range 0 -100
+        batteryLife = (int) (Double.parseDouble(battery) * 100);
+    }
+
+    public int getBatteryLife() {
+        return batteryLife;
     }
 
     public String getRoomName() {

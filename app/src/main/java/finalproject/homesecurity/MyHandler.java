@@ -59,7 +59,7 @@ public class MyHandler extends NotificationsHandler {
         if(substringPersonalMessage.equals("Details")) //take in the details of the security device
         {
             System.out.println("Message sub string: " + message.substring(7, message.length()));
-            Room r = new Room(message.substring(7,message.length()));
+            Room r = new Room(message.substring(7,message.length()),"0.4");
 //            try
 //            {
 //                PersonalDeviceActivity.adapter.add(r);

@@ -94,8 +94,12 @@ public class DecisionActivity extends ActionBarActivity {
             linearLayout.setVisibility(View.INVISIBLE);
 
 
-        //use a users email address as a channel and attempt to subscribe to that channel
-         messaging = new Messaging(sharedPref.getString("userId",null),this);
+        if(savedInstanceState == null)
+        {
+            //use a users email address as a channel and attempt to subscribe to that channel
+            messaging = new Messaging(sharedPref.getString("userId",null),this);
+        }
+
     }
 
     @Override
@@ -336,6 +340,6 @@ public class DecisionActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        messaging.unsubscribeFromChannel(); //stop listening for messages on this channel
+       // messaging.unsubscribeFromChannel(); //stop listening for messages on this channel
     }
 }

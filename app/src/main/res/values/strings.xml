@@ -68,14 +68,15 @@
     <string name="retry">RETRY</string>
     <string name="searchVideos">Searching for your videos</string>
     <string name="noVideos">No videos found</string>
+    <string name="lights">Lights</string>
+    <string name="motion">Motion Detection</string>
+    <string name="cameraMessage">The camera is needed in order for this device to detect motion. Would you like to give permission to HomeSecurity to use this devices camera?</string>
+    <string name="batteryLife" formatted="false">%1$d%% battery</string>
 
     <!--may not be used-->
     <string name="security_devices">Security Devices</string>
     <string name="video_files">Your Videos</string>
-
-
-
-    <string name="title_activity_personal">PersonalActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+
+
 </resources>

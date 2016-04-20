@@ -349,7 +349,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
                         + lineEnd);
 
                 Log.i("Server Response Code ", "" + connection.getResponseCode());
-
+                //consider sending message of whether or not the post was successful or not
 //                if (serverResponseCode == 200) {
 //
 //                }

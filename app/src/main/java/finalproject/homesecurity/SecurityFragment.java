@@ -212,7 +212,7 @@ class RoomsAdapter extends ArrayAdapter<Room> {
 
     // View lookup cache  -- used to improve performance
     private static class ViewHolder {
-        TextView name;
+        TextView name,battery;
     }
 
 
@@ -231,6 +231,7 @@ class RoomsAdapter extends ArrayAdapter<Room> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.objects_inside_of_listview_layout, parent, false);
             viewHolder.name = (TextView) convertView.findViewById(R.id.roomName);
+            viewHolder.battery = (TextView) convertView.findViewById(R.id.batteryPercentage);
 
             convertView.setTag(viewHolder);
         } else {
@@ -239,6 +240,8 @@ class RoomsAdapter extends ArrayAdapter<Room> {
         // Populate the data into the template view using the data object
         String[] roomName = room.getRoomName().split("@"); //get room name without
         viewHolder.name.setText(roomName[0]);
+        System.out.println(room.getBatteryLife());
+        viewHolder.battery.setText(String.format(getContext().getResources().getString(R.string.batteryLife),room.getBatteryLife()));
 
         // Return the completed view to render on screen
         return convertView;

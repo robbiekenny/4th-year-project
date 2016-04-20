@@ -2,75 +2,40 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:src="@drawable/lighton"
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/lights"
-            android:layout_gravity="center"
-           />
-
-        <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="@string/lights"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/lighton"
-            android:id="@+id/lights_textView"
-            android:layout_gravity="center"
-            />
-    </LinearLayout>
+            android:layout_marginTop="5dp"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
         android:background="@android:color/darker_gray">
 
     </View>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/motion"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:src="@drawable/motion_on"
-            android:id="@+id/motion"
-            android:layout_gravity="center"
-             />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/mdon"
-            android:id="@+id/motion_textView"
-            android:layout_gravity="center" />
-    </LinearLayout>
-
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/motion"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginTop="5dp"
+        />
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:background="@android:color/darker_gray">
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="5dp">
 
     </View>
 

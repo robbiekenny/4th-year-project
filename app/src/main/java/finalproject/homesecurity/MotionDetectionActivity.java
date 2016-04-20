@@ -13,9 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
@@ -23,6 +26,9 @@ import android.hardware.Camera.PreviewCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -43,7 +49,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class MotionDetectionActivity extends SensorsActivity {
     //https://github.com/phishman3579/android-motion-detection/tree/master/src/com/jwetherell/motion_detection
-    private static final String TAG = "CameraActivity";
+    //private final int CAMERA_PERMISSION = 255; //Randomly chosen integer used for callback
     private String email; //we use the users email in this activity so that we can send them an email if motion is detected
     private SharedPreferences prefs, sharedPref;
     private SharedPreferences.Editor editor;
@@ -53,7 +59,6 @@ public class MotionDetectionActivity extends SensorsActivity {
     private static boolean inPreview = false;
     private static long mReferenceTime = 0;
     private static IMotionDetection detector = null;
-    private static Context con;
     private static volatile AtomicBoolean processing = new AtomicBoolean(false);
     private static boolean detectMotion = false;
     private ImageView changeCamera;
@@ -64,7 +69,6 @@ public class MotionDetectionActivity extends SensorsActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera_activity_layout);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        con = MotionDetectionActivity.this;
         changeCamera = (ImageView) findViewById(R.id.changeCamera);
         preview = (SurfaceView) findViewById(R.id.preview);
         previewHolder = preview.getHolder();
@@ -208,6 +212,74 @@ public class MotionDetectionActivity extends SensorsActivity {
         MotionDetectionActivity.camera = camera;
     }
 
+//    @Override
+//    public void onRequestPermissionsResult(final int requestCode,
+//                                           String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case CAMERA_PERMISSION: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                    // permission was granted
+//                    try{
+//                        camera = Camera.open(cameraID);
+//                    }catch(Exception e){
+//                        e.printStackTrace();
+//                    }
+//
+//                } else {
+//                    //tell the user we need the camera to detect motion
+//                    new AlertDialog.Builder(this)
+//                            .setMessage(R.string.cameraMessage)
+//                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                   requestCameraPermission();
+//                                }
+//                            })
+//                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    finish();
+//                                }
+//                            })
+//                            .show();
+//
+//                }
+//                return;
+//            }
+//        }
+//    }
+
+//    private void requestCameraPermission()
+//    {
+//        // Here, thisActivity is the current activity
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.READ_CONTACTS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.READ_CONTACTS)) {
+//
+//                // Show an expanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//
+//            } else {
+//
+//                // No explanation needed, we can request the permission.
+//
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.CAMERA},
+//                        CAMERA_PERMISSION);
+//
+//                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+//                // app-defined int constant. The callback method gets the
+//                // result of the request.
+//            }
+//        }
+//    }
+
     private PreviewCallback previewCallback = new PreviewCallback() {
 
         /**
@@ -263,7 +335,7 @@ public class MotionDetectionActivity extends SensorsActivity {
                 Camera.Size size = getBestPreviewSize(width, height, parameters);
                 if (size != null) {
                     parameters.setPreviewSize(size.width, size.height);
-                    Log.d(TAG, "Using width=" + size.width + " height=" + size.height);
+                    Log.d("MotionDetectionActivity", "Using width=" + size.width + " height=" + size.height);
                 }
                 camera.setParameters(parameters);
                 camera.startPreview();
@@ -372,7 +444,7 @@ public class MotionDetectionActivity extends SensorsActivity {
                             else bitmap = ImageProcessing.lumaToGreyscale(img, width, height);
                         }
 
-                        Log.i(TAG, "Saving.. previous=" + previous + " original=" + original + " bitmap=" + bitmap);
+                        Log.i("MotionDetectionActivity", "Saving.. previous=" + previous + " original=" + original + " bitmap=" + bitmap);
                         Looper.prepare();
                         System.out.println("SENDING IMAGE TO USER");
                         /*
@@ -383,11 +455,11 @@ public class MotionDetectionActivity extends SensorsActivity {
 
                         new SendPhotoToUser(email).execute(original);
                     } else {
-                        Log.i(TAG, "Not taking picture because not enough time has passed since the creation of the Surface");
+                        Log.i("MotionDetectionActivity", "Not taking picture because not enough time has passed since the creation of the Surface");
                     }
                 }
             } catch (Exception e) {
-                Log.i(TAG, "FAILED TO PROCESS IMAGE");
+                Log.i("MotionDetectionActivity", "FAILED TO PROCESS IMAGE");
                 e.printStackTrace();
             } finally {
                 processing.set(false);

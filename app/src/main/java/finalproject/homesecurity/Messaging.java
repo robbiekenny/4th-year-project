@@ -4,11 +4,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -33,11 +36,15 @@ public class Messaging {
     private String channel,roomName, substringPersonalMessage,substringSecurityMessage;
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    public Messaging()
+    //used for getting battery life
+    private IntentFilter ifilter;
+    private Intent batteryStatus;
+
+    public Messaging() //default constructor is used purely for sending messages
     {
     }
 
-    public Messaging(String channel,Context context)
+    public Messaging(String channel,Context context) //by calling this constructor a users device is subscrided to a channel
     {
         this.channel = channel;
         ctx = context;
@@ -127,8 +134,12 @@ public class Messaging {
         System.out.println(substringPersonalMessage + "------------");
         if(substringPersonalMessage.equals("Details")) //take in the details of the security device
         {
-            System.out.println("Message sub string: " + message.substring(7, message.length()));
-            final Room r = new Room(message.substring(7,message.length()));
+            //System.out.println("Message sub string: " + message.substring(7, message.length()));
+            String[] details = message.split("@");
+
+            System.out.println(details[0] + ", " + details[1] + ", " + details[2] + ", " +details[3] );
+
+            final Room r = new Room(details[2] + "@" + details[3],details[1]);
             try
             {
                 mHandler.post(new Runnable() {
@@ -194,18 +205,24 @@ public class Messaging {
         {
             //should send device details
             System.out.println("IN retrieve case" + "," + message);
-            //Toast.makeText(ctx,"RETRIEVE",Toast.LENGTH_LONG);
+
             if(channel == null || roomName == null)
                 Toast.makeText(ctx,"An error has occured please close the application and start again", Toast.LENGTH_LONG).show();
             else {
                 /*
                 MESSAGE BEING SENT TO PERSONAL DEVICE WILL BE IN THE FORMAT
-                DETAILS,ROOM NAME e.g DetailsKitchen
-                Appended to each room name is the @ symbol and a UUID
+                DETAILS@,BATTERY LIFE@,ROOM NAME e.g DetailsKitchen
+                Appended to each room name is the @ symbol and a UUID so rooms are unique behind the scenes
                  */
                 try {
-                    sendMessage("Details" + roomName,sharedPref.getString("userId",null));
-                    //Toast.makeText(ctx, "SENT", Toast.LENGTH_LONG);
+                     ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+                     batteryStatus = ctx.registerReceiver(null, ifilter);
+                    int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                    int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+                    float batteryPct = level / (float)scale;
+                    sendMessage("Details@"+ batteryPct +"@" + roomName,sharedPref.getString("userId",null));
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("COULD NOT SEND MESSAGE TO PERSONAL DEVICE");
@@ -255,7 +272,7 @@ public class Messaging {
                             MotionDetectionActivity.getCamera().setParameters(p);
 
                             if(motion == 1) {
-                                new Handler().postDelayed(new Runnable() {
+                                mHandler.postDelayed(new Runnable() {
                                     public void run() {
                                         MotionDetectionActivity.setDetectMotion(false);
                                     }
@@ -284,7 +301,7 @@ public class Messaging {
                         MotionDetectionActivity.getCamera().setParameters(p);
 
                         if(motion == 1) {
-                            new Handler().postDelayed(new Runnable() {
+                            mHandler.postDelayed(new Runnable() {
                                 public void run() {
                                     MotionDetectionActivity.setDetectMotion(false);
                                 }

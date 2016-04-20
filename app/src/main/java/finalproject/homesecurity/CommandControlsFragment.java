@@ -2,6 +2,7 @@ package finalproject.homesecurity;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,9 @@ import finalproject.homesecurity.Utils.SendMessage;
 public class CommandControlsFragment extends Fragment {
     private String userID,roomName;
     private int position;
-    private ImageView lights,motion,takeVideo;
-    private TextView lightText,motionText,takeVideoText;
+    private SwitchCompat lights,motion;
+    private ImageView takeVideo;
+    private TextView takeVideoText;
     private Messaging messaging;
 
     @Override
@@ -33,12 +35,10 @@ public class CommandControlsFragment extends Fragment {
         roomName = getArguments().getString("room");
         position = getArguments().getInt("position");
 
-        lightText = (TextView) view.findViewById(R.id.lights_textView);
-        motionText = (TextView) view.findViewById(R.id.motion_textView);
         takeVideoText = (TextView) view.findViewById(R.id.takeVideo_textView);
 
-        lights = (ImageView) view.findViewById(R.id.lights);
-        motion = (ImageView) view.findViewById(R.id.motion);
+        lights = (SwitchCompat) view.findViewById(R.id.lights);
+        motion = (SwitchCompat) view.findViewById(R.id.motion);
         takeVideo = (ImageView) view.findViewById(R.id.takeVideo);
 
         if(SecurityFragment.adapter.getItem(position).isTakingVideo())
@@ -47,13 +47,11 @@ public class CommandControlsFragment extends Fragment {
         }
         if(SecurityFragment.adapter.getItem(position).isMotionDetection())
         {
-            motion.setImageResource(R.drawable.motion_off);
-            motionText.setText(R.string.mdoff);
+           motion.setChecked(true);
         }
         if(SecurityFragment.adapter.getItem(position).isLights())
         {
-            lights.setImageResource(R.drawable.lightoff);
-            lightText.setText(R.string.lightoff);
+            lights.setChecked(true);
         }
 
         takeVideo.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +59,6 @@ public class CommandControlsFragment extends Fragment {
             public void onClick(View v) {
                 if(SecurityFragment.adapter.getItem(position).isTakingVideo())
                 {
-
                 }
                 else
                 {
@@ -71,47 +68,37 @@ public class CommandControlsFragment extends Fragment {
                 }
             }
         });
-
-        lights.setOnClickListener(new View.OnClickListener() {
+        lights.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if(SecurityFragment.adapter.getItem(position).isLights())
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
                 {
-                    lights.setImageResource(R.drawable.lighton);
-                    lightText.setText(R.string.lighton);
-                    disableFlashLight();
-                    SecurityFragment.adapter.getItem(position).setLights(false);
-                }
-                else
-                {
-                    lights.setImageResource(R.drawable.lightoff);
-                    lightText.setText(R.string.lightoff);
                     enableFlashLight();
                     SecurityFragment.adapter.getItem(position).setLights(true);
                 }
+                else
+                {
+                    disableFlashLight();
+                    SecurityFragment.adapter.getItem(position).setLights(false);
+                }
             }
         });
 
-        motion.setOnClickListener(new View.OnClickListener() {
+        motion.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if(SecurityFragment.adapter.getItem(position).isMotionDetection())
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
                 {
-                    motion.setImageResource(R.drawable.motion_on);
-                    motionText.setText(R.string.mdon);
-                    disableMotion();
-                    SecurityFragment.adapter.getItem(position).setMotionDetection(false);
-                }
-                else
-                {
-                    motion.setImageResource(R.drawable.motion_off);
-                    motionText.setText(R.string.mdoff);
                     enableMotion();
                     SecurityFragment.adapter.getItem(position).setMotionDetection(true);
                 }
+                else
+                {
+                    disableMotion();
+                    SecurityFragment.adapter.getItem(position).setMotionDetection(false);
+                }
             }
         });
-
         messaging = new Messaging();
 
         return view;
