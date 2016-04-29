@@ -6,7 +6,7 @@ import java.util.Date;
  * Created by Robbie on 01/04/2016.
  */
 public class Video {
-    private String video;
+    private String video; //URL of video
     private String roomName;
     private String createdAt;
 

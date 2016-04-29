@@ -2,13 +2,10 @@ package finalproject.homesecurity;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -23,7 +20,10 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import com.google.gson.JsonObject;
+
+/*
+THIS CLASS IS NO LONGER USED AS I NO LONGER USE GCM FOR SENDING COMMANDS BETWEEN DEVICES
+ */
 
 
 public class RegisterClient {

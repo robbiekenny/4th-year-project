@@ -52,7 +52,6 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':libstreaming')
 
 
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
@@ -63,8 +62,7 @@ dependencies {
     compile 'com.microsoft.azure:azure-mobile-services-android-sdk:2.0.3'
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile 'com.google.android.gms:play-services-base:8.4.0'
-    compile 'com.google.android.gms:play-services-gcm:8.4.0'
-    compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.android.support:support-v4:23.3.0'
 
 
     compile 'com.devbrackets.android:exomedia:2.5.6'

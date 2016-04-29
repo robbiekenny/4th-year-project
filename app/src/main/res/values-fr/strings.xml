@@ -30,4 +30,30 @@
     <string name="step2">Étape 2</string>
     <string name="security_details_part3">Ensuite, nous devons fournir le nom de la salle de cette caméra de sécurité va suivre . L\'exemple ci-dessus montre une caméra de sécurité étant mis en place pour une cuisine. Pour poursuivre avec le nom que vous avez choisi de sélectionner le bouton Enregistrer</string>
     <string name="final_step">Voilà, votre appareil est maintenant enregistré en tant que dispositif de sécurité . Vous aurez maintenant une vue de votre appareil photo de sorte que vous pouvez le placer dans un endroit idéal.</string>
+
+    <string name="personal_details_part1">Un dispositif personnel est l\'appareil que vous allez utiliser pour contrôler vos caméras de sécurité. Activation de votre appareil comme un dispositif personnel est très simple comme vous le verrez ci-dessous.</string>
+    <string name="personal_details_part2">Pour permettre le contrôle de votre appareil vos caméras de sécurité sélectionnez simplement le bouton personnel encerclé en rouge ci-dessus</string>
+    <string name="personal_details_part3">Une fois que vous avez choisi l\'option personnelle de votre appareil va commencer la recherche de caméras de sécurité que vous avez mis en place. L\'image ci-dessous montre ce que vous pouvez vous attendre une fois que vous avez choisi l\'option personnelle .</string>
+    <string name="personal_details_part4">Si des dispositifs de sécurité se trouvent alors ils seront présentés à vous dans une liste. Si aucun ne trouve alors vous aurez la possibilité de rechercher à nouveau</string>
+
+    <string name="sign_out_message">Êtes-vous certain de vouloir vous déconnecter</string>
+    <string name="leavePersonalDevice">Etes-vous sûr de vouloir quitter le mode appareil personnel</string>
+    <string name="leaveSecurityDevice">Etes-vous sûr de vouloir quitter le mode de dispositif de sécurité</string>
+    <string name="error_text">Impossible d\'accéder à l\'appareil photo à ce moment</string>
+    <string name="takeVideoText">Prenez la vidéo</string>
+    <string name="takingVideoText">Prenant la vidéo</string>
+    <string name="roomDetails">Détails de la chambre</string>
+    <string name="verify">Vérifiez votre compte de messagerie</string>
+    <string name="validateEmail">Email valide</string>
+    <string name="addedDevice">Ce dispositif a été ajouté à votre groupe de périphériques</string>
+    <string name="didnt_add_device">Impossible d\'ajouter cet appareil à votre groupe de périphériques. Déconnectez-vous et essayez à nouveau</string>
+    <string name="emailVerificationMessage">Pour vérifier votre compte s\'il vous plaît vérifier votre boîte de réception ou un dossier indésirable pour un courriel de AccueilBulletins. Se déconnecter et vous reconnecter une fois que vous avez vérifié votre compte</string>
+    <string name="failedToFindDevices">Impossible de trouver tous les dispositifs de sécurité</string>
+    <string name="retry">RECOMMENCEZ</string>
+    <string name="searchVideos">A la recherche de vos vidéos</string>
+    <string name="noVideos">Aucune vidéo trouvée</string>
+    <string name="lights">Lumières</string>
+    <string name="motion">Détection de mouvement</string>
+    <string name="cameraMessage">La caméra est nécessaire pour que ce dispositif pour détecter le mouvement. Aimeriez-vous donner la permission de AccueilBulletins d\'utiliser cet appareil de dispositifs ?</string>
+    <string name="batteryLife" formatted="false">%1$d%% batterie</string>
 </resources>

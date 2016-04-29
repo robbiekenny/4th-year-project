@@ -22,11 +22,36 @@
     <string name="save">Ahorrar</string>
     <string name="cancel">Cancelar</string>
     <string name="sign_out">Desconectar</string>
-
     <string name="security_details_part1">Configurar el dispositivo como una cámara de seguridad se realiza en 2 pasos fáciles</string>
     <string name="step1">Paso 1</string>
     <string name="security_details_part2">Para empezar a configurar su dispositivo como una cámara de seguridad por favor seleccione el botón de seguridad se muestra por encima de un círculo rojo</string>
     <string name="step2">Paso 2</string>
     <string name="security_details_part3">A continuación, tenemos que proporcionar el nombre de la sala de esta cámara de seguridad se va a supervisar. El ejemplo anterior muestra una cámara de seguridad está configurado para una cocina . Para continuar con el nombre que ha elegido seleccionar el botón de guardar</string>
     <string name="final_step">Eso es todo, el dispositivo ahora está registrado como dispositivo de seguridad. Ahora tendrá una vista de su cámara para que pueda colocarlo en un lugar ideal.</string>
+
+    <string name="personal_details_part1">Un dispositivo personal es el dispositivo que va a utilizar para controlar sus cámaras de seguridad. Permitiendo a su dispositivo como un dispositivo personal es muy simple como se verá a continuación.</string>
+    <string name="personal_details_part2">Para permitir que el dispositivo de control de sus cámaras de seguridad sólo tiene que seleccionar el botón de personal por encima de un círculo en rojo</string>
+    <string name="personal_details_part3">Una vez que haya elegido la opción personal de su dispositivo comenzará a buscar las cámaras de seguridad que haya configurado. La siguiente imagen muestra lo que puede esperar una vez que haya elegido la opción personal.</string>
+    <string name="personal_details_part4">Si se encuentran los dispositivos de seguridad a continuación, serán presentados a usted en una lista. Si no se encuentra ninguno a continuación, se le dará la opción de buscar de nuevo</string>
+
+    <string name="sign_out_message">¿Seguro que desea cerrar la sesión</string>
+    <string name="leavePersonalDevice">¿Está seguro de que desea salir del modo de dispositivo personal</string>
+    <string name="leaveSecurityDevice">¿Está seguro de que desea salir del modo de dispositivo de seguridad</string>
+    <string name="error_text">No se puede acceder cámara en este momento</string>
+    <string name="takeVideoText">Toma video</string>
+    <string name="takingVideoText">tomando vídeo</string>
+    <string name="roomDetails">Detalles de las habitaciones</string>
+    <string name="verify">Verificar su cuenta de correo electrónico</string>
+    <string name="validateEmail">Validar correo electrónico</string>
+    <string name="addedDevice">Este dispositivo ha sido añadido a su grupo de dispositivos</string>
+    <string name="didnt_add_device">No se puede agregar este dispositivo a su grupo de dispositivos. Cierre la sesión y vuelva a intentarlo</string>
+    <string name="emailVerificationMessage">Para verificar su cuenta, por favor revisa tu correo basura o no deseado de un correo electrónico de HomeSecurity. Cierra sesión y de nuevo en una vez que se ha comprobado su cuenta</string>
+    <string name="failedToFindDevices">No se pudo encontrar ningún dispositivo de seguridad</string>
+    <string name="retry">REVER</string>
+    <string name="searchVideos">La búsqueda de sus vídeos</string>
+    <string name="noVideos">No se encontraron vídeos</string>
+    <string name="lights">Luces</string>
+    <string name="motion">Detección de movimiento</string>
+    <string name="cameraMessage">Se necesita la cámara a fin de que este dispositivo para detectar el movimiento. ¿Le gustaría dar permiso para HomeSecurity de utilizar esta cámara dispositivos ?</string>
+    <string name="batteryLife" formatted="false">%1$d%% batería</string>
 </resources>

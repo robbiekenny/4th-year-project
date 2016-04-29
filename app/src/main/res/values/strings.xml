@@ -36,22 +36,6 @@
     <string name="personal_details_part3">Once you\'ve chosen the personal option your device will begin looking for security cameras you have set up. The below image shows what you can expect once you\'ve chosen the personal option.</string>
     <string name="personal_details_part4">If any security devices are found then they will be presented to you in a list. If none are found then you will be given the option to search again</string>
 
-    <string name="start">Start/Stop Streaming</string>
-    <string name="flash">Flash</string>
-    <string name="camera">Camera</string>
-    <string name="video">Video Settings</string>
-    <string name="username">Username</string>
-
-    <string name="uri">URI</string>
-    <string name="password_hint">Leave empty if not needed</string>
-    <string name="username_hint">Leave empty if not needed</string>
-    <string name="default_bitrate">0 kbps</string>
-    <string name="default_stream">rtsp://40.127.139.63:1935/live/myStream</string>
-    <string name="username_text">robbie</string>
-    <string name="password_text"></string>
-    <string name="title_activity_login">Sign in</string>
-
-    <!--YET TO CONVERT TO FR AND ES-->
     <string name="sign_out_message">Are you sure you want to sign out</string>
     <string name="leavePersonalDevice">Are you sure you want to exit personal device mode</string>
     <string name="leaveSecurityDevice">Are you sure you want to exit security device mode</string>

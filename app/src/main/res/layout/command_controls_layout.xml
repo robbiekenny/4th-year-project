@@ -16,7 +16,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="0.5dp"
         android:layout_marginTop="5dp"
         android:background="@android:color/darker_gray">
 
@@ -33,7 +33,7 @@
         />
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="0.5dp"
         android:background="@android:color/darker_gray"
         android:layout_marginTop="5dp">
 
@@ -41,26 +41,27 @@
 
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:src="@drawable/ic_camcorder"
-            android:id="@+id/takeVideo"
-            android:layout_gravity="center"
-            />
-
+        android:layout_height="wrap_content"
+        >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/takeVideoText"
             android:id="@+id/takeVideo_textView"
-            android:layout_gravity="center" />
+            android:layout_marginTop="5dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:clickable="true"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_camcorder"
+            android:id="@+id/takeVideo" />
+
+
     </LinearLayout>
 </LinearLayout>
