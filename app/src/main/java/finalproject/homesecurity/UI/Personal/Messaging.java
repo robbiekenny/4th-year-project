@@ -34,7 +34,7 @@ import finalproject.homesecurity.model.Room;
  * CLASS THAT USES PUBNUB SDK TO PUBLISH/SUBSCRIBE TO CHANNEL
  */
 public class Messaging {
-    private Pubnub pubnub = new Pubnub("pub-c-88cffef4-057d-4a44-905b-89d0a574eefe", "sub-c-7f87a08c-f693-11e5-9086-02ee2ddab7fe");
+    private Pubnub pubnub = new Pubnub("**", "**");
     private Context ctx;
     private String deviceMode;
     private SharedPreferences settings,sharedPref;
