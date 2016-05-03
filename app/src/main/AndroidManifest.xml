@@ -36,13 +36,9 @@
         <activity
             android:name=".UI.SetUpSecurityOrPersonal.DecisionActivity"
             android:theme="@style/NoActionBar" />
-        <!-- <activity -->
-        <!-- android:name=".RecordActivity"> -->
-        <!-- </activity> -->
         <activity
             android:name=".UI.Security.MotionDetectionActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".StreamingActivity" />
         <activity
             android:name=".UI.Security.RecordVideoActivity"
             android:screenOrientation="portrait" />
