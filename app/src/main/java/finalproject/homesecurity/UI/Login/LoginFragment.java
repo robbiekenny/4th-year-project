@@ -47,6 +47,9 @@ import finalproject.homesecurity.model.User;
 
 /**
  * Created by Robbie on 19/01/2016.
+ * THIS CLASS TAKES THE USERS EMAIL AND PASSWORD AND COMPARES IT AGAINST THE DATABASE TO LOOK FOR A MATCH
+ * IF A MATCH IS FOUND THEN WE WILL RETURN THE EMAIL ADDRESS,A TOKEN, AND WHETHER OR NOT THIS USERS EMAIL ADDRESS
+ * HAS BEEN VERIFIED
  */
 public class LoginFragment extends Fragment {
     private EditText email,password;
@@ -86,15 +89,14 @@ public class LoginFragment extends Fragment {
                 return handled;
             }
         });
+        //allow user to see their password
         password.setOnTouchListener(new View.OnTouchListener() { //allows user to see their password
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 final int DRAWABLE_RIGHT = 2;
 
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    //http://stackoverflow.com/questions/11713642/android-to-detect-when-you-are-holding-down-a-button
                     if(event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        //http://stackoverflow.com/questions/9307680/show-the-password-with-edittext
                         password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                         return true;
                     }
@@ -218,7 +220,6 @@ public class LoginFragment extends Fragment {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             //ft.setCustomAnimations(R.xml.enter_from_left, R.xml.exit_to_right);
             ft.replace(R.id.fragment_container, frag,"frag");
-            //ft.addToBackStack(null); //allows user to press back button on phone to get rid of fragment
             ft.commit();
         }
     }

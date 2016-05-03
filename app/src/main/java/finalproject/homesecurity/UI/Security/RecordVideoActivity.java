@@ -114,14 +114,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
                 }
             }, 1000);
         } else {
-//            try
-//            {
-//                SendMessage.sendPush("gcm",sharedPref.getString("userId",null),"Unable to take video in " + settings.getString("RoomName",null));
-//                finish();
-//            }catch(Exception e)
-//            {
-//                e.printStackTrace();
-//            }
+
             Log.i(TAG,"UNABLE TO GET CAMERA");
         }
 
@@ -313,6 +306,15 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
             finish();
         }
 
+        /***************************************************************************************
+         *    Title: Upload large file in Android without outofmemory error
+         *    Author: Andro Selva
+         *    Date: 12/1/2016
+         *    Code version: 1
+         *    Availability: http://stackoverflow.com/questions/9630430/upload-large-file-in-android-without-outofmemory-error
+         *
+         ***************************************************************************************/
+
         public void uploadFile(String filePath) {
             Log.i("Image filename", filePath);
             Log.i("url", Constants.UPLOADVIDEO_ENDPOINT);
@@ -384,7 +386,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
                         + lineEnd);
 
                 Log.i("Server Response Code ", "" + connection.getResponseCode());
-                //consider sending message of whether or not the post was successful or not
+
 //                if (serverResponseCode == 200) {
 //
 //                }
@@ -408,7 +410,7 @@ public class RecordVideoActivity extends Activity implements MediaRecorder.OnInf
     /***************************************************************************************
      *    Title: How to know when MediaRecorder has finished writing data to file
      *    Author: userSeven7s
-     *    Date: 12/3/2016
+     *    Date: 15/3/2016
      *    Code version: 1
      *    Availability: http://stackoverflow.com/questions/7418446/how-to-know-when-mediarecorder-has-finished-writing-data-to-file
      *

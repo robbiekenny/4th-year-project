@@ -5,18 +5,19 @@ package finalproject.homesecurity;
  */
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
 
-/** A basic Camera preview class */
+/** A basic Camera preview class
+ *
+ *  THIS CLASS PROVIDES THE FUNCTIONALITY FOR VIEWING THE DEVICES CAMERAS VIEW
+ * */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera;
-    private SharedPreferences settings;
 
     public CameraPreview(Context context, Camera camera) {
         super(context);
@@ -32,7 +33,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
             mCamera.setPreviewDisplay(holder);
-            //http://stackoverflow.com/questions/10660598/android-camera-preview-orientation-in-portrait-mode
             mCamera.setDisplayOrientation(90);
             mCamera.startPreview();
         } catch (IOException e) {

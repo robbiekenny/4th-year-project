@@ -1,7 +1,6 @@
 package finalproject.homesecurity.UI.Personal;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,8 +10,6 @@ import android.hardware.Camera;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -23,7 +20,6 @@ import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 
 import finalproject.homesecurity.R;
-import finalproject.homesecurity.UI.SetUpSecurityOrPersonal.DecisionActivity;
 import finalproject.homesecurity.UI.Security.MotionDetectionActivity;
 import finalproject.homesecurity.UI.Security.RecordVideoActivity;
 import finalproject.homesecurity.model.Room;
@@ -34,7 +30,7 @@ import finalproject.homesecurity.model.Room;
  * CLASS THAT USES PUBNUB SDK TO PUBLISH/SUBSCRIBE TO CHANNEL
  */
 public class Messaging {
-    private Pubnub pubnub = new Pubnub("**", "**");
+    private Pubnub pubnub = new Pubnub("", "");
     private Context ctx;
     private String deviceMode;
     private SharedPreferences settings,sharedPref;
@@ -161,39 +157,6 @@ public class Messaging {
                 System.out.println("ERROR ADDING ROOM TO ADAPTER");
                 e.printStackTrace();
             }
-        }
-        else if(substringPersonalMessage.equals("Unable "))
-        {
-            System.out.println("Displaying error message");
-            String[] messageWithoutUUID = message.split("@"); //get message without UUID attached to room name
-            NotificationCompat.Builder mBuilder =
-                    (NotificationCompat.Builder) new NotificationCompat.Builder(ctx)
-                            .setSmallIcon(R.drawable.ic_stat_name)
-                            .setContentTitle("HomeSecurity")
-                            .setContentText(messageWithoutUUID[0]);
-// Creates an explicit intent for an Activity in your app
-            Intent resultIntent = new Intent(ctx, DecisionActivity.class);
-
-            int notificationID = 1;
-// The stack builder object will contain an artificial back stack for the
-// started Activity.
-// This ensures that navigating backward from the Activity leads out of
-// your application to the Home screen.
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(ctx);
-// Adds the back stack for the Intent (but not the Intent itself)
-            stackBuilder.addParentStack(DecisionActivity.class);
-// Adds the Intent that starts the Activity to the top of the stack
-            stackBuilder.addNextIntent(resultIntent);
-            PendingIntent resultPendingIntent =
-                    stackBuilder.getPendingIntent(
-                            0,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
-            mBuilder.setContentIntent(resultPendingIntent);
-            NotificationManager mNotificationManager =
-                    (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
-            mNotificationManager.notify(notificationID, mBuilder.build());
         }
     }
 

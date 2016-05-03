@@ -82,7 +82,7 @@ public class RegisterFragment extends Fragment {
             }
         });
 
-        //alows the user to see their password if they want
+        //allows the user to see their password if they want
         regPass.setOnTouchListener(new View.OnTouchListener() { //allows user to see their password
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -150,6 +150,7 @@ public class RegisterFragment extends Fragment {
             public void onSuccess(JsonElement result) {
                 if (result.isJsonObject()) {
                     JsonObject resultObj = result.getAsJsonObject();
+                    //message is coming from web API hosted on Azure
                     displayRegistrationMessage(resultObj.get("message").getAsString(), email);
 
                 } else
@@ -171,7 +172,7 @@ public class RegisterFragment extends Fragment {
             editor.commit();
 
             Intent intent = new Intent(getActivity(),DecisionActivity.class);
-            intent.putExtra("comingFrom", "registering"); //allows next activity to display register dialog
+            intent.putExtra("comingFrom", "registering"); //allows next activity to display register dialog which asks a user to verify their account
             startActivity(intent);
             getActivity().finish();
         }
